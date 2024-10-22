@@ -14,8 +14,12 @@
 
 - Missing DLC data
 
-- SL18_D19.DIO has a bunch of .dat files -- also SpikeGadgets?
+- SL18_D19.DIO has a bunch of .dat files
     - Apparently DIO stands for digital input/output: https://docs.spikegadgets.com/en/latest/basic/Workspace.html
+    - Each file corresponds to a different digital channel (ex. SL18_D19.dio_ECU_Din1.dat = digital input channel 1)
+    - Can read the data using readTrodesExtractedDataFile
+    - 'data' field contains timestamps for each onset (0) and offset (1)
+    - metadata yaml contains descriptions of each dio -- they correspond to behavioral events: Reward well 1-8 and Reward Pump 1-8
 - SL18_D19.ExportedUnitStats has a bunch of .txt files with unit properties
 - SL18_D19.SpikesFinal has plexon files (.plx) -- from spike sorting?
 - SL18_D19.yml has a bunch of useful neuroconv-style metadata
