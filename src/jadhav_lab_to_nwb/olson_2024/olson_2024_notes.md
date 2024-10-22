@@ -20,8 +20,12 @@
     - Can read the data using readTrodesExtractedDataFile
     - 'data' field contains timestamps for each onset (0) and offset (1)
     - metadata yaml contains descriptions of each dio -- they correspond to behavioral events: Reward well 1-8 and Reward Pump 1-8
+- SL18_D19.LFP has LFP data in .dat files
+    - each .dat file has lfp data from 1 channel
+    - there is a separate timestamps file
 - SL18_D19.ExportedUnitStats has a bunch of .txt files with unit properties
 - SL18_D19.SpikesFinal has plexon files (.plx) -- from spike sorting?
+- SL18_D19.timestampoffset has a .txt file per session with a single number (usually 0) -- probably some kind of temporal alignment?
 - SL18_D19.yml has a bunch of useful neuroconv-style metadata
 
 In JLab-Analysis-Suite/SpikeGadgets_Export_Pipeline/PipelineNotes.txt,
