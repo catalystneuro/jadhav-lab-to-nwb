@@ -12,7 +12,11 @@
         - .trodesComments file contains start and stop timestamps
         - .stateScriptLog is some kind of script -- used to run the trodes software?
 
-- Missing DLC data
+- SL18_D19.DLC has the DLC output files for each session
+    - .csv files contain all the standard DLC outputs
+    - .mp4 files appear identical with the corresponding .h264 video file
+
+- SL18_D19.msortOut has mountainsort output for nt1 and nt15
 
 - SL18_D19.DIO has a bunch of .dat files
     - Apparently DIO stands for digital input/output: https://docs.spikegadgets.com/en/latest/basic/Workspace.html
