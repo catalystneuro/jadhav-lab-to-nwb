@@ -2,6 +2,7 @@
 from pathlib import Path
 import datetime
 from zoneinfo import ZoneInfo
+import shutil
 
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
@@ -21,13 +22,17 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
 
     source_data = dict()
     conversion_options = dict()
+
+    # Add Ephys Recording
+    file_path = data_dir_path / f"{data_dir_path.name}.rec"
+    source_data.update(dict(Recording=dict(file_path=file_path)))
+    conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
+
     converter = Olson2024NWBConverter(source_data=source_data)
 
     # Add datetime to conversion
     metadata = converter.get_metadata()
-    datetime.datetime(year=2020, month=1, day=1, tzinfo=ZoneInfo("US/Eastern"))
-    date = datetime.datetime.today()  # TODO: Get this from author
-    metadata["NWBFile"]["session_start_time"] = date
+    metadata["NWBFile"]["session_start_time"] = datetime.datetime(2023, 5, 3, 11, 26, 42, tzinfo=ZoneInfo("US/Eastern"))
 
     # Update default metadata with the editable in the corresponding yaml file
     editable_metadata_path = Path(__file__).parent / "olson_2024_metadata.yaml"
@@ -45,7 +50,10 @@ if __name__ == "__main__":
         "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19_S01_F01_BOX_SLP_20230503_112642"
     )
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb")
-    stub_test = False
+    stub_test = True
+
+    if output_dir_path.exists():
+        shutil.rmtree(output_dir_path, ignore_errors=True)
 
     session_to_nwb(
         data_dir_path=data_dir_path,
