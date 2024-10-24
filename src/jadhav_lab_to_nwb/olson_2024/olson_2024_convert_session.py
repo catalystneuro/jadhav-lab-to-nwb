@@ -1,6 +1,5 @@
 """Primary script to run to convert an entire session for of data using the NWBConverter."""
 from pathlib import Path
-from typing import Union
 import datetime
 from zoneinfo import ZoneInfo
 
@@ -9,7 +8,7 @@ from neuroconv.utils import load_dict_from_file, dict_deep_update
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
 
 
-def session_to_nwb(data_dir_path: Union[str, Path], output_dir_path: Union[str, Path], stub_test: bool = False):
+def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_test: bool = False):
 
     data_dir_path = Path(data_dir_path)
     output_dir_path = Path(output_dir_path)
@@ -39,9 +38,7 @@ def session_to_nwb(data_dir_path: Union[str, Path], output_dir_path: Union[str, 
 
     # Add datetime to conversion
     metadata = converter.get_metadata()
-    datetime.datetime(
-        year=2020, month=1, day=1, tzinfo=ZoneInfo("US/Eastern")
-    )
+    datetime.datetime(year=2020, month=1, day=1, tzinfo=ZoneInfo("US/Eastern"))
     date = datetime.datetime.today()  # TO-DO: Get this from author
     metadata["NWBFile"]["session_start_time"] = date
 
@@ -63,7 +60,8 @@ if __name__ == "__main__":
     output_dir_path = Path("~/conversion_nwb/")
     stub_test = False
 
-    session_to_nwb(data_dir_path=data_dir_path,
-                    output_dir_path=output_dir_path,
-                    stub_test=stub_test,
-                    )
+    session_to_nwb(
+        data_dir_path=data_dir_path,
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
