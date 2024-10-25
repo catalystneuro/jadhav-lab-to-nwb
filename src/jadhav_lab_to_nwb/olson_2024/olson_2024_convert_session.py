@@ -5,6 +5,8 @@ from zoneinfo import ZoneInfo
 import shutil
 
 from neuroconv.utils import load_dict_from_file, dict_deep_update
+from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
+from neuroconv import ConverterPipe
 
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
 
@@ -20,15 +22,22 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     session_id = "sample_session"
     nwbfile_path = output_dir_path / f"{session_id}.nwb"
 
-    source_data = dict()
+    data_interfaces = dict()
     conversion_options = dict()
 
-    # Add Ephys Recording
+    # Add Ephys Recording Interface
     file_path = data_dir_path / f"{data_dir_path.name}.rec"
-    source_data.update(dict(Recording=dict(file_path=file_path)))
+    RecordingInterface = SpikeGadgetsRecordingInterface(file_path=file_path)
+    # channel_ids = converter.data_interface_objects["Recording"].recording_extractor.get_channel_ids()
+    # converter.data_interface_objects["Recording"].recording_extractor.set_property(
+    #     key="group_name",
+    #     ids=channel_ids,
+    #     values=["CA1_R"]*len(channel_ids),
+    # )
+    data_interfaces.update(dict(Recording=RecordingInterface))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
-    converter = Olson2024NWBConverter(source_data=source_data)
+    converter = ConverterPipe(data_interfaces=data_interfaces)
 
     # Add datetime to conversion
     metadata = converter.get_metadata()

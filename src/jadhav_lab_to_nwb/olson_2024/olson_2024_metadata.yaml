@@ -6,6 +6,7 @@ NWBFile:
   experimenter:
     - Last, First Middle
     - Last, First Middle
+
 Subject:
   description: Long Evans Rat
   genotype: Wild Type
@@ -13,3 +14,29 @@ Subject:
   species: Rattus norvegicus
   subject_id: SL18
   weight: 467g
+
+Ecephys:
+  Device:
+    - name: ProbeNameTBD
+      description: ProbeDescriptionTBD
+      manufacturer: ProbeManufacturerTBD
+  ElectrodeGroup:
+    - name: CA1_R
+      description: DescriptionTBD
+      location: Right CA1
+      device: ProbeNameTBD
+    - name: CA1_L
+      description: DescriptionTBD
+      location: Left CA1
+      device: ProbeNameTBD
+    - name: SUB_R
+      description: DescriptionTBD
+      location: Right Subiculum
+      device: ProbeNameTBD
+    - name: SUB_L
+      description: DescriptionTBD
+      location: Left Subiculum
+      device: ProbeNameTBD
+  ElectricalSeries:
+    - name: ElectricalSeries
+      description: Recording of AC neural responses in mice performing this behavioral task will utilize dense 128-channel recording probes (Masmanidis Lab). These recording probes span a depth ~1mm, allowing for sampling of all layers of cortex. Electrophysiology data will be recorded using OpenEphys Acquisition Board v2.4 and associated OpenEphys GUI software.
