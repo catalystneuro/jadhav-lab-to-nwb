@@ -17,6 +17,9 @@ classifiers = [
 dependencies = [
   "neuroconv",
   "nwbinspector",
+  "pre-commit",
+  "ipykernel",
+  "matplotlib",
 ]
 
 [project.urls]
