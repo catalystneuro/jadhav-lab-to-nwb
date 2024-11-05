@@ -4,18 +4,19 @@ from pynwb.file import NWBFile
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.utils import DeepDict
 
+
 class Olson2024BehaviorInterface(BaseDataInterface):
     """Behavior interface for olson_2024 conversion"""
 
     keywords = ("behavior",)
-    
+
     def __init__(self):
         # This should load the data lazily and prepare variables you need
         pass
 
     def get_metadata(self) -> DeepDict:
         # Automatically retrieve as much metadata as possible from the source files available
-        metadata = super().get_metadata()   
+        metadata = super().get_metadata()
 
         return metadata
 
