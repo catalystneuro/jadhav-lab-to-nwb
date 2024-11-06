@@ -45,10 +45,9 @@ class Olson2024SpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
             "type": "array",
             "minItems": 1,
             "items": {
-                "required": ["name", "description", "location", "device", "nTrodes"],
+                "required": ["name", "location", "device", "nTrodes"],
                 "properties": {
                     "name": {"description": "the name of this Trode group", "pattern": "^[^/]*$", "type": "string"},
-                    "description": {"description": "description of this Trode group", "type": "string"},
                     "location": {"description": "description of location of this Trode group", "type": "string"},
                     "device": {
                         "description": "the device that was used to record from this Trode group",
@@ -80,6 +79,7 @@ class Olson2024SpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
             for nTrode in nTrodes:
                 electrode_group = copy.deepcopy(group)
                 electrode_group["name"] = f"nTrode{nTrode}"
+                electrode_group["description"] = f"ElectrodeGroup for tetrode {nTrode}"
                 metadata["Ecephys"]["ElectrodeGroup"].append(electrode_group)
         return metadata
 

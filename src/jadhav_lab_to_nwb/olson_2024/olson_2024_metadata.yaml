@@ -22,25 +22,21 @@ Ecephys:
       manufacturer: ProbeManufacturerTBD
   TrodeGroups:
     - name: CA1_R
-      description: DescriptionTBD
       location: Right hippocampal subfield CA1
       device: ProbeNameTBD
       nTrodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,60,61,62,63,64]
     - name: CA1_L
-      description: DescriptionTBD
-      location: CA1_L
+      location: Left hippocampal subfield CA1
       device: ProbeNameTBD
       nTrodes: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
     - name: SUB_L
-      description: DescriptionTBD
       location: Left Subiculum
       device: ProbeNameTBD
       nTrodes: [28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43]
     - name: SUB_R
-      description: DescriptionTBD
       location: Right Subiculum
       device: ProbeNameTBD
       nTrodes: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]
   ElectricalSeries:
     - name: ElectricalSeries
-      description: Recording of AC neural responses in mice performing this behavioral task will utilize dense 128-channel recording probes (Masmanidis Lab). These recording probes span a depth ~1mm, allowing for sampling of all layers of cortex. Electrophysiology data will be recorded using OpenEphys Acquisition Board v2.4 and associated OpenEphys GUI software.
+      description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
