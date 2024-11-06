@@ -40,3 +40,8 @@ Ecephys:
   ElectricalSeries:
     - name: ElectricalSeries
       description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
+
+Behavior:
+  Videos:
+    - name: Video SL18_D19_S01_F01_BOX_SLP_20230503_112642.1
+      description: Video of the rat in the box.

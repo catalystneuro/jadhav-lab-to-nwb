@@ -5,7 +5,6 @@ from zoneinfo import ZoneInfo
 import shutil
 
 from neuroconv.utils import load_dict_from_file, dict_deep_update
-from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
 
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
 
@@ -28,6 +27,11 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     file_path = data_dir_path / f"{data_dir_path.name}.rec"
     source_data.update(dict(Recording=dict(file_path=file_path)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
+
+    # Add Video
+    file_paths = [data_dir_path / f"{data_dir_path.name}.1.h264"]
+    source_data.update(dict(Video=dict(file_paths=file_paths)))
+    conversion_options.update(dict(Video=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)
 
