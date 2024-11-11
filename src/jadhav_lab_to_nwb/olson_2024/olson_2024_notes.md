@@ -34,3 +34,7 @@
 
 In JLab-Analysis-Suite/SpikeGadgets_Export_Pipeline/PipelineNotes.txt,
     - Jacob mentions that neuroconv's interface only converts the raw .rec file but nothing else --> will need to extend the interface to cover the rest of the data.
+
+## Ephys
+
+- Need probe info (not just control units)
