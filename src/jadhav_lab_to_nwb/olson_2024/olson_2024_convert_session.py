@@ -19,6 +19,7 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     session_id = "sample_session"
+    subject_id = "SL18"
     nwbfile_path = output_dir_path / f"{session_id}.nwb"
 
     source_data = dict()
@@ -36,7 +37,7 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
 
     # Add DLC
     file_path = "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19.DLC/SL18_D19_S01_F01_BOX_SLP_20230503_112642.1DLC_resnet50_SubLearnSleepBoxRedLightJun26shuffle1_100000.csv"
-    source_data.update(dict(DeepLabCut=dict(file_path=file_path)))
+    source_data.update(dict(DeepLabCut=dict(file_path=file_path, subject_name=subject_id)))
     conversion_options.update(dict(DeepLabCut=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)
