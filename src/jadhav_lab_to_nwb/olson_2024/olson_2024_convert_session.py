@@ -4,7 +4,9 @@ import datetime
 from zoneinfo import ZoneInfo
 import shutil
 
-from ndx_pose import PoseEstimationSeries
+from ndx_pose import (
+    PoseEstimationSeries,
+)  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
