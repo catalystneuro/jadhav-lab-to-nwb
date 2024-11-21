@@ -51,73 +51,73 @@ Behavior:
   Events:
   - id: ECU_Din1
     name: reward_well_1
-    description: Reward Well 1
+    description: Whenever the animal visits Reward Well 1
   - id: ECU_Din2
     name: reward_well_2
-    description: Reward Well 2
+    description: Whenever the animal visits Reward Well 2
   - id: ECU_Din3
     name: reward_well_3
-    description: Reward Well 3
+    description: Whenever the animal visits Reward Well 3
   - id: ECU_Din4
     name: reward_well_4
-    description: Reward Well 4
+    description: Whenever the animal visits Reward Well 4
   - id: ECU_Din5
     name: reward_well_5
-    description: Reward Well 5
+    description: Whenever the animal visits Reward Well 5
   - id: ECU_Din6
     name: reward_well_6
-    description: Reward Well 6
+    description: Whenever the animal visits Reward Well 6
   - id: ECU_Din7
     name: reward_well_7
-    description: Reward Well 7
+    description: Whenever the animal visits Reward Well 7
   - id: ECU_Din8
     name: reward_well_8
-    description: Reward Well 8
+    description: Whenever the animal visits Reward Well 8
   - id: ECU_Dout1
     name: reward_pump_1
-    description: Reward Pump 1
+    description: Whenever a reward is delivered from Reward Pump 1
   - id: ECU_Dout2
     name: reward_pump_2
-    description: Reward Pump 2
+    description: Whenever a reward is delivered from Reward Pump 2
   - id: ECU_Dout3
     name: reward_pump_3
-    description: Reward Pump 3
+    description: Whenever a reward is delivered from Reward Pump 3
   - id: ECU_Dout4
     name: reward_pump_4
-    description: Reward Pump 4
+    description: Whenever a reward is delivered from Reward Pump 4
   - id: ECU_Dout5
     name: reward_pump_5
-    description: Reward Pump 5
+    description: Whenever a reward is delivered from Reward Pump 5
   - id: ECU_Dout6
     name: reward_pump_6
-    description: Reward Pump 6
+    description: Whenever a reward is delivered from Reward Pump 6
   - id: ECU_Dout7
     name: reward_pump_7
-    description: Reward Pump 7
+    description: Whenever a reward is delivered from Reward Pump 7
   - id: ECU_Dout8
     name: reward_pump_8
-    description: Reward Pump 8
+    description: Whenever a reward is delivered from Reward Pump 8
   - id: ECU_Dout17
     name: barrier_1
-    description: Barrier 1
+    description: Whenever Barrier 1 is placed in the box
   - id: ECU_Dout18
     name: barrier_2
-    description: Barrier 2
+    description: Whenever Barrier 2 is placed in the box
   - id: ECU_Dout19
     name: barrier_3
-    description: Barrier 3
+    description: Whenever Barrier 3 is placed in the box
   - id: ECU_Dout20
     name: barrier_4
-    description: Barrier 4
+    description: Whenever Barrier 4 is placed in the box
   - id: ECU_Dout21
     name: barrier_5
-    description: Barrier 5
+    description: Whenever Barrier 5 is placed in the box
   - id: ECU_Dout22
     name: barrier_6
-    description: Barrier 6
+    description: Whenever Barrier 6 is placed in the box
   - id: ECU_Dout23
     name: barrier_7
-    description: Barrier 7
+    description: Whenever Barrier 7 is placed in the box
   - id: ECU_Dout24
     name: barrier_8
-    description: Barrier 8
+    description: Whenever Barrier 8 is placed in the box
