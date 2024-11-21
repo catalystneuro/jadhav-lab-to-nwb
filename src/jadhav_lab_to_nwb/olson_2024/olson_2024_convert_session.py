@@ -42,6 +42,11 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     source_data.update(dict(DeepLabCut=dict(file_path=file_path, subject_name=subject_id)))
     conversion_options.update(dict(DeepLabCut=dict()))
 
+    # Add Behavior
+    folder_path = "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19.DIO"
+    source_data.update(dict(Behavior=dict(folder_path=folder_path)))
+    conversion_options.update(dict(Behavior=dict()))
+
     converter = Olson2024NWBConverter(source_data=source_data)
 
     # Add datetime to conversion

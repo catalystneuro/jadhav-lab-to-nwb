@@ -12,4 +12,5 @@ class Olson2024NWBConverter(NWBConverter):
         Recording=Olson2024SpikeGadgetsRecordingInterface,
         Video=VideoInterface,
         DeepLabCut=DeepLabCutInterface,
+        Behavior=Olson2024BehaviorInterface,
     )
