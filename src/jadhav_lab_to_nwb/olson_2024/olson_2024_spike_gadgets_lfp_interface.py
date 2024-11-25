@@ -8,6 +8,7 @@ import re
 from pynwb.ecephys import ElectricalSeries, LFP
 from neuroconv import BaseDataInterface
 from neuroconv.tools import nwb_helpers
+from neuroconv.utils import get_base_schema
 
 
 class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
@@ -17,6 +18,29 @@ class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
 
     def __init__(self, folder_path: DirectoryPath):
         super().__init__(folder_path=folder_path)
+
+    def get_metadata_schema(self):
+        metadata_schema = super().get_metadata_schema()
+        metadata_schema["properties"]["Ecephys"] = get_base_schema(tag="Ecephys")
+        metadata_schema["properties"]["Ecephys"]["properties"]["LFP"] = {
+            "type": "object",
+            "required": ["ElectricalSeries"],
+            "properties": {
+                "ElectricalSeries": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "required": ["name", "description"],
+                        "properties": {
+                            "name": {"type": "string"},
+                            "description": {"type": "string"},
+                        },
+                    },
+                },
+            },
+        }
+
+        return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, stub_test: bool = False):
         folder_path = Path(self.source_data["folder_path"])
@@ -52,8 +76,10 @@ class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
         if stub_test:
             lfp_data = lfp_data[:100]
             timestamps = timestamps[:100]
+        lfp_metadata = metadata["Ecephys"]["LFP"]
         lfp_electrical_series = ElectricalSeries(
-            name="ElectricalSeries",
+            name=lfp_metadata["ElectricalSeries"][0]["name"],
+            description=lfp_metadata["ElectricalSeries"][0]["description"],
             data=lfp_data,
             timestamps=timestamps,
             electrodes=lfp_table_region,
