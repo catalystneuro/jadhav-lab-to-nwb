@@ -24,12 +24,27 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     conversion_options = dict()
 
     # Add Ephys
-    file_path = data_dir_path / f"{data_dir_path.name}.rec"
+    file_path = (
+        data_dir_path
+        / "SL18_D19"
+        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642"
+        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642.rec"
+    )
     source_data.update(dict(Recording=dict(file_path=file_path)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
+    # Add LFP
+    folder_path = data_dir_path / "SL18_D19" / "SL18_D19.LFP"
+    source_data.update(dict(LFP=dict(folder_path=folder_path)))
+    conversion_options.update(dict(LFP=dict(stub_test=stub_test)))
+
     # Add Video
-    file_paths = [data_dir_path / f"{data_dir_path.name}.1.h264"]
+    file_paths = [
+        data_dir_path
+        / "SL18_D19"
+        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642"
+        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642.1.h264"
+    ]
     source_data.update(dict(Video=dict(file_paths=file_paths)))
     conversion_options.update(dict(Video=dict()))
 
@@ -51,9 +66,7 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
 if __name__ == "__main__":
 
     # Parameters for conversion
-    data_dir_path = Path(
-        "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19_S01_F01_BOX_SLP_20230503_112642"
-    )
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb")
     stub_test = True
 
