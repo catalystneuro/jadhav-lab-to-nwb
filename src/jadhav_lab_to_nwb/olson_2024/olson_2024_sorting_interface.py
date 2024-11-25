@@ -28,6 +28,7 @@ class Olson2024SortingInterface(BaseDataInterface):
             nTrode = int(file_path.name.split("_")[0].split("nt")[1])
             df = pd.read_csv(file_path, names=["unitInd", "time"])
             unitInds = natsorted(df["unitInd"].unique())
+            electrode_group = nwbfile.electrode_groups[f"nTrode{nTrode}"]
             for unitInd in unitInds:
                 spike_times = df.time[df.unitInd == unitInd].to_numpy()
                 nwbfile.add_unit(
@@ -35,4 +36,5 @@ class Olson2024SortingInterface(BaseDataInterface):
                     nTrode=nTrode,
                     unitInd=unitInd,
                     global_id=f"nTrode{nTrode}_unit{unitInd}",
+                    electrode_group=electrode_group,
                 )
