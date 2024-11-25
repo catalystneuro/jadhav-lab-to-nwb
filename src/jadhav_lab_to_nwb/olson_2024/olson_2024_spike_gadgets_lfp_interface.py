@@ -1,19 +1,13 @@
 """Primary class for converting SpikeGadgets LFP data."""
 from pynwb.file import NWBFile
 from pathlib import Path
-from xml.etree import ElementTree
 from pydantic import FilePath, DirectoryPath
-import copy
-from collections import Counter
 import numpy as np
 import re
 
 from pynwb.ecephys import ElectricalSeries, LFP
 from neuroconv import BaseDataInterface
-from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
-from neuroconv.utils import DeepDict
 from neuroconv.tools import nwb_helpers
-from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
 
 
 class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
