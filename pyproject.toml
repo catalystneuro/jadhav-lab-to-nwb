@@ -20,6 +20,7 @@ dependencies = [
   "pre-commit",
   "ipykernel",
   "matplotlib",
+  "ndx-events==0.2.0"
 ]
 
 [project.urls]
