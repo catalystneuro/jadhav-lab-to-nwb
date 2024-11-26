@@ -38,3 +38,7 @@ In JLab-Analysis-Suite/SpikeGadgets_Export_Pipeline/PipelineNotes.txt,
 ## Ephys
 
 - Need probe info (not just control units)
+
+## DLC
+
+- Need config.yaml
