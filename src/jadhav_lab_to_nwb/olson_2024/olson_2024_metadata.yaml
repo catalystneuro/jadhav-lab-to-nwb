@@ -40,6 +40,10 @@ Ecephys:
   ElectricalSeries:
     - name: ElectricalSeries
       description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
+  LFP:
+    ElectricalSeries:
+      - name: ElectricalSeriesLFP
+        description: Local field potential data recorded by SpikeGadgets (1 channel per tetrode).
 
 Behavior:
   Module:

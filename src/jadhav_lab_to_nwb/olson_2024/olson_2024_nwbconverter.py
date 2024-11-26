@@ -2,7 +2,11 @@
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import VideoInterface, DeepLabCutInterface
 
-from jadhav_lab_to_nwb.olson_2024 import Olson2024BehaviorInterface, Olson2024SpikeGadgetsRecordingInterface
+from jadhav_lab_to_nwb.olson_2024 import (
+    Olson2024BehaviorInterface,
+    Olson2024SpikeGadgetsRecordingInterface,
+    Olson2024SpikeGadgetsLFPInterface,
+)
 
 
 class Olson2024NWBConverter(NWBConverter):
@@ -10,6 +14,7 @@ class Olson2024NWBConverter(NWBConverter):
 
     data_interface_classes = dict(
         Recording=Olson2024SpikeGadgetsRecordingInterface,
+        LFP=Olson2024SpikeGadgetsLFPInterface,
         Video=VideoInterface,
         DeepLabCut=DeepLabCutInterface,
         Behavior=Olson2024BehaviorInterface,
