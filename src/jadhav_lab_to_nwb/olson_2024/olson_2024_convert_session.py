@@ -38,9 +38,13 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
     # Add Sorting
-    folder_path = data_dir_path / "SL18_D19" / "SL18_D19.SpikesFinal"
+    spike_times_folder_path = data_dir_path / "SL18_D19" / "SL18_D19.SpikesFinal"
     unit_stats_folder_path = data_dir_path / "SL18_D19" / "SL18_D19.ExportedUnitStats"
-    source_data.update(dict(Sorting=dict(folder_path=folder_path, unit_stats_folder_path=unit_stats_folder_path)))
+    source_data.update(
+        dict(
+            Sorting=dict(spike_times_folder_path=spike_times_folder_path, unit_stats_folder_path=unit_stats_folder_path)
+        )
+    )
     conversion_options.update(dict(Sorting=dict()))
 
     # Add LFP

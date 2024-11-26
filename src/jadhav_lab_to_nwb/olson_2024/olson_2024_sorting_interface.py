@@ -12,11 +12,11 @@ class Olson2024SortingInterface(BaseDataInterface):
 
     keywords = ("extracellular electrophysiology", "spike sorting")
 
-    def __init__(self, folder_path: DirectoryPath, unit_stats_folder_path: DirectoryPath):
-        super().__init__(folder_path=folder_path, unit_stats_folder_path=unit_stats_folder_path)
+    def __init__(self, spike_times_folder_path: DirectoryPath, unit_stats_folder_path: DirectoryPath):
+        super().__init__(spike_times_folder_path=spike_times_folder_path, unit_stats_folder_path=unit_stats_folder_path)
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        folder_path = Path(self.source_data["folder_path"])
+        spike_times_folder_path = Path(self.source_data["spike_times_folder_path"])
         unit_stats_folder_path = Path(self.source_data["unit_stats_folder_path"])
         nwbfile.add_unit_column(name="nTrode", description="The tetrode number for this unit")
         nwbfile.add_unit_column(name="unitInd", description="The integer id each unit within each nTrode")
@@ -31,7 +31,7 @@ class Olson2024SortingInterface(BaseDataInterface):
             name="waveformPeakMinusTrough", description="Peak minus trough of the template waveform in uV."
         )
 
-        for file_path in folder_path.glob(r"*.txt"):
+        for file_path in spike_times_folder_path.glob(r"*.txt"):
             if file_path.name.startswith("._"):
                 continue
             unit_stats_file_name = file_path.name.split(".")[0] + ".unitexp.txt"
@@ -41,11 +41,11 @@ class Olson2024SortingInterface(BaseDataInterface):
             unit_stats_df = unit_stats_df.iloc[:, : len(names)]
             unit_stats_df.columns = names
             nTrode = int(file_path.name.split("_")[0].split("nt")[1])
-            df = pd.read_csv(file_path, names=["unitInd", "time"])
-            unitInds = natsorted(df["unitInd"].unique())
+            spike_times_df = pd.read_csv(file_path, names=["unitInd", "time"])
+            unitInds = natsorted(spike_times_df["unitInd"].unique())
             electrode_group = nwbfile.electrode_groups[f"nTrode{nTrode}"]
             for unitInd in unitInds:
-                spike_times = df.time[df.unitInd == unitInd].to_numpy()
+                spike_times = spike_times_df.time[spike_times_df.unitInd == unitInd].to_numpy()
                 unit_stats = unit_stats_df[unit_stats_df["Unit Number"] == unitInd]
                 nWaveforms = unit_stats["Number of Waveforms"].iloc[0]
                 waveformFWHM = unit_stats["Valley FWHM of Unit Template"].iloc[0]
