@@ -4,6 +4,9 @@ import datetime
 from zoneinfo import ZoneInfo
 import shutil
 
+from ndx_pose import (
+    PoseEstimationSeries,
+)  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
@@ -18,6 +21,7 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     session_id = "sample_session"
+    subject_id = "SL18"
     nwbfile_path = output_dir_path / f"{session_id}.nwb"
 
     source_data = dict()
@@ -37,6 +41,11 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     folder_path = data_dir_path / "SL18_D19" / "SL18_D19.SpikesFinal"
     source_data.update(dict(Sorting=dict(folder_path=folder_path)))
     conversion_options.update(dict(Sorting=dict()))
+    
+    # Add LFP
+    folder_path = data_dir_path / "SL18_D19" / "SL18_D19.LFP"
+    source_data.update(dict(LFP=dict(folder_path=folder_path)))
+    conversion_options.update(dict(LFP=dict(stub_test=stub_test)))
 
     # Add Video
     file_paths = [
@@ -47,6 +56,16 @@ def session_to_nwb(data_dir_path: str | Path, output_dir_path: str | Path, stub_
     ]
     source_data.update(dict(Video=dict(file_paths=file_paths)))
     conversion_options.update(dict(Video=dict()))
+
+    # Add DLC
+    file_path = "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19.DLC/SL18_D19_S01_F01_BOX_SLP_20230503_112642.1DLC_resnet50_SubLearnSleepBoxRedLightJun26shuffle1_100000.csv"
+    source_data.update(dict(DeepLabCut=dict(file_path=file_path, subject_name=subject_id)))
+    conversion_options.update(dict(DeepLabCut=dict()))
+
+    # Add Behavior
+    folder_path = "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19.DIO"
+    source_data.update(dict(Behavior=dict(folder_path=folder_path)))
+    conversion_options.update(dict(Behavior=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)
 
