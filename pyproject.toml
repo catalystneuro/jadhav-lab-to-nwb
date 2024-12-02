@@ -68,4 +68,4 @@ known_first_party = ["jadhav_lab_to_nwb"]
 [tool.codespell]
 skip = '.git*,*.pdf,*.css'
 check-hidden = true
-ignore-words-list = 'assertin'
+ignore-words-list = 'assertin,trough'

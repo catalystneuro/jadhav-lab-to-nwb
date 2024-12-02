@@ -38,6 +38,7 @@ In JLab-Analysis-Suite/SpikeGadgets_Export_Pipeline/PipelineNotes.txt,
 ## Ephys
 
 - Need probe info (not just control units)
+- In the unit stats files ignoring `Peak to Valley Ticks of Unit Template` and `Valley to Peak Ticks of Unit Template`
 
 ## DLC
 
