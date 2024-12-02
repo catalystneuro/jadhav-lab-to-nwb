@@ -21,7 +21,7 @@ class Olson2024SortingInterface(BaseDataInterface):
         nwbfile.add_unit_column(name="nTrode", description="The tetrode number for this unit")
         nwbfile.add_unit_column(name="unitInd", description="The integer id each unit within each nTrode")
         nwbfile.add_unit_column(
-            name="global_id", description=f"The global id for each unit: nTrode{nTrode}_unit{unitInd}"
+            name="globalID", description=f"The global id for each unit: nTrode{nTrode}_unit{unitInd}"
         )
         nwbfile.add_unit_column(name="nWaveforms", description="Number of waveforms (spikes) for each unit.")
         nwbfile.add_unit_column(
@@ -55,7 +55,7 @@ class Olson2024SortingInterface(BaseDataInterface):
                     electrode_group=electrode_group,
                     nTrode=nTrode,
                     unitInd=unitInd,
-                    global_id=f"nTrode{nTrode}_unit{unitInd}",
+                    globalID=f"nTrode{nTrode}_unit{unitInd}",
                     nWaveforms=nWaveforms,
                     waveformFWHM=waveformFWHM,
                     waveformPeakMinusTrough=waveformPeakMinusTrough,
