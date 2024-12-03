@@ -2,11 +2,11 @@
 from datetime import datetime
 from pathlib import Path
 from neuroconv import NWBConverter
-from neuroconv.datainterfaces import DeepLabCutInterface
 
 from jadhav_lab_to_nwb.olson_2024 import (
     Olson2024BehaviorInterface,
     Olson2024VideoInterface,
+    Olson2024DeepLabCutInterface,
     Olson2024SpikeGadgetsRecordingInterface,
     Olson2024SortingInterface,
     Olson2024SpikeGadgetsLFPInterface,
@@ -21,7 +21,7 @@ class Olson2024NWBConverter(NWBConverter):
         Sorting=Olson2024SortingInterface,
         LFP=Olson2024SpikeGadgetsLFPInterface,
         Video=Olson2024VideoInterface,
-        DeepLabCut=DeepLabCutInterface,
+        DeepLabCut=Olson2024DeepLabCutInterface,
         Behavior=Olson2024BehaviorInterface,
     )
 
@@ -47,8 +47,8 @@ def get_start_datetime(epoch_folder_name: str) -> datetime:
     Returns
     -------
     datetime.datetime
-        The start time of the epoch.
+        The start datetime of the epoch.
     """
     split_name = epoch_folder_name.split("_")
-    start_time = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
-    return start_time
+    start_datetime = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
+    return start_datetime
