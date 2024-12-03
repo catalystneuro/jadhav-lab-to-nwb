@@ -9,7 +9,7 @@ from ndx_pose import (
 )  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
-from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
+from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter, get_start_datetime
 
 
 def session_to_nwb(
@@ -27,11 +27,6 @@ def session_to_nwb(
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
     epoch_folder_paths = sorted(epoch_folder_paths)
-    first_epoch_folder_path = epoch_folder_paths[0]
-    split_name = first_epoch_folder_path.name.split("_")
-    session_start_time = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
-    est = ZoneInfo("US/Eastern")
-    session_start_time = session_start_time.replace(tzinfo=est)
 
     source_data = dict()
     conversion_options = dict()
@@ -83,9 +78,12 @@ def session_to_nwb(
     conversion_options.update(dict(Behavior=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)
+    metadata = converter.get_metadata()
 
     # Add datetime to conversion
-    metadata = converter.get_metadata()
+    session_start_time = get_start_datetime(epoch_folder_paths[0].name)
+    est = ZoneInfo("US/Eastern")
+    session_start_time = session_start_time.replace(tzinfo=est)
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
     # Update default metadata with the editable in the corresponding yaml file
