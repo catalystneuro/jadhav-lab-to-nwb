@@ -1,6 +1,6 @@
 """Primary script to run to convert an entire session for of data using the NWBConverter."""
 from pathlib import Path
-import datetime
+from datetime import datetime
 from zoneinfo import ZoneInfo
 import shutil
 
@@ -22,7 +22,16 @@ def session_to_nwb(
         output_dir_path = output_dir_path / "nwb_stub"
     output_dir_path.mkdir(parents=True, exist_ok=True)
     session_folder_path = data_dir_path / f"{subject_id}_{session_id}"
-    nwbfile_path = nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
+    nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
+
+    # Get epoch info
+    epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
+    epoch_folder_paths = sorted(epoch_folder_paths)
+    first_epoch_folder_path = epoch_folder_paths[0]
+    split_name = first_epoch_folder_path.name.split("_")
+    session_start_time = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
+    est = ZoneInfo("US/Eastern")
+    session_start_time = session_start_time.replace(tzinfo=est)
 
     source_data = dict()
     conversion_options = dict()
@@ -51,19 +60,22 @@ def session_to_nwb(
     source_data.update(dict(LFP=dict(folder_path=folder_path)))
     conversion_options.update(dict(LFP=dict(stub_test=stub_test)))
 
-    # Add Video
-    file_paths = [
-        session_folder_path
-        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642"
-        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642.1.h264"
-    ]
-    source_data.update(dict(Video=dict(file_paths=file_paths)))
-    conversion_options.update(dict(Video=dict()))
-
     # Add DLC
-    file_path = "/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject/SL18_D19/SL18_D19.DLC/SL18_D19_S01_F01_BOX_SLP_20230503_112642.1DLC_resnet50_SubLearnSleepBoxRedLightJun26shuffle1_100000.csv"
+    dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
+    file_path = (
+        dlc_folder_path
+        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642.1DLC_resnet50_SubLearnSleepBoxRedLightJun26shuffle1_100000.csv"
+    )
     source_data.update(dict(DeepLabCut=dict(file_path=file_path, subject_name=subject_id)))
     conversion_options.update(dict(DeepLabCut=dict()))
+
+    # Add Video
+    file_paths = []
+    for epoch_folder_path in epoch_folder_paths:
+        file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.h264"
+        file_paths.append(file_path)
+    source_data.update(dict(Video=dict(file_paths=file_paths)))
+    conversion_options.update(dict(Video=dict()))
 
     # Add Behavior
     folder_path = session_folder_path / f"{session_folder_path.name}.DIO"
@@ -74,7 +86,7 @@ def session_to_nwb(
 
     # Add datetime to conversion
     metadata = converter.get_metadata()
-    metadata["NWBFile"]["session_start_time"] = datetime.datetime(2023, 5, 3, 11, 26, 42, tzinfo=ZoneInfo("US/Eastern"))
+    metadata["NWBFile"]["session_start_time"] = session_start_time
 
     # Update default metadata with the editable in the corresponding yaml file
     editable_metadata_path = Path(__file__).parent / "olson_2024_metadata.yaml"
