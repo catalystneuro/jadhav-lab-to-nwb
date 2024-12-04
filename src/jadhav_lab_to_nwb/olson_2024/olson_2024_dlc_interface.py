@@ -7,6 +7,8 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import DeepLabCutInterface
 
+from .utils.utils import get_epoch_name
+
 
 class Olson2024DeepLabCutInterface(BaseDataInterface):
     """DeepLabCut interface for olson_2024 conversion"""
@@ -47,14 +49,7 @@ class Olson2024DeepLabCutInterface(BaseDataInterface):
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         for dlc_interface in self.dlc_interfaces:
             file_path = dlc_interface.source_data["file_path"]
-            epoch_name = get_epoch_name(file_name=file_path.name)
+            epoch_name = get_epoch_name(name=file_path.name)
             dlc_interface.add_to_nwbfile(
                 nwbfile=nwbfile, metadata=metadata, container_name=f"PoseEstimation_{epoch_name}"
             )
-
-
-def get_epoch_name(file_name: str) -> str:
-    """Get the epoch name from the file name."""
-    split_name = file_name.split("_")
-    epoch_name = "_".join(split_name[2:6])
-    return epoch_name

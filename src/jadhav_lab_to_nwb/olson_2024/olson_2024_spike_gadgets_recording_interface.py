@@ -11,12 +11,14 @@ from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
 from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
 
+from .utils.utils import get_epoch_name
+
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
     def __init__(self, file_paths: list[FilePath], **kwargs):
         recording_interfaces = []
         for file_path in file_paths:
-            epoch_name = get_epoch_name(folder_name=file_path.parent.name)
+            epoch_name = get_epoch_name(name=file_path.parent.name)
             kwargs["es_key"] = f"ElectricalSeries_{epoch_name}"
             recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(file_path=file_path, **kwargs)
             recording_interfaces.append(recording_interface)
@@ -41,13 +43,6 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
                 "ElectricalSeries_description"
             ]
             recording_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
-
-
-def get_epoch_name(folder_name: str) -> str:
-    """Get the epoch name from the folder name."""
-    split_name = folder_name.split("_")
-    epoch_name = "_".join(split_name[2:6])
-    return epoch_name
 
 
 class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
