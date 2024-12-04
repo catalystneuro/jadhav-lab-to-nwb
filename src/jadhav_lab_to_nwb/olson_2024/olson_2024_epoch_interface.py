@@ -4,6 +4,7 @@ from pydantic import DirectoryPath
 import numpy as np
 
 from neuroconv.basedatainterface import BaseDataInterface
+from .tools.spikegadgets import readCameraModuleTimeStamps
 from .utils.utils import get_epoch_name
 
 
@@ -43,8 +44,10 @@ class Olson2024EpochInterface(BaseDataInterface):
             led_configuration = epoch_metadata["led_configuration"]
             led_list = ",".join(epoch_metadata["led_list"])
             led_positions = ",".join(epoch_metadata["led_positions"])
-            start_time = float(np.random.randint(0, 1000))  # TODO: Get the actual start time and stop time
-            stop_time = float(np.random.randint(start_time + 1, start_time + 1000))
+            video_timestamps_file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.videoTimeStamps"
+            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
+            start_time = timestamps[0]
+            stop_time = timestamps[-1]
             nwbfile.add_epoch(
                 start_time=start_time,
                 stop_time=stop_time,
