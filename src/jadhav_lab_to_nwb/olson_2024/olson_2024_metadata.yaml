@@ -47,27 +47,7 @@ Behavior:
   Module:
     name: behavior
     description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
-  VideoSL18_D19_S01_F01_BOX_SLP_20230503_112642:
-    - name: VideoSL18_D19_S01_F01_BOX_SLP_20230503_112642
-      description: Video of the rat in the box.
-  VideoSL18_D19_S02_F01_Home+4_HomeAltVisitAll_20230503_115833:
-    - name: VideoSL18_D19_S02_F01_Home+4_HomeAltVisitAll_20230503_115833
-      description: Video of the rat in the box.
-  VideoSL18_D19_S03_F01_BOX_SLP_20230503_125151:
-    - name: VideoSL18_D19_S03_F01_BOX_SLP_20230503_125151
-      description: Video of the rat in the box.
-  VideoSL18_D19_S04_F01_Home+4_HomeAltVisitAll_20230503_132903:
-    - name: VideoSL18_D19_S04_F01_Home+4_HomeAltVisitAll_20230503_132903
-      description: Video of the rat in the box.
-  VideoSL18_D19_S05_F01_BOX_SLP_20230503_141635:
-    - name: VideoSL18_D19_S05_F01_BOX_SLP_20230503_141635
-      description: Video of the rat in the box.
-  VideoSL18_D19_S06_F01_Home+4_HomeAltVisitAll_20230503_150029:
-    - name: VideoSL18_D19_S06_F01_Home+4_HomeAltVisitAll_20230503_150029
-      description: Video of the rat in the box.
-  VideoSL18_D19_S07_F01_BOX_SLP_20230503_153644:
-    - name: VideoSL18_D19_S07_F01_BOX_SLP_20230503_153644
-      description: Video of the rat in the box.
+  Video_description: Video of the rat in the box.
   Events:
   - id: ECU_Din1
     name: reward_well_1

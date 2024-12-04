@@ -40,6 +40,12 @@ class Olson2024DeepLabCutInterface(BaseDataInterface):
             dlc_interfaces.append(dlc_interface)
         self.dlc_interfaces = dlc_interfaces
 
+    def get_metadata(self) -> DeepDict:
+        metadata = super().get_metadata()
+        for dlc_interface in self.dlc_interfaces:
+            metadata = dict_deep_update(metadata, dlc_interface.get_metadata())
+        return metadata
+
     def get_metadata_schema(self) -> DeepDict:
         metadata_schema = super().get_metadata_schema()
         for dlc_interface in self.dlc_interfaces:
