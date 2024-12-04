@@ -18,6 +18,34 @@ class Olson2024EpochInterface(BaseDataInterface):
 
     def get_metadata_schema(self):
         metadata_schema = super().get_metadata_schema()
+        metadata_schema["properties"]["Epochs"] = {
+            "description": "Metadata for each epoch",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "task_name": {"type": "string"},
+                    "led_configuration": {"type": "string"},
+                    "led_list": {"type": "array", "items": {"type": "string"}},
+                    "led_positions": {"type": "array", "items": {"type": "string"}},
+                },
+                "required": ["name", "task_name", "led_configuration", "led_list", "led_positions"],
+            },
+        }
+        metadata_schema["properties"]["Tasks"] = {
+            "description": "Metadata for each task",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "description": {"type": "string"},
+                    "camera_id": {"type": "string"},
+                },
+                "required": ["name", "description", "camera_id"],
+            },
+        }
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
