@@ -10,6 +10,7 @@ from jadhav_lab_to_nwb.olson_2024 import (
     Olson2024SpikeGadgetsRecordingInterface,
     Olson2024SortingInterface,
     Olson2024SpikeGadgetsLFPInterface,
+    Olson2024EpochInterface,
 )
 
 
@@ -23,6 +24,7 @@ class Olson2024NWBConverter(NWBConverter):
         Video=Olson2024VideoInterface,
         DeepLabCut=Olson2024DeepLabCutInterface,
         Behavior=Olson2024BehaviorInterface,
+        Epoch=Olson2024EpochInterface,
     )
 
     def temporally_align_data_interfaces(self):

@@ -121,3 +121,68 @@ Behavior:
   - id: ECU_Dout24
     name: barrier_8
     description: Whenever Barrier 8 is placed in the box
+
+Epochs:
+  - name: S01
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S02
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S03
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S04
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S05
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S06
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S07
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+
+Tasks:
+  - name: Sleep
+    description: The animal sleeps in a small empty box.
+    camera_id: 0
+  - name: HomeAltVisitAll
+    description: Shuttle task between home and 4 destinations.
+    camera_id: 1

@@ -4,4 +4,5 @@ from .olson_2024_dlc_interface import Olson2024DeepLabCutInterface
 from .olson_2024_spike_gadgets_recording_interface import Olson2024SpikeGadgetsRecordingInterface
 from .olson_2024_sorting_interface import Olson2024SortingInterface
 from .olson_2024_spike_gadgets_lfp_interface import Olson2024SpikeGadgetsLFPInterface
+from .olson_2024_epoch_interface import Olson2024EpochInterface
 from .olson_2024_nwbconverter import Olson2024NWBConverter, get_start_datetime
