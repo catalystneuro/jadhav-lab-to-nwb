@@ -37,9 +37,7 @@ Ecephys:
       location: Right Subiculum
       device: ProbeNameTBD
       nTrodes: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]
-  ElectricalSeries:
-    - name: ElectricalSeries
-      description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
+  ElectricalSeries_description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
   LFP:
     ElectricalSeries:
       - name: ElectricalSeriesLFP

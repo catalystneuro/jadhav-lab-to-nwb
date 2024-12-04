@@ -6,12 +6,51 @@ from pydantic import FilePath
 import copy
 from collections import Counter
 
+from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
-from neuroconv.utils import DeepDict
+from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
 
 
-class Olson2024SpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
+class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
+    def __init__(self, file_paths: list[FilePath], **kwargs):
+        recording_interfaces = []
+        for file_path in file_paths:
+            epoch_name = get_epoch_name(folder_name=file_path.parent.name)
+            kwargs["es_key"] = f"ElectricalSeries_{epoch_name}"
+            recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(file_path=file_path, **kwargs)
+            recording_interfaces.append(recording_interface)
+        self.recording_interfaces = recording_interfaces
+
+    def get_metadata(self) -> DeepDict:
+        metadata = super().get_metadata()
+        for recording_interface in self.recording_interfaces:
+            metadata = dict_deep_update(metadata, recording_interface.get_metadata())
+        return metadata
+
+    def get_metadata_schema(self) -> DeepDict:
+        metadata_schema = super().get_metadata_schema()
+        for recording_interface in self.recording_interfaces:
+            metadata_schema = dict_deep_update(metadata_schema, recording_interface.get_metadata_schema())
+        metadata_schema["properties"]["Ecephys"]["properties"]["ElectricalSeries_description"] = {"type": "string"}
+        return metadata_schema
+
+    def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+        for recording_interface in self.recording_interfaces:
+            metadata["Ecephys"][recording_interface.es_key]["description"] = metadata["Ecephys"][
+                "ElectricalSeries_description"
+            ]
+            recording_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
+
+
+def get_epoch_name(folder_name: str) -> str:
+    """Get the epoch name from the folder name."""
+    split_name = folder_name.split("_")
+    epoch_name = "_".join(split_name[2:6])
+    return epoch_name
+
+
+class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
     """SpikeGadgets RecordingInterface for olson_2024 conversion."""
 
     Extractor = SpikeGadgetsRecordingExtractor
@@ -71,17 +110,18 @@ class Olson2024SpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
         }
         return metadata_schema
 
-    def reformat_metadata(self, metadata: dict) -> dict:
-        TrodeGroups = metadata["Ecephys"]["TrodeGroups"]
-        metadata["Ecephys"]["ElectrodeGroup"] = []
+    def reformat_metadata(self, reformatted_metadata: dict) -> dict:
+        reformatted_metadata = copy.deepcopy(reformatted_metadata)
+        TrodeGroups = reformatted_metadata["Ecephys"]["TrodeGroups"]
+        reformatted_metadata["Ecephys"]["ElectrodeGroup"] = []
         for group in TrodeGroups:
             nTrodes = group.pop("nTrodes")
             for nTrode in nTrodes:
                 electrode_group = copy.deepcopy(group)
                 electrode_group["name"] = f"nTrode{nTrode}"
                 electrode_group["description"] = f"ElectrodeGroup for tetrode {nTrode}"
-                metadata["Ecephys"]["ElectrodeGroup"].append(electrode_group)
-        return metadata
+                reformatted_metadata["Ecephys"]["ElectrodeGroup"].append(electrode_group)
+        return reformatted_metadata
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
         metadata = self.reformat_metadata(metadata)

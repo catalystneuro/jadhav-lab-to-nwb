@@ -32,12 +32,8 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add Ephys
-    file_path = (
-        session_folder_path
-        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642"
-        / "SL18_D19_S01_F01_BOX_SLP_20230503_112642.rec"
-    )
-    source_data.update(dict(Recording=dict(file_path=file_path)))
+    file_paths = [epoch_folder_path / f"{epoch_folder_path.name}.rec" for epoch_folder_path in epoch_folder_paths]
+    source_data.update(dict(Recording=dict(file_paths=file_paths)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
     # Add Sorting
