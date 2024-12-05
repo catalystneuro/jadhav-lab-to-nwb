@@ -37,9 +37,7 @@ Ecephys:
       location: Right Subiculum
       device: ProbeNameTBD
       nTrodes: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]
-  ElectricalSeries:
-    - name: ElectricalSeries
-      description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
+  ElectricalSeries_description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
   LFP:
     ElectricalSeries:
       - name: ElectricalSeriesLFP
@@ -49,9 +47,7 @@ Behavior:
   Module:
     name: behavior
     description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
-  Videos:
-    - name: Video SL18_D19_S01_F01_BOX_SLP_20230503_112642.1
-      description: Video of the rat in the box.
+  Video_description: Video of the rat in the box.
   Events:
   - id: ECU_Din1
     name: reward_well_1
@@ -125,3 +121,68 @@ Behavior:
   - id: ECU_Dout24
     name: barrier_8
     description: Whenever Barrier 8 is placed in the box
+
+Epochs:
+  - name: S01
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S02
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S03
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S04
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S05
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S06
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S07
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+
+Tasks:
+  - name: Sleep
+    description: The animal sleeps in a small empty box.
+    camera_id: "0"
+  - name: HomeAltVisitAll
+    description: Shuttle task between home and 4 destinations.
+    camera_id: "1"
