@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 from pydantic import FilePath
 import copy
 from collections import Counter
+from typing import Optional
 
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
@@ -15,14 +16,20 @@ from .utils.utils import get_epoch_name
 
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
-    def __init__(self, file_paths: list[FilePath], **kwargs):
+    def __init__(self, file_paths: list[FilePath], comments_file_paths: list[FilePath], **kwargs):
+        assert len(file_paths) == len(comments_file_paths), "Number of comments files must match number of recordings"
         recording_interfaces = []
-        for file_path in file_paths:
+        for file_path, comments_file_path in zip(file_paths, comments_file_paths):
             epoch_name = get_epoch_name(name=file_path.parent.name)
             kwargs["es_key"] = f"ElectricalSeries_{epoch_name}"
-            recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(file_path=file_path, **kwargs)
+            recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(
+                file_path=file_path,
+                comments_file_path=comments_file_path,
+                **kwargs,
+            )
             recording_interfaces.append(recording_interface)
         self.recording_interfaces = recording_interfaces
+        self.starting_times = None
 
     def get_metadata(self) -> DeepDict:
         metadata = super().get_metadata()
@@ -50,7 +57,7 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
 
     Extractor = SpikeGadgetsRecordingExtractor
 
-    def __init__(self, file_path: FilePath, **kwargs):
+    def __init__(self, file_path: FilePath, comments_file_path: Optional[FilePath] = None, **kwargs):
         super().__init__(file_path=file_path, **kwargs)
 
         header_txt = get_spikegadgets_header(file_path)
@@ -68,6 +75,18 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
         self.nTrode_to_hwChans = {nTrode: [] for nTrode in self.hwChan_to_nTrode.values()}
         for hwChan, nTrode in self.hwChan_to_nTrode.items():
             self.nTrode_to_hwChans[nTrode].append(hwChan)
+
+        if comments_file_path is not None:
+            with open(comments_file_path, "r") as f:
+                first_line = f.readline()
+                if "start" in first_line:
+                    self.starting_time = (
+                        float(first_line.split()[0]) / self.recording_extractor.get_sampling_frequency()
+                    )
+                else:
+                    raise ValueError(f"Comments file {comments_file_path} does not contain starting time")
+        else:
+            self.starting_time = 0.0
 
     def get_metadata(self) -> DeepDict:
         metadata = super().get_metadata()
@@ -145,7 +164,9 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
             key="brain_area", ids=channel_ids, values=locations
         )  # brain_area in spikeinterface is location in nwb
 
-        super().add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
+        super().add_to_nwbfile(
+            nwbfile=nwbfile, metadata=metadata, starting_time=self.starting_time, **conversion_options
+        )
 
 
 def get_spikegadgets_header(file_path: str | Path):

@@ -33,7 +33,10 @@ def session_to_nwb(
 
     # Add Ephys
     file_paths = [epoch_folder_path / f"{epoch_folder_path.name}.rec" for epoch_folder_path in epoch_folder_paths]
-    source_data.update(dict(Recording=dict(file_paths=file_paths)))
+    comments_file_paths = [
+        epoch_folder_path / f"{epoch_folder_path.name}.trodesComments" for epoch_folder_path in epoch_folder_paths
+    ]
+    source_data.update(dict(Recording=dict(file_paths=file_paths, comments_file_paths=comments_file_paths)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
     # Add Sorting
