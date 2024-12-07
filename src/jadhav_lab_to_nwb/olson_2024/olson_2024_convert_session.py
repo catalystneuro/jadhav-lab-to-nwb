@@ -61,11 +61,13 @@ def session_to_nwb(
     conversion_options.update(dict(DeepLabCut=dict()))
 
     # Add Video
-    file_paths = []
+    file_paths, video_timestamps_file_paths = [], []
     for epoch_folder_path in epoch_folder_paths:
         file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.h264"
+        video_timestamps_file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.videoTimeStamps"
         file_paths.append(file_path)
-    source_data.update(dict(Video=dict(file_paths=file_paths)))
+        video_timestamps_file_paths.append(video_timestamps_file_path)
+    source_data.update(dict(Video=dict(file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Video=dict()))
 
     # Add Behavior
