@@ -6,6 +6,7 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import VideoInterface
 
+from .tools.spikegadgets import readCameraModuleTimeStamps
 from .utils.utils import get_epoch_name
 
 
@@ -14,14 +15,20 @@ class Olson2024VideoInterface(BaseDataInterface):
 
     keywords = ("movie", "natural behavior", "tracking")
 
-    def __init__(self, file_paths: list[FilePath]):
+    def __init__(self, file_paths: list[FilePath], video_timestamps_file_paths: list[FilePath]):
         # file_paths must be sorted in the order that the videos were recorded
         assert len(file_paths) > 0, "At least one file path must be provided."
+        assert len(file_paths) == len(
+            video_timestamps_file_paths
+        ), "The number of file paths must match the number of video timestamps file paths."
         video_interfaces = []
-        for file_path in file_paths:
+        for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
             epoch_name = get_epoch_name(name=file_path.parent.name)
             metadata_key_name = "Video" + "_" + epoch_name  # TODO: Document this naming convention in the docstring
-            video_interfaces.append(VideoInterface(file_paths=[file_path], metadata_key_name=metadata_key_name))
+            video_interface = VideoInterface(file_paths=[file_path], metadata_key_name=metadata_key_name)
+            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
+            video_interface.set_aligned_timestamps(aligned_timestamps=[timestamps])
+            video_interfaces.append(video_interface)
         self.video_interfaces = video_interfaces
 
     def get_metadata(self) -> DeepDict:

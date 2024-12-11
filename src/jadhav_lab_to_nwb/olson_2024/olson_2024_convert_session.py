@@ -9,7 +9,25 @@ from ndx_pose import (
 )  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
-from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter, get_start_datetime
+from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
+
+
+def get_start_datetime(epoch_folder_name: str) -> datetime:
+    """Get the start datetime of the epoch from the folder name.
+
+    Parameters
+    ----------
+    epoch_folder_path : pathlib.Path
+        The path to the epoch folder.
+
+    Returns
+    -------
+    datetime.datetime
+        The start datetime of the epoch.
+    """
+    split_name = epoch_folder_name.split("_")
+    start_datetime = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
+    return start_datetime
 
 
 def session_to_nwb(
@@ -33,7 +51,10 @@ def session_to_nwb(
 
     # Add Ephys
     file_paths = [epoch_folder_path / f"{epoch_folder_path.name}.rec" for epoch_folder_path in epoch_folder_paths]
-    source_data.update(dict(Recording=dict(file_paths=file_paths)))
+    comments_file_paths = [
+        epoch_folder_path / f"{epoch_folder_path.name}.trodesComments" for epoch_folder_path in epoch_folder_paths
+    ]
+    source_data.update(dict(Recording=dict(file_paths=file_paths, comments_file_paths=comments_file_paths)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
     # Add Sorting
@@ -51,19 +72,27 @@ def session_to_nwb(
     source_data.update(dict(LFP=dict(folder_path=folder_path)))
     conversion_options.update(dict(LFP=dict(stub_test=stub_test)))
 
+    # Add Video
+    file_paths, video_timestamps_file_paths = [], []
+    for epoch_folder_path in epoch_folder_paths:
+        file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.h264"
+        video_timestamps_file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.videoTimeStamps"
+        file_paths.append(file_path)
+        video_timestamps_file_paths.append(video_timestamps_file_path)
+    source_data.update(dict(Video=dict(file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths)))
+    conversion_options.update(dict(Video=dict()))
+
     # Add DLC
     dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
     file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
-    source_data.update(dict(DeepLabCut=dict(file_paths=file_paths, subject_name=subject_id)))
+    source_data.update(
+        dict(
+            DeepLabCut=dict(
+                file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name=subject_id
+            )
+        )
+    )
     conversion_options.update(dict(DeepLabCut=dict()))
-
-    # Add Video
-    file_paths = []
-    for epoch_folder_path in epoch_folder_paths:
-        file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.h264"
-        file_paths.append(file_path)
-    source_data.update(dict(Video=dict(file_paths=file_paths)))
-    conversion_options.update(dict(Video=dict()))
 
     # Add Behavior
     folder_path = session_folder_path / f"{session_folder_path.name}.DIO"
