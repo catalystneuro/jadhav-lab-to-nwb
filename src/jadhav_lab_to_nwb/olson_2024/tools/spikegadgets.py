@@ -86,3 +86,40 @@ def parseFields(fieldstr: str) -> np.dtype:
         else:
             typearr.append((str(fieldname), fieldtype, repeats))
     return np.dtype(typearr)
+
+
+def readCameraModuleTimeStamps(file_path: FilePath) -> tuple[np.ndarray, float]:
+    """
+    Read the timestamps from a .videoTimeStamps file.
+
+    Adapted from https://docs.spikegadgets.com/en/latest/basic/ExportFunctions.html
+
+    The below function reads the header in order to get the clock rate, then
+    reads the rest of the file as uint32s and divides by the clock rate to get
+    the timestamps in seconds.
+
+    The header length switches, so reading lines seems more reliable..
+    Encoding appears to be latin-1, not UTF-8.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the .videoTimeStamps file.
+
+    Returns
+    -------
+    tuple[np.ndarray, float]
+        The timestamps and the clock rate.
+    """
+    CLOCK_STRING = "Clock rate: "
+    HEADER_END_STRING = "End settings"
+    with open(file_path, "r", encoding="latin-1") as fid:
+        while True:
+            header_text = fid.readline()
+            # find substring "clock rate: " in header_text
+            if header_text.find(CLOCK_STRING) != -1:
+                clock_rate = int(re.search(r"\d+", header_text)[0])
+            elif header_text.find(HEADER_END_STRING) != -1:
+                break
+        timestamps = np.fromfile(fid, dtype=np.uint32) / clock_rate
+    return timestamps, clock_rate

@@ -21,7 +21,7 @@ class Olson2024SortingInterface(BaseDataInterface):
         nwbfile.add_unit_column(name="nTrode", description="The tetrode number for this unit")
         nwbfile.add_unit_column(name="unitInd", description="The integer id each unit within each nTrode")
         nwbfile.add_unit_column(
-            name="globalID", description=f"The global id for each unit: nTrode{nTrode}_unit{unitInd}"
+            name="globalID", description="The global id for each unit: nTrode{nTrode}_unit{unitInd}"
         )
         nwbfile.add_unit_column(name="nWaveforms", description="Number of waveforms (spikes) for each unit.")
         nwbfile.add_unit_column(
