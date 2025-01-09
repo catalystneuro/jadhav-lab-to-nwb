@@ -90,4 +90,5 @@ class Olson2024EpochInterface(BaseDataInterface):
                 led_configuration=led_configuration,
                 led_list=led_list,
                 led_positions=led_positions,
+                tags=[epoch_name],
             )
