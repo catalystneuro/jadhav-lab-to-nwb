@@ -33,6 +33,7 @@ def main():
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=True, raise_err=True)
     print(sgc.Session & {"nwb_file_name": nwb_copy_file_name})
     print(sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name})
+    print(sgc.Electrode & {"nwb_file_name": nwb_copy_file_name})
 
 
 if __name__ == "__main__":

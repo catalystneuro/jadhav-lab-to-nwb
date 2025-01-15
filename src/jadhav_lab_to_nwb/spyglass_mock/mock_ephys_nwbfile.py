@@ -52,7 +52,25 @@ def main():
         units="mm",
     )
     nwbfile.add_electrode_group(electrode_group)
-    nwbfile.add_electrode(location="my_location", group=electrode_group)
+    extra_cols = [
+        "probe_shank",
+        "probe_electrode",
+        "bad_channel",
+        "ref_elect_id",
+    ]
+    for col in extra_cols:
+        nwbfile.add_electrode_column(name=col, description=f"description for {col}")
+    nwbfile.add_electrode(
+        location="my_location",
+        group=electrode_group,
+        probe_shank=1,
+        probe_electrode=1,
+        bad_channel=False,
+        ref_elect_id=0,
+        x=0.0,
+        y=0.0,
+        z=0.0,
+    )
     electrodes = nwbfile.electrodes.create_region(name="electrodes", region=[0], description="electrodes")
     mock_ElectricalSeries(electrodes=electrodes, nwbfile=nwbfile, data=np.ones((10, 1)))
 
