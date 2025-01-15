@@ -1,0 +1,58 @@
+{
+    "database.host": "localhost",
+    "database.password": "tutorial",
+    "database.user": "root",
+    "database.port": 3306,
+    "database.reconnect": true,
+    "connection.init_function": null,
+    "connection.charset": "",
+    "loglevel": "INFO",
+    "safemode": true,
+    "fetch_format": "array",
+    "display.limit": 12,
+    "display.width": 14,
+    "display.show_tuple_count": true,
+    "database.use_tls": true,
+    "enable_python_native_blobs": true,
+    "add_hidden_timestamp": false,
+    "filepath_checksum_size_limit": 1073741824,
+    "stores": {
+        "raw": {
+            "protocol": "file",
+            "location": "/Volumes/T7/CatalystNeuro/Spyglass/raw",
+            "stage": "/Volumes/T7/CatalystNeuro/Spyglass/raw"
+        },
+        "analysis": {
+            "protocol": "file",
+            "location": "/Volumes/T7/CatalystNeuro/Spyglass/analysis",
+            "stage": "/Volumes/T7/CatalystNeuro/Spyglass/analysis"
+        }
+    },
+    "custom": {
+        "debug_mode": "false",
+        "test_mode": "false",
+        "spyglass_dirs": {
+            "base": "/Volumes/T7/CatalystNeuro/Spyglass",
+            "raw": "/Volumes/T7/CatalystNeuro/Spyglass/raw",
+            "analysis": "/Volumes/T7/CatalystNeuro/Spyglass/analysis",
+            "recording": "/Volumes/T7/CatalystNeuro/Spyglass/recording",
+            "sorting": "/Volumes/T7/CatalystNeuro/Spyglass/spikesorting",
+            "waveforms": "/Volumes/T7/CatalystNeuro/Spyglass/waveforms",
+            "temp": "/Volumes/T7/CatalystNeuro/Spyglass/tmp",
+            "video": "/Volumes/T7/CatalystNeuro/Spyglass/video",
+            "export": "/Volumes/T7/CatalystNeuro/Spyglass/export"
+        },
+        "kachery_dirs": {
+            "cloud": "/Volumes/T7/CatalystNeuro/Spyglass/.kachery-cloud",
+            "storage": "/Volumes/T7/CatalystNeuro/Spyglass/kachery_storage",
+            "temp": "/Volumes/T7/CatalystNeuro/Spyglass/tmp"
+        },
+        "dlc_dirs": {
+            "base": "/Volumes/T7/CatalystNeuro/Spyglass/deeplabcut",
+            "project": "/Volumes/T7/CatalystNeuro/Spyglass/deeplabcut/projects",
+            "video": "/Volumes/T7/CatalystNeuro/Spyglass/deeplabcut/video",
+            "output": "/Volumes/T7/CatalystNeuro/Spyglass/deeplabcut/output"
+        },
+        "kachery_zone": "franklab.default"
+    }
+}
