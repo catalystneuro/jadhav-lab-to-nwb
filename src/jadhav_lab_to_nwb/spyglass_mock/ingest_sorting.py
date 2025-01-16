@@ -5,6 +5,7 @@ import datajoint as dj
 from pathlib import Path
 import pandas as pd
 from pynwb import NWBHDF5IO
+import numpy as np
 
 dj_local_conf_path = "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_mock/dj_local_conf.json"
 dj.config.load(dj_local_conf_path)  # load config for database connection info
@@ -40,7 +41,17 @@ def main():
         nwbfile = io.read()
         units_table = nwbfile.units.to_dataframe()
     insert_sorting(nwb_copy_file_name, units_table)
+
     print(UnitAnnotation().Annotation())
+    group_key = {
+        "nwb_file_name": nwb_copy_file_name,
+        "sorted_spikes_group_name": "all_units",
+    }
+    group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
+    spikes_spyglass = SortedSpikesGroup().fetch_spike_data(group_key)
+    spikes_nwb = [unit.spike_times for _, unit in units_table.iterrows()]
+    for nwb_unit, spyglass_unit in zip(spikes_nwb, spikes_spyglass):
+        np.testing.assert_array_equal(nwb_unit, spyglass_unit)
 
 
 def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
@@ -53,13 +64,6 @@ def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
         nwb_file_name=nwb_copy_file_name,
         keys=[{"spikesorting_merge_id": merge_id}],
     )
-    # check the new group
-    group_key = {
-        "nwb_file_name": nwb_copy_file_name,
-        "sorted_spikes_group_name": group_name,
-    }
-    group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
-
     annotation_to_type = {
         "custom_label": "label",
         "custom_quantification": "quantification",
@@ -69,10 +73,9 @@ def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
         "sorted_spikes_group_name": group_name,
     }
     group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
-    spike_times, unit_ids = SortedSpikesGroup().fetch_spike_data(group_key, return_unit_ids=True)
-    from tqdm.notebook import tqdm
+    _, unit_ids = SortedSpikesGroup().fetch_spike_data(group_key, return_unit_ids=True)
 
-    for spikes, unit_key in tqdm(zip(spike_times, unit_ids), total=len(spike_times)):
+    for unit_key in unit_ids:
         unit_id = unit_key["unit_id"]
         for annotation, annotation_type in annotation_to_type.items():
             annotation_key = {
