@@ -4,7 +4,6 @@ import os
 import datajoint as dj
 from pathlib import Path
 
-os.chdir("/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/spyglass")
 dj_local_conf_path = "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_mock/dj_local_conf.json"
 dj.config.load(dj_local_conf_path)  # load config for database connection info
 
