@@ -26,14 +26,18 @@ def main():
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
 
     if sgc.Session & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete(force_permission=True)
+        (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete()
     if sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete(force_permission=True)
+        (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
 
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=True, raise_err=True)
     print(sgc.Session & {"nwb_file_name": nwb_copy_file_name})
     print(sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name})
     print(sgc.Electrode & {"nwb_file_name": nwb_copy_file_name})
+    print(sgc.ElectrodeGroup & {"nwb_file_name": nwb_copy_file_name})
+    print(sgc.Probe & {"nwb_file_name": nwb_copy_file_name})
+    print(sgc.Probe.Shank & {"nwb_file_name": nwb_copy_file_name})
+    print(sgc.Probe.Electrode & {"nwb_file_name": nwb_copy_file_name})
 
 
 if __name__ == "__main__":
