@@ -48,19 +48,6 @@ def _get_nwb_metadata(recording: BaseRecording, metadata: dict = None):
     return metadata
 
 
-def add_devices(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] = None):
-    """
-    Deprecated function. Use add_devices_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_devices' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_devices_to_nwbfile' instead.",
-    )
-
-    return add_devices_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
-
-
 def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] = None):
     """
     Add device information to nwbfile object.
@@ -101,19 +88,6 @@ def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] 
         if device_metadata.get("name", defaults["name"]) not in nwbfile.devices:
             device_kwargs = dict(defaults, **device_metadata)
             nwbfile.create_device(**device_kwargs)
-
-
-def add_electrode_groups(recording: BaseRecording, nwbfile: pynwb.NWBFile, metadata: dict = None):
-    """
-    Deprecated function. Use add_electrode_groups_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_electrode_groups' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_electrode_groups_to_nwbfile' instead.",
-    )
-
-    return add_electrode_groups_to_nwbfile(recording=recording, nwbfile=nwbfile, metadata=metadata)
 
 
 def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWBFile, metadata: Optional[dict] = None):
@@ -381,31 +355,6 @@ def _get_null_value_for_property(property: str, sample_data: Any, null_values_fo
             raise ValueError(error_msg)
 
     return default_value
-
-
-def add_electrodes(
-    recording: BaseRecording,
-    nwbfile: pynwb.NWBFile,
-    metadata: Optional[dict] = None,
-    exclude: tuple = (),
-    null_values_for_properties: Optional[dict] = None,
-):
-    """
-    Deprecated function. Use add_electrodes_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_electrodes' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_electrodes_to_nwbfile' instead.",
-    )
-
-    return add_electrodes_to_nwbfile(
-        recording=recording,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        exclude=exclude,
-        null_values_for_properties=null_values_for_properties,
-    )
 
 
 def add_electrodes_to_nwbfile(
@@ -740,41 +689,6 @@ def _recording_traces_to_hdmf_iterator(
     return traces_as_iterator
 
 
-def add_electrical_series(
-    recording: BaseRecording,
-    nwbfile: pynwb.NWBFile,
-    metadata: dict = None,
-    segment_index: int = 0,
-    starting_time: Optional[float] = None,
-    write_as: Literal["raw", "processed", "lfp"] = "raw",
-    es_key: str = None,
-    write_scaled: bool = False,
-    iterator_type: Optional[str] = "v2",
-    iterator_opts: Optional[dict] = None,
-):
-    """
-    Deprecated function. Use add_electrical_series_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_electrical_series' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_electrical_series_to_nwbfile' instead.",
-    )
-
-    return add_electrical_series_to_nwbfile(
-        recording=recording,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        segment_index=segment_index,
-        starting_time=starting_time,
-        write_as=write_as,
-        es_key=es_key,
-        write_scaled=write_scaled,
-        iterator_type=iterator_type,
-        iterator_opts=iterator_opts,
-    )
-
-
 def _report_variable_offset(channel_offsets, channel_ids):
     """
     Helper function to report variable offsets per channel IDs.
@@ -1026,41 +940,6 @@ def add_electrodes_info_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWBF
     add_electrodes_to_nwbfile(recording=recording, nwbfile=nwbfile, metadata=metadata)
 
 
-def add_recording(
-    recording: BaseRecording,
-    nwbfile: pynwb.NWBFile,
-    metadata: Optional[dict] = None,
-    starting_time: Optional[float] = None,
-    write_as: Literal["raw", "processed", "lfp"] = "raw",
-    es_key: Optional[str] = None,
-    write_electrical_series: bool = True,
-    write_scaled: bool = False,
-    iterator_type: str = "v2",
-    iterator_opts: Optional[dict] = None,
-):
-    """
-    Deprecated function. Use add_recording_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_recording' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_recording_to_nwbfile' instead.",
-    )
-
-    return add_recording_to_nwbfile(
-        recording=recording,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        starting_time=starting_time,
-        write_as=write_as,
-        es_key=es_key,
-        write_electrical_series=write_electrical_series,
-        write_scaled=write_scaled,
-        iterator_type=iterator_type,
-        iterator_opts=iterator_opts,
-    )
-
-
 def add_recording_to_nwbfile(
     recording: BaseRecording,
     nwbfile: pynwb.NWBFile,
@@ -1154,47 +1033,6 @@ def add_recording_to_nwbfile(
                 iterator_opts=iterator_opts,
                 always_write_timestamps=always_write_timestamps,
             )
-
-
-def write_recording(
-    recording: BaseRecording,
-    nwbfile_path: Optional[FilePath] = None,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    overwrite: bool = False,
-    verbose: bool = True,
-    starting_time: Optional[float] = None,
-    write_as: Optional[str] = "raw",
-    es_key: Optional[str] = None,
-    write_electrical_series: bool = True,
-    write_scaled: bool = False,
-    iterator_type: Optional[str] = "v2",
-    iterator_opts: Optional[dict] = None,
-):
-    """
-    Deprecated function. Use write_recording_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'write_recording' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'write_recording_to_nwbfile' instead.",
-    )
-
-    return write_recording_to_nwbfile(
-        recording=recording,
-        nwbfile_path=nwbfile_path,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        overwrite=overwrite,
-        verbose=verbose,
-        starting_time=starting_time,
-        write_as=write_as,
-        es_key=es_key,
-        write_electrical_series=write_electrical_series,
-        write_scaled=write_scaled,
-        iterator_type=iterator_type,
-        iterator_opts=iterator_opts,
-    )
 
 
 def write_recording_to_nwbfile(
@@ -1326,45 +1164,6 @@ def write_recording_to_nwbfile(
             iterator_opts=iterator_opts,
         )
     return nwbfile_out
-
-
-def add_units_table(
-    sorting: BaseSorting,
-    nwbfile: pynwb.NWBFile,
-    unit_ids: Optional[list[Union[str, int]]] = None,
-    property_descriptions: Optional[dict] = None,
-    skip_properties: Optional[list[str]] = None,
-    units_table_name: str = "units",
-    unit_table_description: str = "Autogenerated by neuroconv.",
-    write_in_processing_module: bool = False,
-    waveform_means: Optional[np.ndarray] = None,
-    waveform_sds: Optional[np.ndarray] = None,
-    unit_electrode_indices=None,
-    null_values_for_properties: Optional[dict] = None,
-):
-    """
-    Deprecated function. Use add_units_table_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_units_table' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_units_table_to_nwbfile' instead.",
-    )
-
-    return add_units_table_to_nwbfile(
-        sorting=sorting,
-        nwbfile=nwbfile,
-        unit_ids=unit_ids,
-        property_descriptions=property_descriptions,
-        skip_properties=skip_properties,
-        units_table_name=units_table_name,
-        unit_table_description=unit_table_description,
-        write_in_processing_module=write_in_processing_module,
-        waveform_means=waveform_means,
-        waveform_sds=waveform_sds,
-        unit_electrode_indices=unit_electrode_indices,
-        null_values_for_properties=null_values_for_properties,
-    )
 
 
 def add_units_table_to_nwbfile(
@@ -1635,45 +1434,6 @@ def add_units_table_to_nwbfile(
         units_table.add_column(property, **cols_args)
 
 
-def add_sorting(
-    sorting: BaseSorting,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    unit_ids: Optional[Union[list[str], list[int]]] = None,
-    property_descriptions: Optional[dict] = None,
-    skip_properties: Optional[list[str]] = None,
-    skip_features: Optional[list[str]] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-    waveform_means: Optional[np.ndarray] = None,
-    waveform_sds: Optional[np.ndarray] = None,
-    unit_electrode_indices=None,
-):
-    """
-    Deprecated function. Use add_sorting_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_sorting' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_sorting_to_nwbfile' instead.",
-    )
-
-    return add_sorting_to_nwbfile(
-        sorting=sorting,
-        nwbfile=nwbfile,
-        unit_ids=unit_ids,
-        property_descriptions=property_descriptions,
-        skip_properties=skip_properties,
-        skip_features=skip_features,
-        write_as=write_as,
-        units_name=units_name,
-        units_description=units_description,
-        waveform_means=waveform_means,
-        waveform_sds=waveform_sds,
-        unit_electrode_indices=unit_electrode_indices,
-    )
-
-
 def add_sorting_to_nwbfile(
     sorting: BaseSorting,
     nwbfile: Optional[pynwb.NWBFile] = None,
@@ -1747,53 +1507,6 @@ def add_sorting_to_nwbfile(
         write_in_processing_module=write_in_processing_module,
         units_table_name=units_name,
         unit_table_description=units_description,
-        waveform_means=waveform_means,
-        waveform_sds=waveform_sds,
-        unit_electrode_indices=unit_electrode_indices,
-    )
-
-
-def write_sorting(
-    sorting: BaseSorting,
-    nwbfile_path: Optional[FilePath] = None,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    overwrite: bool = False,
-    verbose: bool = True,
-    unit_ids: Optional[list[Union[str, int]]] = None,
-    property_descriptions: Optional[dict] = None,
-    skip_properties: Optional[list[str]] = None,
-    skip_features: Optional[list[str]] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-    waveform_means: Optional[np.ndarray] = None,
-    waveform_sds: Optional[np.ndarray] = None,
-    unit_electrode_indices=None,
-):
-    """
-    Deprecated function. Use write_sorting_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'write_sorting' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'write_sorting_to_nwbfile' instead.",
-    )
-
-    return write_sorting_to_nwbfile(
-        sorting=sorting,
-        nwbfile_path=nwbfile_path,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        overwrite=overwrite,
-        verbose=verbose,
-        unit_ids=unit_ids,
-        property_descriptions=property_descriptions,
-        skip_properties=skip_properties,
-        skip_features=skip_features,
-        write_as=write_as,
-        units_name=units_name,
-        units_description=units_description,
         waveform_means=waveform_means,
         waveform_sds=waveform_sds,
         unit_electrode_indices=unit_electrode_indices,
@@ -1886,41 +1599,6 @@ def write_sorting_to_nwbfile(
             waveform_sds=waveform_sds,
             unit_electrode_indices=unit_electrode_indices,
         )
-
-
-def add_sorting_analyzer(
-    sorting_analyzer: SortingAnalyzer,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    recording: Optional[BaseRecording] = None,
-    unit_ids: Optional[Union[list[str], list[int]]] = None,
-    skip_properties: Optional[list[str]] = None,
-    property_descriptions: Optional[dict] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-):
-    """
-    Deprecated function. Use add_sorting_analyzer_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'add_sorting_analyzer' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'add_sorting_analyzer_to_nwbfile' instead.",
-    )
-
-    return add_sorting_analyzer_to_nwbfile(
-        sorting_analyzer=sorting_analyzer,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        recording=recording,
-        unit_ids=unit_ids,
-        skip_properties=skip_properties,
-        property_descriptions=property_descriptions,
-        write_as=write_as,
-        units_name=units_name,
-        units_description=units_description,
-    )
 
 
 def add_sorting_analyzer_to_nwbfile(
@@ -2034,51 +1712,6 @@ def add_sorting_analyzer_to_nwbfile(
     )
 
 
-def write_sorting_analyzer(
-    sorting_analyzer: SortingAnalyzer,
-    nwbfile_path: Optional[FilePath] = None,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    overwrite: bool = False,
-    recording: Optional[BaseRecording] = None,
-    verbose: bool = True,
-    unit_ids: Optional[Union[list[str], list[int]]] = None,
-    write_electrical_series: bool = False,
-    add_electrical_series_kwargs: Optional[dict] = None,
-    skip_properties: Optional[list[str]] = None,
-    property_descriptions: Optional[dict] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-):
-    """
-    Deprecated function. Use write_sorting_analyzer_to_nwbfile instead.
-    """
-
-    warnings.warn(
-        "The 'write_sorting_analyzer' function is deprecated and will be removed after February 2025. \n"
-        "Please use 'write_sorting_analyzer_to_nwbfile' instead.",
-    )
-
-    return write_sorting_analyzer_to_nwbfile(
-        sorting_analyzer=sorting_analyzer,
-        nwbfile_path=nwbfile_path,
-        nwbfile=nwbfile,
-        metadata=metadata,
-        overwrite=overwrite,
-        recording=recording,
-        verbose=verbose,
-        unit_ids=unit_ids,
-        write_electrical_series=write_electrical_series,
-        add_electrical_series_kwargs=add_electrical_series_kwargs,
-        skip_properties=skip_properties,
-        property_descriptions=property_descriptions,
-        write_as=write_as,
-        units_name=units_name,
-        units_description=units_description,
-    )
-
-
 def write_sorting_analyzer_to_nwbfile(
     sorting_analyzer: SortingAnalyzer,
     nwbfile_path: Optional[FilePath] = None,
@@ -2183,59 +1816,6 @@ def write_sorting_analyzer_to_nwbfile(
             units_name=units_name,
             units_description=units_description,
         )
-
-
-# TODO: Remove February 2025
-def write_waveforms(
-    waveform_extractor,
-    nwbfile_path: Optional[FilePath] = None,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    overwrite: bool = False,
-    recording: Optional[BaseRecording] = None,
-    verbose: bool = True,
-    unit_ids: Optional[list[Union[str, int]]] = None,
-    write_electrical_series: bool = False,
-    add_electrical_series_kwargs: Optional[dict] = None,
-    skip_properties: Optional[list[str]] = None,
-    property_descriptions: Optional[dict] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-):
-    """
-    Deprecated function to write a WaveformExtractor
-    """
-    raise NotImplementedError(
-        "This function is deprecated and will be removed in February 2025, "
-        "since the WaveformExtractor object has been discontinued since "
-        "SpikeInterface version 0.101.0. Use write_sorting_analyzer instead."
-    )
-
-
-# TODO: Remove February 2025
-
-
-def add_waveforms(
-    waveform_extractor,
-    nwbfile: Optional[pynwb.NWBFile] = None,
-    metadata: Optional[dict] = None,
-    recording: Optional[BaseRecording] = None,
-    unit_ids: Optional[list[Union[str, int]]] = None,
-    skip_properties: Optional[list[str]] = None,
-    property_descriptions: Optional[dict] = None,
-    write_as: Literal["units", "processing"] = "units",
-    units_name: str = "units",
-    units_description: str = "Autogenerated by neuroconv.",
-):
-    """
-    Deprecated function to add a WaveformExtractor to an nwbfile
-    """
-    raise NotImplementedError(
-        "This function is deprecated and will be removed in February 2025, "
-        "since the WaveformExtractor object has been discontinued since "
-        "SpikeInterface version 0.101.0. Use add_sorting_analyzer instead."
-    )
 
 
 def _get_electrode_group_indices(recording, nwbfile):
