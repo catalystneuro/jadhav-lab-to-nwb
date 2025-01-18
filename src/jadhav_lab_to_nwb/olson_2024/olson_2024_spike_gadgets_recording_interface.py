@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 from pydantic import FilePath
 import copy
 from collections import Counter
-from typing import Optional
+from typing import Optional, Literal
 
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
@@ -137,7 +137,18 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
                 reformatted_metadata["Ecephys"]["ElectrodeGroup"].append(electrode_group)
         return reformatted_metadata
 
-    def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+    def add_to_nwbfile(
+        self,
+        nwbfile: NWBFile,
+        metadata: dict,
+        stub_test: bool = False,
+        starting_time: Optional[float] = None,
+        write_as: Literal["raw", "lfp", "processed"] = "raw",
+        write_electrical_series: bool = True,
+        iterator_type: Optional[str] = "v2",
+        iterator_opts: Optional[dict] = None,
+        always_write_timestamps: bool = False,
+    ):
         metadata = self.reformat_metadata(metadata)
         channel_ids = self.recording_extractor.get_channel_ids()
         channel_names = self.recording_extractor.get_property(key="channel_name", ids=channel_ids)
@@ -164,8 +175,28 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
             key="brain_area", ids=channel_ids, values=locations
         )  # brain_area in spikeinterface is location in nwb
 
-        super().add_to_nwbfile(
-            nwbfile=nwbfile, metadata=metadata, starting_time=self.starting_time, **conversion_options
+        # from BaseRecordingExtractorInterface
+        from .tools.spikeinterface import add_recording_to_nwbfile
+
+        if stub_test or self.subset_channels is not None:
+            recording = self.subset_recording(stub_test=stub_test)
+        else:
+            recording = self.recording_extractor
+
+        if metadata is None:
+            metadata = self.get_metadata()
+
+        add_recording_to_nwbfile(
+            recording=recording,
+            nwbfile=nwbfile,
+            metadata=metadata,
+            starting_time=self.starting_time,
+            write_as=write_as,
+            write_electrical_series=write_electrical_series,
+            es_key=self.es_key,
+            iterator_type=iterator_type,
+            iterator_opts=iterator_opts,
+            always_write_timestamps=always_write_timestamps,
         )
 
 
