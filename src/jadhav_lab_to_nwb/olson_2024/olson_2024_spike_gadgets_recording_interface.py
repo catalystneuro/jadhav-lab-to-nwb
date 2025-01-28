@@ -175,6 +175,12 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
             key="brain_area", ids=channel_ids, values=locations
         )  # brain_area in spikeinterface is location in nwb
 
+        # Add spyglass-specific properties
+        self.recording_extractor.set_property(key="probe_shank", ids=channel_ids, values=[0] * len(channel_ids))
+        self.recording_extractor.set_property(key="probe_electrode", ids=channel_ids, values=channel_ids)
+        self.recording_extractor.set_property(key="bad_channel", ids=channel_ids, values=[False] * len(channel_ids))
+        self.recording_extractor.set_property(key="ref_elect_id", ids=channel_ids, values=channel_ids)
+
         # from BaseRecordingExtractorInterface
         from .tools.spikeinterface import add_recording_to_nwbfile
 
