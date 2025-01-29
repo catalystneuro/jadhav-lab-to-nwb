@@ -49,4 +49,6 @@ class Olson2024VideoInterface(BaseDataInterface):
             metadata["Behavior"][video_interface.metadata_key_name][0]["description"] = metadata["Behavior"][
                 "Video_description"
             ]
-            video_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
+            video_interface.add_to_nwbfile(
+                nwbfile=nwbfile, metadata=metadata, module_name="behavior"
+            )  # TODO: move video back to acquisition once https://github.com/LorenFrankLab/spyglass/issues/396 is fixed.
