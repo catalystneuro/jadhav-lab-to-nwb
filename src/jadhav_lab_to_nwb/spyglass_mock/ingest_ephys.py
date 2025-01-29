@@ -28,15 +28,26 @@ def main():
         (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete()
     if sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}:
         (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
+    if sgc.ProbeType & {"probe_type": "my_probe_type"}:
+        (sgc.ProbeType & {"probe_type": "my_probe_type"}).delete()
 
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=True, raise_err=True)
+    print("=== Session ===")
     print(sgc.Session & {"nwb_file_name": nwb_copy_file_name})
+    print("=== NWB File ===")
     print(sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name})
+    print("=== Electrode ===")
     print(sgc.Electrode & {"nwb_file_name": nwb_copy_file_name})
+    print("=== Electrode Group ===")
     print(sgc.ElectrodeGroup & {"nwb_file_name": nwb_copy_file_name})
-    print(sgc.Probe & {"nwb_file_name": nwb_copy_file_name})
-    print(sgc.Probe.Shank & {"nwb_file_name": nwb_copy_file_name})
-    print(sgc.Probe.Electrode & {"nwb_file_name": nwb_copy_file_name})
+    print("=== Probe ===")
+    print(sgc.Probe & {"probe_id": "my_probe_type"})
+    print("=== Probe Shank ===")
+    print(sgc.Probe.Shank & {"probe_id": "my_probe_type"})
+    print("=== Probe Electrode ===")
+    print(sgc.Probe.Electrode & {"probe_id": "my_probe_type"})
+    print("=== Raw ===")
+    print(sgc.Raw & {"nwb_file_name": nwb_copy_file_name})
 
 
 if __name__ == "__main__":
