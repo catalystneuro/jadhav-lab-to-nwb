@@ -1,6 +1,5 @@
-"""Ingest mock ephys data from an NWB file into a spyglass database."""
+"""Ingest spike sorting data from a converted NWB file into a spyglass database."""
 
-import os
 import datajoint as dj
 from pathlib import Path
 import pandas as pd
@@ -27,33 +26,6 @@ from spyglass.spikesorting.analysis.v1.group import UnitSelectionParams
 from spyglass.spikesorting.analysis.v1.unit_annotation import UnitAnnotation
 
 
-def main():
-    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/mock_sorting.nwb")
-    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
-
-    if sgc.Session & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete()
-    if sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
-
-    sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=True, raise_err=True)
-    with NWBHDF5IO(nwbfile_path, "r") as io:
-        nwbfile = io.read()
-        units_table = nwbfile.units.to_dataframe()
-    insert_sorting(nwb_copy_file_name, units_table)
-
-    print(UnitAnnotation().Annotation())
-    group_key = {
-        "nwb_file_name": nwb_copy_file_name,
-        "sorted_spikes_group_name": "all_units",
-    }
-    group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
-    spikes_spyglass = SortedSpikesGroup().fetch_spike_data(group_key)
-    spikes_nwb = [unit.spike_times for _, unit in units_table.iterrows()]
-    for nwb_unit, spyglass_unit in zip(spikes_nwb, spikes_spyglass):
-        np.testing.assert_array_equal(nwb_unit, spyglass_unit)
-
-
 def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
     merge_id = str((SpikeSortingOutput.ImportedSpikeSorting & {"nwb_file_name": nwb_copy_file_name}).fetch1("merge_id"))
 
@@ -65,8 +37,12 @@ def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
         keys=[{"spikesorting_merge_id": merge_id}],
     )
     annotation_to_type = {
-        "custom_label": "label",
-        "custom_quantification": "quantification",
+        "nTrode": "label",
+        "unitInd": "label",
+        "globalID": "label",
+        "nWaveforms": "quantification",
+        "waveformFWHM": "quantification",
+        "waveformPeakMinusTrough": "quantification",
     }
     group_key = {
         "nwb_file_name": nwb_copy_file_name,
@@ -84,6 +60,34 @@ def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
                 annotation_type: units_table.loc[unit_id][annotation],
             }
             UnitAnnotation().add_annotation(annotation_key, skip_duplicates=True)
+
+
+def main():
+    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-SL18_ses-D19.nwb")
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
+
+    if sgc.Session & {"nwb_file_name": nwb_copy_file_name}:
+        (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete()
+    if sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}:
+        (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
+    sgc.ProbeType.delete()
+
+    sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=True, raise_err=True)
+    with NWBHDF5IO(nwbfile_path, "r") as io:
+        nwbfile = io.read()
+        units_table = nwbfile.units.to_dataframe()
+    insert_sorting(nwb_copy_file_name, units_table)
+
+    print(UnitAnnotation().Annotation())
+    group_key = {
+        "nwb_file_name": nwb_copy_file_name,
+        "sorted_spikes_group_name": "all_units",
+    }
+    group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
+    spikes_spyglass = SortedSpikesGroup().fetch_spike_data(group_key)
+    spikes_nwb = [unit.spike_times for _, unit in units_table.iterrows()]
+    for nwb_unit, spyglass_unit in zip(spikes_nwb, spikes_spyglass):
+        np.testing.assert_array_equal(nwb_unit, spyglass_unit)
 
 
 if __name__ == "__main__":

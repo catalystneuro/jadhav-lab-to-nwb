@@ -12,7 +12,7 @@
     "display.limit": 12,
     "display.width": 14,
     "display.show_tuple_count": true,
-    "database.use_tls": true,
+    "database.use_tls": false,
     "enable_python_native_blobs": true,
     "add_hidden_timestamp": false,
     "filepath_checksum_size_limit": 1073741824,
