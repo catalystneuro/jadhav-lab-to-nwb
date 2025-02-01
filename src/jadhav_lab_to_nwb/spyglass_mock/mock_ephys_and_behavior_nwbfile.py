@@ -75,7 +75,7 @@ def add_behavior(nwbfile):
     time_series = mock_TimeSeries(name="my_time_series", timestamps=np.arange(20), data=np.ones((20, 1)))
     behavioral_events = BehavioralEvents(name="behavioral_events", time_series=time_series)
     behavior_module = nwbfile.create_processing_module(name="behavior", description="behavior module")
-    behavior_module.add_data_interface(behavioral_events)
+    behavior_module.add(behavioral_events)
 
 
 def main():
