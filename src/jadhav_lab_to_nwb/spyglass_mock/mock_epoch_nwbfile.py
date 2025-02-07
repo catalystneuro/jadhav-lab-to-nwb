@@ -33,8 +33,9 @@ def main():
         )
         tasks_module.add(task_table)
 
-    nwbfile.add_epoch(start_time=0.0, stop_time=1.0, tags=["01"])
-    nwbfile.add_epoch(start_time=1.0, stop_time=2.0, tags=["02"])
+    nwbfile.add_epoch_column(name="custom_data_string", description="Custom epoch column")
+    nwbfile.add_epoch(start_time=0.0, stop_time=1.0, tags=["01"], custom_data_string="custom_value1")
+    nwbfile.add_epoch(start_time=1.0, stop_time=2.0, tags=["02"], custom_data_string="custom_value2")
 
     nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/mock_epochs.nwb")
     if nwbfile_path.exists():
