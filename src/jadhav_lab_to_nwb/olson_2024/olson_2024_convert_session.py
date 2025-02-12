@@ -36,11 +36,11 @@ def session_to_nwb(
 
     data_dir_path = Path(data_dir_path)
     output_dir_path = Path(output_dir_path)
-    if stub_test:
-        output_dir_path = output_dir_path / "nwb_stub"
     output_dir_path.mkdir(parents=True, exist_ok=True)
     session_folder_path = data_dir_path / f"{subject_id}_{session_id}"
     nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
+    if nwbfile_path.exists():
+        nwbfile_path.unlink()
 
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
@@ -127,11 +127,8 @@ if __name__ == "__main__":
 
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
     stub_test = True
-
-    if output_dir_path.exists():
-        shutil.rmtree(output_dir_path, ignore_errors=True)
 
     # Example Session
     subject_id = "SL18"

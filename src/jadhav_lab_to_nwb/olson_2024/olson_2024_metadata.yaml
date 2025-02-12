@@ -182,7 +182,20 @@ Epochs:
 Tasks:
   - name: Sleep
     description: The animal sleeps in a small empty box.
-    camera_id: "0"
+    environment: SLP
+    camera_id:
+      - 0
+    task_epochs:
+      - 1
+      - 3
+      - 5
+      - 7
   - name: HomeAltVisitAll
     description: Shuttle task between home and 4 destinations.
-    camera_id: "1"
+    environment: BOX
+    camera_id:
+      - 1
+    task_epochs:
+      - 2
+      - 4
+      - 6
