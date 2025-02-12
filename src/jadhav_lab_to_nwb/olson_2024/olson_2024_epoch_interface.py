@@ -8,8 +8,6 @@ from neuroconv.basedatainterface import BaseDataInterface
 from .tools.spikegadgets import readCameraModuleTimeStamps
 from .utils.utils import get_epoch_name
 
-from ndx_franklab_novela import CameraDevice  # TODO: move to video interface
-
 
 class Olson2024EpochInterface(BaseDataInterface):
     """Epoch interface for olson_2024 conversion"""
@@ -52,24 +50,6 @@ class Olson2024EpochInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        # TODO: move camera info to videointerface
-        camera_0 = CameraDevice(
-            name="Camera 0",
-            meters_per_pixel=1.0,
-            model="my_model",
-            lens="my_lens",
-            camera_name="my_camera_name_0",
-        )
-        camera_1 = CameraDevice(
-            name="Camera 1",
-            meters_per_pixel=1.0,
-            model="my_model",
-            lens="my_lens",
-            camera_name="my_camera_name_1",
-        )
-        nwbfile.add_device(camera_0)
-        nwbfile.add_device(camera_1)
-
         tasks_metadata = metadata["Tasks"]
         tasks_module = nwbfile.create_processing_module(name="tasks", description="tasks module")
         for task_metadata in tasks_metadata:

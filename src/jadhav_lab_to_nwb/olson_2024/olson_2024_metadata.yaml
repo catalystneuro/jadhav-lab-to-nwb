@@ -47,7 +47,21 @@ Behavior:
   Module:
     name: behavior
     description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
-  Video_description: Video of the rat in the box.
+  Video:
+    description: Video of the rat in the box.
+    CameraDevice:
+    - name: camera_device 0 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.002
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: SleepBox
+    - name: camera_device 1 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.0026
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: Room
   Events:
   - id: ECU_Din1
     name: reward_well_1
