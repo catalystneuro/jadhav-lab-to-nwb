@@ -16,10 +16,25 @@ Subject:
   weight: 467g
 
 Ecephys:
-  Device:
-    - name: ProbeNameTBD
-      description: ProbeDescriptionTBD
-      manufacturer: ProbeManufacturerTBD
+  DataAcqDevice:
+      - name: MCU
+        system: MCU
+        description: Main Control Unit from SpikeGadgets - Handles Analog and Digital Signals, and Coordination across hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: ECU
+        system: ECU
+        description: Environmental Control Unit from SpikeGadgets - I/O control hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: AdaptAMaze
+        system: AdaptAMaze
+        description: Maze Control System
+        manufacturer: JadhavLab (JMOlson)
+        amplifier: TBD
+        adc_circuit: TBD
   TrodeGroups:
     - name: CA1_R
       location: Right hippocampal subfield CA1

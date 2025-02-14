@@ -122,6 +122,33 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
                 "tag": "pynwb.ecephys.ElectrodeGroup",
             },
         }
+        metadata_schema["properties"]["Ecephys"]["properties"]["DataAcqDevice"] = {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "required": ["name", "system", "description", "manufacturer", "amplifier", "adc_circuit"],
+                "properties": {
+                    "name": {"description": "the name of the data acquisition device", "type": "string"},
+                    "system": {"description": "the system that the device is part of", "type": "string"},
+                    "description": {"description": "description of the data acquisition device", "type": "string"},
+                    "manufacturer": {
+                        "description": "the manufacturer of the data acquisition device",
+                        "type": "string",
+                    },
+                    "amplifier": {
+                        "description": "the amplifier used for this data acquisition device",
+                        "type": "string",
+                    },
+                    "adc_circuit": {
+                        "description": "the adc circuit used for this data acquisition device",
+                        "type": "string",
+                    },
+                },
+                "type": "object",
+                "additionalProperties": False,
+            },
+        }
+
         return metadata_schema
 
     def reformat_metadata(self, reformatted_metadata: dict) -> dict:

@@ -21,7 +21,7 @@ from neuroconv.utils import (
     dict_deep_update,
 )
 from neuroconv.utils.str_utils import human_readable_size
-from ndx_franklab_novela import DataAcqDevice, CameraDevice, Probe, Shank, ShanksElectrode, NwbElectrodeGroup
+from ndx_franklab_novela import DataAcqDevice, Probe, Shank, ShanksElectrode, NwbElectrodeGroup
 
 
 def _get_nwb_metadata(recording: BaseRecording, metadata: dict = None):
@@ -54,8 +54,7 @@ def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] 
     """
     Add device information to nwbfile object.
 
-    Will always ensure nwbfile has at least one device, but multiple
-    devices within the metadata list will also be created.
+    Uses DataAcqDevice from ndx_franklab_novela to ensure spyglass compatibility.
 
     Parameters
     ----------
@@ -65,10 +64,12 @@ def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] 
         metadata info for constructing the nwb file (optional).
         Should be of the format::
 
-            metadata['Ecephys']['Device'] = [
+            metadata['Ecephys']['DataAcqDevice'] = [
                 {
                     'name': my_name,
-                    'description': my_description
+                    'description': my_description,
+                    'system': my_system,
+                    'manufacturer': my_manufacturer,
                 },
                 ...
             ]
@@ -76,19 +77,9 @@ def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] 
     """
     if nwbfile is not None:
         assert isinstance(nwbfile, pynwb.NWBFile), "'nwbfile' should be of type pynwb.NWBFile"
-    # Default Device metadata
-    defaults = dict(name="Device", description="Ecephys probe. Automatically generated.")
-
-    if metadata is None:
-        metadata = dict()
-    if "Ecephys" not in metadata:
-        metadata["Ecephys"] = dict()
-    if "Device" not in metadata["Ecephys"]:
-        metadata["Ecephys"]["Device"] = [defaults]
-    for device_metadata in metadata["Ecephys"]["Device"]:
-        if device_metadata.get("name", defaults["name"]) not in nwbfile.devices:
-            device_kwargs = dict(defaults, **device_metadata)
-            nwbfile.create_device(**device_kwargs)
+    for device_metadata in metadata["Ecephys"]["DataAcqDevice"]:
+        data_acq_device = DataAcqDevice(**device_metadata)
+        nwbfile.add_device(data_acq_device)
 
 
 def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWBFile, metadata: Optional[dict] = None):
