@@ -270,8 +270,13 @@ class SpyglassVideoInterface(VideoInterface):
             camera_device = nwbfile.devices[device_name]
             image_series_kwargs.update(device=camera_device)
         image_series = ImageSeries(**image_series_kwargs)
-        behavioral_events = BehavioralEvents(name="video")
-        behavioral_events.add_timeseries(image_series)
-        get_module(nwbfile=nwbfile, name=module_name, description=module_description).add(behavioral_events)
+        module = get_module(nwbfile=nwbfile, name=module_name, description=module_description)
+        if "video" in module.data_interfaces:
+            behavioral_events = module.data_interfaces["video"]
+            behavioral_events.add_timeseries(image_series)
+        else:
+            behavioral_events = BehavioralEvents(name="video")
+            behavioral_events.add_timeseries(image_series)
+            module.add(behavioral_events)
 
         return nwbfile

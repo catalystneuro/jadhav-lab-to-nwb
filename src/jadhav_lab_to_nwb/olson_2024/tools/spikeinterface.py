@@ -82,7 +82,8 @@ def add_devices_to_nwbfile(nwbfile: pynwb.NWBFile, metadata: Optional[DeepDict] 
         assert isinstance(nwbfile, pynwb.NWBFile), "'nwbfile' should be of type pynwb.NWBFile"
     for device_metadata in metadata["Ecephys"]["DataAcqDevice"]:
         data_acq_device = DataAcqDevice(**device_metadata)
-        nwbfile.add_device(data_acq_device)
+        if data_acq_device.name not in nwbfile.devices:
+            nwbfile.add_device(data_acq_device)
 
 
 def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWBFile, metadata: Optional[dict] = None):
