@@ -45,6 +45,7 @@ def session_to_nwb(
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
     epoch_folder_paths = sorted(epoch_folder_paths)
+    epoch_folder_paths = epoch_folder_paths[:1]  # TODO: Add the rest of the epochs when stub_test is False
 
     source_data = dict()
     conversion_options = dict()
@@ -85,6 +86,7 @@ def session_to_nwb(
     # Add DLC
     dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
     file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
+    file_paths = file_paths[:1]  # TODO: Add the rest of the DLC files when stub_test is False
     source_data.update(
         dict(
             DeepLabCut=dict(
@@ -99,9 +101,9 @@ def session_to_nwb(
     source_data.update(dict(Behavior=dict(folder_path=folder_path)))
     conversion_options.update(dict(Behavior=dict()))
 
-    # # Add Epoch
-    # source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
-    # conversion_options.update(dict(Epoch=dict()))
+    # Add Epoch
+    source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
+    conversion_options.update(dict(Epoch=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
