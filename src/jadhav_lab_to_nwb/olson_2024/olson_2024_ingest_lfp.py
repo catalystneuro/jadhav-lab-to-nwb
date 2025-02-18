@@ -49,15 +49,13 @@ def insert_lfp(nwb_copy_file_name: str, eseries_kwargs: dict):
 
     sgc.AnalysisNwbfile().add(nwb_copy_file_name, lfp_file_name)
 
-    lfp_electrode_group_name = "my_lfp_electrode_group"
+    lfp_electrode_group_name = "lfp_electrode_group"
     sglfp.lfp_electrode.LFPElectrodeGroup.create_lfp_electrode_group(
         nwb_file_name=nwb_copy_file_name,
         group_name=lfp_electrode_group_name,
         electrode_list=lfp_electrode_indices,
     )
-    print(f"{eseries_kwargs['timestamps'] = }")
     lfp_sampling_rate = estimate_sampling_rate(eseries_kwargs["timestamps"])
-    print(f"{lfp_sampling_rate = }")
     key = {
         "nwb_file_name": nwb_copy_file_name,
         "lfp_electrode_group_name": lfp_electrode_group_name,
