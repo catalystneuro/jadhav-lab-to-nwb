@@ -33,7 +33,9 @@ class TaskLEDs(SpyglassMixin, dj.Imported):
         for _, epoch_data in epochs.iterrows():
             epoch = int(epoch_data.tags[0])
             led_configuration = epoch_data.led_configuration
-            for led_name, led_position in zip(epoch_data.led_list, epoch_data.led_positions):
+            led_names = epoch_data.led_list.split(",")
+            led_positions = epoch_data.led_positions.split(",")
+            for led_name, led_position in zip(led_names, led_positions):
                 epoch_inserts.append(
                     {
                         "nwb_file_name": nwb_file_name,

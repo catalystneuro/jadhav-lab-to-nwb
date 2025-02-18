@@ -76,8 +76,8 @@ class Olson2024EpochInterface(BaseDataInterface):
         epoch_folder_paths = self.source_data["epoch_folder_paths"]
         nwbfile.add_epoch_column(name="frag_id", description="Frag ID")  # TODO: What is a frag ID?
         nwbfile.add_epoch_column(name="led_configuration", description="LED configuration")
-        nwbfile.add_epoch_column(name="led_list", description="List of LED names")
-        nwbfile.add_epoch_column(name="led_positions", description="List of LED positions")
+        nwbfile.add_epoch_column(name="led_list", description="Comma-separated list of LED names")
+        nwbfile.add_epoch_column(name="led_positions", description="Comma-separated list of LED positions")
         for epoch_folder_path in epoch_folder_paths:
             epoch_name = get_epoch_name(epoch_folder_path.name)
             epoch_id, frag_id, _, _ = epoch_name.split("_")
@@ -85,8 +85,8 @@ class Olson2024EpochInterface(BaseDataInterface):
             task_name = epoch_metadata["task_name"]
             task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == task_name)
             led_configuration = epoch_metadata["led_configuration"]
-            led_list = epoch_metadata["led_list"]
-            led_positions = epoch_metadata["led_positions"]
+            led_list = ",".join(epoch_metadata["led_list"])
+            led_positions = ",".join(epoch_metadata["led_positions"])
             video_timestamps_file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.videoTimeStamps"
             timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
             start_time = timestamps[0]
