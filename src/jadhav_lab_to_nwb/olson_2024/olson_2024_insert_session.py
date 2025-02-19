@@ -4,7 +4,7 @@ from pynwb import NWBHDF5IO
 import numpy as np
 import datajoint as dj
 from pathlib import Path
-import pandas as pd
+import sys
 
 dj_local_conf_path = "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_mock/dj_local_conf.json"
 dj.config.load(dj_local_conf_path)  # load config for database connection info
@@ -22,8 +22,6 @@ from spyglass.spikesorting.analysis.v1.group import UnitSelectionParams
 from spyglass.spikesorting.analysis.v1.unit_annotation import UnitAnnotation
 
 # Custom Table Imports
-import sys
-
 sys.path.append(
     "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/olson_2024/spyglass_extensions"
 )
@@ -35,7 +33,11 @@ from spyglass.utils.nwb_helper_fn import estimate_sampling_rate
 from pynwb.ecephys import ElectricalSeries, LFP
 
 
-def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
+def insert_sorting(nwbfile_path: Path):
+    with NWBHDF5IO(nwbfile_path, "r") as io:
+        nwbfile = io.read()
+        units_table = nwbfile.units.to_dataframe()
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     merge_id = str((SpikeSortingOutput.ImportedSpikeSorting & {"nwb_file_name": nwb_copy_file_name}).fetch1("merge_id"))
 
     UnitSelectionParams().insert_default()
@@ -71,7 +73,18 @@ def insert_sorting(nwb_copy_file_name: str, units_table: pd.DataFrame):
             UnitAnnotation().add_annotation(annotation_key, skip_duplicates=True)
 
 
-def insert_lfp(nwb_copy_file_name: str, eseries_kwargs: dict):
+def insert_lfp(nwbfile_path: Path):
+    with NWBHDF5IO(nwbfile_path, "r") as io:
+        nwbfile = io.read()
+        lfp_eseries = nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
+        timestamps = np.asarray(lfp_eseries.timestamps)
+        data = np.asarray(lfp_eseries.data)
+        eseries_kwargs = {
+            "data": data,
+            "timestamps": timestamps,
+            "description": lfp_eseries.description,
+        }
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     lfp_file_name = sgc.AnalysisNwbfile().create(nwb_copy_file_name)
     analysis_file_abspath = sgc.AnalysisNwbfile().get_abs_path(lfp_file_name)
 
@@ -113,6 +126,11 @@ def insert_lfp(nwb_copy_file_name: str, eseries_kwargs: dict):
     sglfp.lfp_merge.LFPOutput.insert1(key, allow_direct_insert=True)
 
 
+def insert_task(nwbfile_path: Path):
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
+    TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
+
+
 def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err: bool = False):
     """
     Insert all data from a converted NWB file into a spyglass database.
@@ -126,25 +144,10 @@ def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err:
     raise_err : bool
         Whether to raise an error if an error occurs.
     """
-    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=rollback_on_fail, raise_err=raise_err)
-
-    with NWBHDF5IO(nwbfile_path, "r") as io:
-        nwbfile = io.read()
-        units_table = nwbfile.units.to_dataframe()
-    insert_sorting(nwb_copy_file_name, units_table)
-    TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
-    with NWBHDF5IO(nwbfile_path, "r") as io:
-        nwbfile = io.read()
-        lfp_eseries = nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
-        timestamps = np.asarray(lfp_eseries.timestamps)
-        data = np.asarray(lfp_eseries.data)
-        eseries_kwargs = {
-            "data": data,
-            "timestamps": timestamps,
-            "description": lfp_eseries.description,
-        }
-    insert_lfp(nwb_copy_file_name=nwb_copy_file_name, eseries_kwargs=eseries_kwargs)
+    insert_sorting(nwbfile_path=nwbfile_path)
+    insert_lfp(nwbfile_path=nwbfile_path)
+    insert_task(nwbfile_path=nwbfile_path)
 
 
 def main():
