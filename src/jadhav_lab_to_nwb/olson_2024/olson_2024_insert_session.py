@@ -154,25 +154,10 @@ def main():
     nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-SL18_ses-D19.nwb")
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
 
-    if sgc.Session & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Session & {"nwb_file_name": nwb_copy_file_name}).delete()
-    if sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
+    (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
     sgc.ProbeType.delete()
-    if sgc.DataAcquisitionDevice & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.DataAcquisitionDevice & {"nwb_file_name": nwb_copy_file_name}).delete()
-    if sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name}).delete()
-    if sgc.IntervalList & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.IntervalList & {"nwb_file_name": nwb_copy_file_name}).delete()
-    if sgc.Task():
-        sgc.Task.delete()
-    if sgc.TaskEpoch():
-        sgc.TaskEpoch.delete()
-    if TaskLEDs():
-        TaskLEDs().delete()
-    if sgc.VideoFile & {"nwb_file_name": nwb_copy_file_name}:
-        (sgc.VideoFile & {"nwb_file_name": nwb_copy_file_name}).delete()
+    sgc.DataAcquisitionDevice.delete()
+    sgc.Task.delete()
 
     insert_session(nwbfile_path, rollback_on_fail=True, raise_err=True)
 
