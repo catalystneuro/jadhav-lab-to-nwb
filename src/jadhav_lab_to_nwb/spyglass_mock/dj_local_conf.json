@@ -10,7 +10,7 @@
     "safemode": true,
     "fetch_format": "array",
     "display.limit": 12,
-    "display.width": 14,
+    "display.width": 30,
     "display.show_tuple_count": true,
     "database.use_tls": false,
     "enable_python_native_blobs": true,

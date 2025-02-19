@@ -15,16 +15,12 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
 from .tools.spikeinterface import MultiRecordingDataChunkIterator
 
-from .utils.utils import get_epoch_name
-
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
     def __init__(self, file_paths: list[FilePath], comments_file_paths: list[FilePath], **kwargs):
         assert len(file_paths) == len(comments_file_paths), "Number of comments files must match number of recordings"
         recording_interfaces = []
         for file_path, comments_file_path in zip(file_paths, comments_file_paths):
-            epoch_name = get_epoch_name(name=file_path.parent.name)
-            kwargs["es_key"] = f"ElectricalSeries_{epoch_name}"
             recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(
                 file_path=file_path,
                 comments_file_path=comments_file_path,
