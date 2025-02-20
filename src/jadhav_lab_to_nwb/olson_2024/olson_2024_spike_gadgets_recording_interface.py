@@ -44,7 +44,7 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
-        timestamps, data = [], []
+        timestamps = []
         for recording_interface in self.recording_interfaces:
             metadata["Ecephys"][recording_interface.es_key]["description"] = metadata["Ecephys"][
                 "ElectricalSeries_description"
