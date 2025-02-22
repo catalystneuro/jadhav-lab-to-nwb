@@ -45,7 +45,7 @@ def session_to_nwb(
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
     epoch_folder_paths = sorted(epoch_folder_paths)
-    epoch_folder_paths = epoch_folder_paths[:1]  # TODO: Add the rest of the epochs when stub_test is False
+    # epoch_folder_paths = epoch_folder_paths[:1]  # TODO: Add the rest of the epochs when stub_test is False
 
     source_data = dict()
     conversion_options = dict()
@@ -86,7 +86,7 @@ def session_to_nwb(
     # Add DLC
     dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
     file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
-    file_paths = file_paths[:1]  # TODO: Add the rest of the DLC files when stub_test is False
+    # file_paths = file_paths[:1]  # TODO: Add the rest of the DLC files when stub_test is False
     source_data.update(
         dict(
             DeepLabCut=dict(
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
-    stub_test = True
+    stub_test = False
 
     # Example Session
     subject_id = "SL18"
