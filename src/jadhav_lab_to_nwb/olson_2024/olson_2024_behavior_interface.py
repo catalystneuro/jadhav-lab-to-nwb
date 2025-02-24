@@ -8,7 +8,6 @@ from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools import nwb_helpers
 from neuroconv.utils import get_base_schema
 
-# from ndx_events import Events
 from pynwb.behavior import BehavioralEvents
 from pynwb import TimeSeries
 
