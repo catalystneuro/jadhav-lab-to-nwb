@@ -236,6 +236,7 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
         if metadata is None:
             metadata = self.get_metadata()
 
+        # using a custom add_recording_to_nwbfile in order to ensure spyglass compatibility
         add_recording_to_nwbfile(
             recording=recording,
             nwbfile=nwbfile,
