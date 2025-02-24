@@ -34,6 +34,17 @@ from pynwb.ecephys import ElectricalSeries, LFP
 
 
 def insert_sorting(nwbfile_path: Path):
+    """
+    Insert spike sorting data from an NWB file into a spyglass database.
+
+    This function adds UnitAnnotation data from the units table in the NWB file to the UnitAnnotation table in the
+    spyglass database. The annotations are added as labels or quantifications depending on the type of annotation.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        The path to the NWB file to insert.
+    """
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
         units_table = nwbfile.units.to_dataframe()
@@ -74,6 +85,14 @@ def insert_sorting(nwbfile_path: Path):
 
 
 def insert_lfp(nwbfile_path: Path):
+    """
+    Insert LFP data from an NWB file into a spyglass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        The path to the NWB file to insert.
+    """
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
         lfp_eseries = nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
@@ -127,6 +146,14 @@ def insert_lfp(nwbfile_path: Path):
 
 
 def insert_task(nwbfile_path: Path):
+    """
+    Insert task data from an NWB file into a spyglass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        The path to the NWB file to insert.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
 
