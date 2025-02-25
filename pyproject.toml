@@ -15,12 +15,12 @@ classifiers = [
 ]
 
 dependencies = [
-  "neuroconv[spikegadgets,video]",
+  "neuroconv[spikegadgets,video,deeplabcut]",
   "nwbinspector",
   "pre-commit",
   "ipykernel",
   "matplotlib",
-  "ndx-events==0.2.0"
+  "ndx_franklab_novela"
 ]
 
 [project.urls]

@@ -7,7 +7,9 @@ from pathlib import Path
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools import nwb_helpers
 from neuroconv.utils import get_base_schema
-from ndx_events import Events
+
+from pynwb.behavior import BehavioralEvents
+from pynwb import TimeSeries
 
 from .tools.spikegadgets import readTrodesExtractedDataFile
 
@@ -49,6 +51,7 @@ class Olson2024BehaviorInterface(BaseDataInterface):
             name=metadata["Behavior"]["Module"]["name"],
             description=metadata["Behavior"]["Module"]["description"],
         )
+        behavioral_events = BehavioralEvents(name="behavioral_events")
         for file_path in folder_path.glob(r"*.dat"):
             fieldsText = readTrodesExtractedDataFile(file_path)
             rate = np.asarray(fieldsText["clockrate"], dtype="float64")
@@ -58,9 +61,12 @@ class Olson2024BehaviorInterface(BaseDataInterface):
             event_metadata = next(
                 event_metadata for event_metadata in metadata["Behavior"]["Events"] if event_metadata["id"] == event_id
             )
-            event = Events(
+            time_series = TimeSeries(
                 name=event_metadata["name"],
                 description=event_metadata["description"],
+                data=np.ones((len(timestamps), 1)),
                 timestamps=timestamps,
+                unit="n.a.",
             )
-            behavior_module.add(event)
+            behavioral_events.add_timeseries(time_series)
+        behavior_module.add(behavioral_events)

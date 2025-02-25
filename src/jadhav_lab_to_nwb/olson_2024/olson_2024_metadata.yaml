@@ -14,12 +14,28 @@ Subject:
   species: Rattus norvegicus
   subject_id: SL18
   weight: 467g
+  age: P63D/ # TODO: Replace with actual age
 
 Ecephys:
-  Device:
-    - name: ProbeNameTBD
-      description: ProbeDescriptionTBD
-      manufacturer: ProbeManufacturerTBD
+  DataAcqDevice:
+      - name: MCU
+        system: MCU
+        description: Main Control Unit from SpikeGadgets - Handles Analog and Digital Signals, and Coordination across hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: ECU
+        system: ECU
+        description: Environmental Control Unit from SpikeGadgets - I/O control hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: AdaptAMaze
+        system: AdaptAMaze
+        description: Maze Control System
+        manufacturer: JadhavLab (JMOlson)
+        amplifier: TBD
+        adc_circuit: TBD
   TrodeGroups:
     - name: CA1_R
       location: Right hippocampal subfield CA1
@@ -47,7 +63,21 @@ Behavior:
   Module:
     name: behavior
     description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
-  Video_description: Video of the rat in the box.
+  Video:
+    description: Video of the rat in the box.
+    CameraDevice:
+    - name: camera_device 0 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.002
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: SleepBox
+    - name: camera_device 1 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.0026
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: Room
   Events:
   - id: ECU_Din1
     name: reward_well_1
@@ -182,7 +212,20 @@ Epochs:
 Tasks:
   - name: Sleep
     description: The animal sleeps in a small empty box.
-    camera_id: "0"
+    environment: SLP
+    camera_id:
+      - 0
+    task_epochs:
+      - 1
+      - 3
+      - 5
+      - 7
   - name: HomeAltVisitAll
     description: Shuttle task between home and 4 destinations.
-    camera_id: "1"
+    environment: BOX
+    camera_id:
+      - 1
+    task_epochs:
+      - 2
+      - 4
+      - 6

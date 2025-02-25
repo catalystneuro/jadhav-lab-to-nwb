@@ -65,7 +65,8 @@ class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
             conversions.append(conversion)
         timestamp_file_path = folder_path / "SL18_D19.timestamps.dat"
         fieldsText = readTrodesExtractedDataFile(timestamp_file_path)
-        timestamps = np.asarray(fieldsText["data"], dtype=np.float64)
+        rate = np.asarray(fieldsText["clockrate"], dtype="float64")
+        timestamps = np.asarray(fieldsText["data"], dtype=np.float64) / rate
         for conversion in conversions:
             assert conversion == conversions[0], "All LFP data must have the same conversion factor."
         conversion = conversions[0]

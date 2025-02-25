@@ -1,18 +1,19 @@
 """Primary class for converting SpikeGadgets Ephys Recordings."""
 from pynwb.file import NWBFile
+from pynwb.ecephys import ElectricalSeries
 from pathlib import Path
 from xml.etree import ElementTree
 from pydantic import FilePath
 import copy
 from collections import Counter
-from typing import Optional
+from typing import Optional, Literal
+import numpy as np
 
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
 from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
-
-from .utils.utils import get_epoch_name
+from .tools.spikeinterface import MultiRecordingDataChunkIterator
 
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
@@ -20,8 +21,6 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         assert len(file_paths) == len(comments_file_paths), "Number of comments files must match number of recordings"
         recording_interfaces = []
         for file_path, comments_file_path in zip(file_paths, comments_file_paths):
-            epoch_name = get_epoch_name(name=file_path.parent.name)
-            kwargs["es_key"] = f"ElectricalSeries_{epoch_name}"
             recording_interface = Olson2024SingleEpochSpikeGadgetsRecordingInterface(
                 file_path=file_path,
                 comments_file_path=comments_file_path,
@@ -45,11 +44,29 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+        timestamps = []
         for recording_interface in self.recording_interfaces:
             metadata["Ecephys"][recording_interface.es_key]["description"] = metadata["Ecephys"][
                 "ElectricalSeries_description"
             ]
             recording_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
+            eseries_kwargs = recording_interface.eseries_kwargs
+            timestamps.append(eseries_kwargs["timestamps"])
+
+        if conversion_options.get("stub_test", False):
+            recordings = [
+                recording_interface.subset_recording(stub_test=True)
+                for recording_interface in self.recording_interfaces
+            ]
+        else:
+            recordings = [recording_interface.recording_extractor for recording_interface in self.recording_interfaces]
+        data = MultiRecordingDataChunkIterator(recordings=recordings)
+        eseries_kwargs["name"] = "ElectricalSeries"
+        eseries_kwargs["timestamps"] = np.concatenate(timestamps)
+        eseries_kwargs["data"] = data
+
+        electrical_series = ElectricalSeries(**eseries_kwargs)
+        nwbfile.add_acquisition(electrical_series)
 
 
 class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
@@ -122,6 +139,33 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
                 "tag": "pynwb.ecephys.ElectrodeGroup",
             },
         }
+        metadata_schema["properties"]["Ecephys"]["properties"]["DataAcqDevice"] = {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "required": ["name", "system", "description", "manufacturer", "amplifier", "adc_circuit"],
+                "properties": {
+                    "name": {"description": "the name of the data acquisition device", "type": "string"},
+                    "system": {"description": "the system that the device is part of", "type": "string"},
+                    "description": {"description": "description of the data acquisition device", "type": "string"},
+                    "manufacturer": {
+                        "description": "the manufacturer of the data acquisition device",
+                        "type": "string",
+                    },
+                    "amplifier": {
+                        "description": "the amplifier used for this data acquisition device",
+                        "type": "string",
+                    },
+                    "adc_circuit": {
+                        "description": "the adc circuit used for this data acquisition device",
+                        "type": "string",
+                    },
+                },
+                "type": "object",
+                "additionalProperties": False,
+            },
+        }
+
         return metadata_schema
 
     def reformat_metadata(self, reformatted_metadata: dict) -> dict:
@@ -137,7 +181,18 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
                 reformatted_metadata["Ecephys"]["ElectrodeGroup"].append(electrode_group)
         return reformatted_metadata
 
-    def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+    def add_to_nwbfile(
+        self,
+        nwbfile: NWBFile,
+        metadata: dict,
+        stub_test: bool = False,
+        starting_time: Optional[float] = None,
+        write_as: Literal["raw", "lfp", "processed"] = "raw",
+        write_electrical_series: bool = True,
+        iterator_type: Optional[str] = "v2",
+        iterator_opts: Optional[dict] = None,
+        always_write_timestamps: bool = False,
+    ):
         metadata = self.reformat_metadata(metadata)
         channel_ids = self.recording_extractor.get_channel_ids()
         channel_names = self.recording_extractor.get_property(key="channel_name", ids=channel_ids)
@@ -164,8 +219,45 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
             key="brain_area", ids=channel_ids, values=locations
         )  # brain_area in spikeinterface is location in nwb
 
-        super().add_to_nwbfile(
-            nwbfile=nwbfile, metadata=metadata, starting_time=self.starting_time, **conversion_options
+        # Add spyglass-specific properties
+        self.recording_extractor.set_property(key="probe_shank", ids=channel_ids, values=[0] * len(channel_ids))
+        self.recording_extractor.set_property(key="probe_electrode", ids=channel_ids, values=channel_ids)
+        self.recording_extractor.set_property(key="bad_channel", ids=channel_ids, values=[False] * len(channel_ids))
+        self.recording_extractor.set_property(key="ref_elect_id", ids=channel_ids, values=channel_ids)
+
+        # from BaseRecordingExtractorInterface
+        from .tools.spikeinterface import add_recording_to_nwbfile, get_electrical_series_kwargs
+
+        if stub_test or self.subset_channels is not None:
+            recording = self.subset_recording(stub_test=stub_test)
+        else:
+            recording = self.recording_extractor
+
+        if metadata is None:
+            metadata = self.get_metadata()
+
+        # using a custom add_recording_to_nwbfile in order to ensure spyglass compatibility
+        add_recording_to_nwbfile(
+            recording=recording,
+            nwbfile=nwbfile,
+            metadata=metadata,
+            starting_time=self.starting_time,
+            write_as=write_as,
+            write_electrical_series=False,
+            es_key=self.es_key,
+            iterator_type=iterator_type,
+            iterator_opts=iterator_opts,
+            always_write_timestamps=True,
+        )
+        self.eseries_kwargs = get_electrical_series_kwargs(
+            recording=recording,
+            nwbfile=nwbfile,
+            metadata=metadata,
+            starting_time=self.starting_time,
+            es_key=self.es_key,
+            iterator_type=iterator_type,
+            iterator_opts=iterator_opts,
+            always_write_timestamps=True,
         )
 
 
