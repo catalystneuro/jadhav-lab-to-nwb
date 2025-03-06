@@ -15,7 +15,7 @@
     "database.use_tls": false,
     "enable_python_native_blobs": true,
     "add_hidden_timestamp": false,
-    "filepath_checksum_size_limit": 1073741824,
+    "filepath_checksum_size_limit": 3221225472,
     "stores": {
         "raw": {
             "protocol": "file",

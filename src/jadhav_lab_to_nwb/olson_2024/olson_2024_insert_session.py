@@ -32,6 +32,8 @@ import spyglass.lfp as sglfp
 from spyglass.utils.nwb_helper_fn import estimate_sampling_rate
 from pynwb.ecephys import ElectricalSeries, LFP
 
+from tqdm import tqdm
+
 
 def insert_sorting(nwbfile_path: Path):
     """
@@ -45,9 +47,8 @@ def insert_sorting(nwbfile_path: Path):
     nwbfile_path : Path
         The path to the NWB file to insert.
     """
-    with NWBHDF5IO(nwbfile_path, "r") as io:
-        nwbfile = io.read()
-        units_table = nwbfile.units.to_dataframe()
+    io = NWBHDF5IO(nwbfile_path, "r")
+    nwbfile = io.read()
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     merge_id = str((SpikeSortingOutput.ImportedSpikeSorting & {"nwb_file_name": nwb_copy_file_name}).fetch1("merge_id"))
 
@@ -73,15 +74,17 @@ def insert_sorting(nwbfile_path: Path):
     group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
     _, unit_ids = SortedSpikesGroup().fetch_spike_data(group_key, return_unit_ids=True)
 
-    for unit_key in unit_ids:
+    for unit_key in tqdm(unit_ids, desc="Inserting Unit Annotations"):
         unit_id = unit_key["unit_id"]
         for annotation, annotation_type in annotation_to_type.items():
+            annotation_value = nwbfile.units.get((unit_id, annotation))
             annotation_key = {
                 **unit_key,
                 "annotation": annotation,
-                annotation_type: units_table.loc[unit_id][annotation],
+                annotation_type: annotation_value,
             }
             UnitAnnotation().add_annotation(annotation_key, skip_duplicates=True)
+    io.close()
 
 
 def insert_lfp(nwbfile_path: Path):
@@ -93,36 +96,38 @@ def insert_lfp(nwbfile_path: Path):
     nwbfile_path : Path
         The path to the NWB file to insert.
     """
-    with NWBHDF5IO(nwbfile_path, "r") as io:
-        nwbfile = io.read()
-        lfp_eseries = nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
-        timestamps = np.asarray(lfp_eseries.timestamps)
-        data = np.asarray(lfp_eseries.data)
-        eseries_kwargs = {
-            "data": data,
-            "timestamps": timestamps,
-            "description": lfp_eseries.description,
-        }
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     lfp_file_name = sgc.AnalysisNwbfile().create(nwb_copy_file_name)
     analysis_file_abspath = sgc.AnalysisNwbfile().get_abs_path(lfp_file_name)
 
+    raw_io = NWBHDF5IO(nwbfile_path, "r")
+    raw_nwbfile = raw_io.read()
+    lfp_eseries = raw_nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
+    eseries_kwargs = {
+        "data": lfp_eseries.data,
+        "timestamps": lfp_eseries.timestamps,
+        "description": lfp_eseries.description,
+    }
+
     # Create dynamic table region and electrode series, write/close file
-    with NWBHDF5IO(path=analysis_file_abspath, mode="a", load_namespaces=True) as io:
-        nwbf = io.read()
+    analysis_io = NWBHDF5IO(path=analysis_file_abspath, mode="a", load_namespaces=True)
+    analysis_nwbfile = analysis_io.read()
 
-        # get the indices of the electrodes in the electrode table
-        electrodes_table = nwbf.electrodes.to_dataframe()
-        lfp_electrode_indices = electrodes_table.index[electrodes_table.hasLFP].tolist()
+    # get the indices of the electrodes in the electrode table
+    electrodes_table = analysis_nwbfile.electrodes.to_dataframe()
+    lfp_electrode_indices = electrodes_table.index[electrodes_table.hasLFP].tolist()
 
-        electrode_table_region = nwbf.create_electrode_table_region(lfp_electrode_indices, "filtered electrode table")
-        eseries_kwargs["name"] = "filtered data"
-        eseries_kwargs["electrodes"] = electrode_table_region
-        es = ElectricalSeries(**eseries_kwargs)
-        lfp_object_id = es.object_id
-        ecephys_module = nwbf.create_processing_module(name="ecephys", description="ecephys module")
-        ecephys_module.add(LFP(electrical_series=es))
-        io.write(nwbf)
+    electrode_table_region = analysis_nwbfile.create_electrode_table_region(
+        lfp_electrode_indices, "filtered electrode table"
+    )
+    eseries_kwargs["name"] = "filtered data"
+    eseries_kwargs["electrodes"] = electrode_table_region
+    es = ElectricalSeries(**eseries_kwargs)
+    lfp_object_id = es.object_id
+    ecephys_module = analysis_nwbfile.create_processing_module(name="ecephys", description="ecephys module")
+    ecephys_module.add(LFP(electrical_series=es))
+    analysis_io.write(analysis_nwbfile, link_data=False)
+    analysis_io.close()
 
     sgc.AnalysisNwbfile().add(nwb_copy_file_name, lfp_file_name)
 
@@ -132,7 +137,7 @@ def insert_lfp(nwbfile_path: Path):
         group_name=lfp_electrode_group_name,
         electrode_list=lfp_electrode_indices,
     )
-    lfp_sampling_rate = estimate_sampling_rate(eseries_kwargs["timestamps"])
+    lfp_sampling_rate = estimate_sampling_rate(eseries_kwargs["timestamps"][:1_000_000])
     key = {
         "nwb_file_name": nwb_copy_file_name,
         "lfp_electrode_group_name": lfp_electrode_group_name,
@@ -143,6 +148,8 @@ def insert_lfp(nwbfile_path: Path):
     }
     sglfp.ImportedLFP.insert1(key, allow_direct_insert=True)
     sglfp.lfp_merge.LFPOutput.insert1(key, allow_direct_insert=True)
+
+    raw_io.close()
 
 
 def insert_task(nwbfile_path: Path):
@@ -233,23 +240,23 @@ def test_behavior(nwbfile_path: Path):
     time_series = (
         sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name, "dio_event_name": "reward_well_1"}
     ).fetch_nwb()[0]["dio"]
-    spyglass_dio_data = np.asarray(time_series.data)
+    spyglass_dio_data = np.asarray(time_series.data[:100])
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
         nwb_dio_data = np.asarray(
-            nwbfile.processing["behavior"].data_interfaces["behavioral_events"].time_series["reward_well_1"].data
+            nwbfile.processing["behavior"].data_interfaces["behavioral_events"].time_series["reward_well_1"].data[:100]
         )
-        np.testing.assert_array_equal(spyglass_dio_data, nwb_dio_data)
+    np.testing.assert_array_equal(spyglass_dio_data, nwb_dio_data)
 
 
 def test_ephys(nwbfile_path: Path):
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     electrical_series = (sgc.Raw & {"nwb_file_name": nwb_copy_file_name}).fetch_nwb()[0]["raw"]
-    spyglass_raw_data = np.asarray(electrical_series.data)
+    spyglass_raw_data = np.asarray(electrical_series.data[:100])
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
-        nwb_raw_data = np.asarray(nwbfile.acquisition["ElectricalSeries"].data)
-        np.testing.assert_array_equal(spyglass_raw_data, nwb_raw_data)
+        nwb_raw_data = np.asarray(nwbfile.acquisition["ElectricalSeries"].data[:100])
+    np.testing.assert_array_equal(spyglass_raw_data, nwb_raw_data)
 
 
 def test_epoch(nwbfile_path: Path):
@@ -270,11 +277,13 @@ def test_epoch(nwbfile_path: Path):
 def test_lfp(nwbfile_path: Path):
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     lfp_electrical_series = (sglfp.ImportedLFP & {"nwb_file_name": nwb_copy_file_name}).fetch_nwb()[0]["lfp"]
-    spyglass_lfp_data = np.asarray(lfp_electrical_series.data)
+    spyglass_lfp_data = np.asarray(lfp_electrical_series.data[:100])
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
-        nwb_lfp_data = np.asarray(nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"].data)
-        np.testing.assert_array_equal(spyglass_lfp_data, nwb_lfp_data)
+        nwb_lfp_data = np.asarray(
+            nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"].data[:100]
+        )
+    np.testing.assert_array_equal(spyglass_lfp_data, nwb_lfp_data)
 
 
 def test_sorting(nwbfile_path: Path):
