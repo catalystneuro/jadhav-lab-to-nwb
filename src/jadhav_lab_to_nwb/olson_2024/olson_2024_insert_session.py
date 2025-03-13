@@ -263,7 +263,7 @@ def test_epoch(nwbfile_path: Path):
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     first_task_epoch = (sgc.TaskEpoch & {"nwb_file_name": nwb_copy_file_name, "epoch": 1}).fetch1()
     expected_first_task_epoch = {
-        "nwb_file_name": "sub-SL18_ses-D19_.nwb",
+        "nwb_file_name": nwb_copy_file_name,
         "epoch": 1,
         "task_name": "Sleep",
         "camera_name": None,
