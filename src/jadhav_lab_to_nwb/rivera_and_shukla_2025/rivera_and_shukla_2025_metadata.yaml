@@ -1,0 +1,231 @@
+NWBFile:
+  session_description:
+    A rich text description of the experiment. Can also just be the abstract of the publication.
+  institution: Brandeis University
+  lab: Jadhav
+  experimenter:
+    - Last, First Middle
+    - Last, First Middle
+
+Subject:
+  description: Long Evans Rat
+  genotype: Wild Type
+  sex: M
+  species: Rattus norvegicus
+  subject_id: SL18
+  weight: 467g
+  age: P63D/ # TODO: Replace with actual age
+
+Ecephys:
+  DataAcqDevice:
+      - name: MCU
+        system: MCU
+        description: Main Control Unit from SpikeGadgets - Handles Analog and Digital Signals, and Coordination across hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: ECU
+        system: ECU
+        description: Environmental Control Unit from SpikeGadgets - I/O control hardware
+        manufacturer: SpikeGadgets
+        amplifier: TBD
+        adc_circuit: TBD
+      - name: AdaptAMaze
+        system: AdaptAMaze
+        description: Maze Control System
+        manufacturer: JadhavLab (JMOlson)
+        amplifier: TBD
+        adc_circuit: TBD
+  TrodeGroups:
+    - name: CA1_R
+      location: Right hippocampal subfield CA1
+      device: ProbeNameTBD
+      nTrodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,60,61,62,63,64]
+    - name: CA1_L
+      location: Left hippocampal subfield CA1
+      device: ProbeNameTBD
+      nTrodes: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
+    - name: SUB_L
+      location: Left Subiculum
+      device: ProbeNameTBD
+      nTrodes: [28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43]
+    - name: SUB_R
+      location: Right Subiculum
+      device: ProbeNameTBD
+      nTrodes: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]
+  ElectricalSeries_description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
+  LFP:
+    ElectricalSeries:
+      - name: ElectricalSeriesLFP
+        description: Local field potential data recorded by SpikeGadgets (1 channel per tetrode).
+
+Behavior:
+  Module:
+    name: behavior
+    description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
+  Video:
+    description: Video of the rat in the box.
+    CameraDevice:
+    - name: camera_device 0 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.002
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: SleepBox
+    - name: camera_device 1 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.0026
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: Room
+  Events:
+  - id: ECU_Din1
+    name: reward_well_1
+    description: Whenever the animal visits Reward Well 1
+  - id: ECU_Din2
+    name: reward_well_2
+    description: Whenever the animal visits Reward Well 2
+  - id: ECU_Din3
+    name: reward_well_3
+    description: Whenever the animal visits Reward Well 3
+  - id: ECU_Din4
+    name: reward_well_4
+    description: Whenever the animal visits Reward Well 4
+  - id: ECU_Din5
+    name: reward_well_5
+    description: Whenever the animal visits Reward Well 5
+  - id: ECU_Din6
+    name: reward_well_6
+    description: Whenever the animal visits Reward Well 6
+  - id: ECU_Din7
+    name: reward_well_7
+    description: Whenever the animal visits Reward Well 7
+  - id: ECU_Din8
+    name: reward_well_8
+    description: Whenever the animal visits Reward Well 8
+  - id: ECU_Dout1
+    name: reward_pump_1
+    description: Whenever a reward is delivered from Reward Pump 1
+  - id: ECU_Dout2
+    name: reward_pump_2
+    description: Whenever a reward is delivered from Reward Pump 2
+  - id: ECU_Dout3
+    name: reward_pump_3
+    description: Whenever a reward is delivered from Reward Pump 3
+  - id: ECU_Dout4
+    name: reward_pump_4
+    description: Whenever a reward is delivered from Reward Pump 4
+  - id: ECU_Dout5
+    name: reward_pump_5
+    description: Whenever a reward is delivered from Reward Pump 5
+  - id: ECU_Dout6
+    name: reward_pump_6
+    description: Whenever a reward is delivered from Reward Pump 6
+  - id: ECU_Dout7
+    name: reward_pump_7
+    description: Whenever a reward is delivered from Reward Pump 7
+  - id: ECU_Dout8
+    name: reward_pump_8
+    description: Whenever a reward is delivered from Reward Pump 8
+  - id: ECU_Dout17
+    name: barrier_1
+    description: Whenever Barrier 1 is placed in the box
+  - id: ECU_Dout18
+    name: barrier_2
+    description: Whenever Barrier 2 is placed in the box
+  - id: ECU_Dout19
+    name: barrier_3
+    description: Whenever Barrier 3 is placed in the box
+  - id: ECU_Dout20
+    name: barrier_4
+    description: Whenever Barrier 4 is placed in the box
+  - id: ECU_Dout21
+    name: barrier_5
+    description: Whenever Barrier 5 is placed in the box
+  - id: ECU_Dout22
+    name: barrier_6
+    description: Whenever Barrier 6 is placed in the box
+  - id: ECU_Dout23
+    name: barrier_7
+    description: Whenever Barrier 7 is placed in the box
+  - id: ECU_Dout24
+    name: barrier_8
+    description: Whenever Barrier 8 is placed in the box
+
+Epochs:
+  - name: S01
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S02
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S03
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S04
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S05
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+  - name: S06
+    task_name: HomeAltVisitAll
+    led_configuration: left/right
+    led_list:
+      - redled
+      - greenled
+    led_positions:
+      - right
+      - left
+  - name: S07
+    task_name: Sleep
+    led_configuration: single
+    led_list:
+      - redled
+    led_positions:
+      - center
+
+Tasks:
+  - name: Sleep
+    description: The animal sleeps in a small empty box.
+    environment: SLP
+    camera_id:
+      - 0
+    task_epochs:
+      - 1
+      - 3
+      - 5
+      - 7
+  - name: HomeAltVisitAll
+    description: Shuttle task between home and 4 destinations.
+    environment: BOX
+    camera_id:
+      - 1
+    task_epochs:
+      - 2
+      - 4
+      - 6
