@@ -60,9 +60,9 @@ Ecephys:
         description: Local field potential data recorded by SpikeGadgets (1 channel per tetrode).
 
 Behavior:
-  Module:
-    name: behavior
-    description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
+  # Module:
+  #   name: behavior
+  #   description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
   Video:
     description: Video of the rat in the box.
     CameraDevice:
@@ -78,154 +78,142 @@ Behavior:
       model: Mako G-158C
       lens: Theia SL183M
       camera_name: Room
-  Events:
-  - id: ECU_Din1
-    name: reward_well_1
-    description: Whenever the animal visits Reward Well 1
-  - id: ECU_Din2
-    name: reward_well_2
-    description: Whenever the animal visits Reward Well 2
-  - id: ECU_Din3
-    name: reward_well_3
-    description: Whenever the animal visits Reward Well 3
-  - id: ECU_Din4
-    name: reward_well_4
-    description: Whenever the animal visits Reward Well 4
-  - id: ECU_Din5
-    name: reward_well_5
-    description: Whenever the animal visits Reward Well 5
-  - id: ECU_Din6
-    name: reward_well_6
-    description: Whenever the animal visits Reward Well 6
-  - id: ECU_Din7
-    name: reward_well_7
-    description: Whenever the animal visits Reward Well 7
-  - id: ECU_Din8
-    name: reward_well_8
-    description: Whenever the animal visits Reward Well 8
-  - id: ECU_Dout1
-    name: reward_pump_1
-    description: Whenever a reward is delivered from Reward Pump 1
-  - id: ECU_Dout2
-    name: reward_pump_2
-    description: Whenever a reward is delivered from Reward Pump 2
-  - id: ECU_Dout3
-    name: reward_pump_3
-    description: Whenever a reward is delivered from Reward Pump 3
-  - id: ECU_Dout4
-    name: reward_pump_4
-    description: Whenever a reward is delivered from Reward Pump 4
-  - id: ECU_Dout5
-    name: reward_pump_5
-    description: Whenever a reward is delivered from Reward Pump 5
-  - id: ECU_Dout6
-    name: reward_pump_6
-    description: Whenever a reward is delivered from Reward Pump 6
-  - id: ECU_Dout7
-    name: reward_pump_7
-    description: Whenever a reward is delivered from Reward Pump 7
-  - id: ECU_Dout8
-    name: reward_pump_8
-    description: Whenever a reward is delivered from Reward Pump 8
-  - id: ECU_Dout17
-    name: barrier_1
-    description: Whenever Barrier 1 is placed in the box
-  - id: ECU_Dout18
-    name: barrier_2
-    description: Whenever Barrier 2 is placed in the box
-  - id: ECU_Dout19
-    name: barrier_3
-    description: Whenever Barrier 3 is placed in the box
-  - id: ECU_Dout20
-    name: barrier_4
-    description: Whenever Barrier 4 is placed in the box
-  - id: ECU_Dout21
-    name: barrier_5
-    description: Whenever Barrier 5 is placed in the box
-  - id: ECU_Dout22
-    name: barrier_6
-    description: Whenever Barrier 6 is placed in the box
-  - id: ECU_Dout23
-    name: barrier_7
-    description: Whenever Barrier 7 is placed in the box
-  - id: ECU_Dout24
-    name: barrier_8
-    description: Whenever Barrier 8 is placed in the box
+  # Events:
+  # - id: ECU_Din1
+  #   name: reward_well_1
+  #   description: Whenever the animal visits Reward Well 1
+  # - id: ECU_Din2
+  #   name: reward_well_2
+  #   description: Whenever the animal visits Reward Well 2
+  # - id: ECU_Din3
+  #   name: reward_well_3
+  #   description: Whenever the animal visits Reward Well 3
+  # - id: ECU_Din4
+  #   name: reward_well_4
+  #   description: Whenever the animal visits Reward Well 4
+  # - id: ECU_Din5
+  #   name: reward_well_5
+  #   description: Whenever the animal visits Reward Well 5
+  # - id: ECU_Din6
+  #   name: reward_well_6
+  #   description: Whenever the animal visits Reward Well 6
+  # - id: ECU_Din7
+  #   name: reward_well_7
+  #   description: Whenever the animal visits Reward Well 7
+  # - id: ECU_Din8
+  #   name: reward_well_8
+  #   description: Whenever the animal visits Reward Well 8
+  # - id: ECU_Dout1
+  #   name: reward_pump_1
+  #   description: Whenever a reward is delivered from Reward Pump 1
+  # - id: ECU_Dout2
+  #   name: reward_pump_2
+  #   description: Whenever a reward is delivered from Reward Pump 2
+  # - id: ECU_Dout3
+  #   name: reward_pump_3
+  #   description: Whenever a reward is delivered from Reward Pump 3
+  # - id: ECU_Dout4
+  #   name: reward_pump_4
+  #   description: Whenever a reward is delivered from Reward Pump 4
+  # - id: ECU_Dout5
+  #   name: reward_pump_5
+  #   description: Whenever a reward is delivered from Reward Pump 5
+  # - id: ECU_Dout6
+  #   name: reward_pump_6
+  #   description: Whenever a reward is delivered from Reward Pump 6
+  # - id: ECU_Dout7
+  #   name: reward_pump_7
+  #   description: Whenever a reward is delivered from Reward Pump 7
+  # - id: ECU_Dout8
+  #   name: reward_pump_8
+  #   description: Whenever a reward is delivered from Reward Pump 8
+  # - id: ECU_Dout17
+  #   name: barrier_1
+  #   description: Whenever Barrier 1 is placed in the box
+  # - id: ECU_Dout18
+  #   name: barrier_2
+  #   description: Whenever Barrier 2 is placed in the box
+  # - id: ECU_Dout19
+  #   name: barrier_3
+  #   description: Whenever Barrier 3 is placed in the box
+  # - id: ECU_Dout20
+  #   name: barrier_4
+  #   description: Whenever Barrier 4 is placed in the box
+  # - id: ECU_Dout21
+  #   name: barrier_5
+  #   description: Whenever Barrier 5 is placed in the box
+  # - id: ECU_Dout22
+  #   name: barrier_6
+  #   description: Whenever Barrier 6 is placed in the box
+  # - id: ECU_Dout23
+  #   name: barrier_7
+  #   description: Whenever Barrier 7 is placed in the box
+  # - id: ECU_Dout24
+  #   name: barrier_8
+  #   description: Whenever Barrier 8 is placed in the box
 
 Epochs:
-  - name: S01
-    task_name: Sleep
-    led_configuration: single
+  - name: 1-XFN1-XFN3
+    task_name: SocialW_Left
+    led_configuration: front/back
     led_list:
-      - redled
+      - head
+      - neck
     led_positions:
-      - center
-  - name: S02
-    task_name: HomeAltVisitAll
-    led_configuration: left/right
+      - front
+      - back
+  - name: 3-XFN3-XFN1
+    task_name: SocialW_Right
+    led_configuration: front/back
     led_list:
-      - redled
-      - greenled
+      - head
+      - neck
     led_positions:
-      - right
-      - left
-  - name: S03
-    task_name: Sleep
-    led_configuration: single
+      - front
+      - back
+  - name: 5-XFN1-XFN3
+    task_name: SocialW_Left
+    led_configuration: front/back
     led_list:
-      - redled
+      - head
+      - neck
     led_positions:
-      - center
-  - name: S04
-    task_name: HomeAltVisitAll
-    led_configuration: left/right
+      - front
+      - back
+  - name: 7-XFN3-XFN1
+    task_name: SocialW_Right
+    led_configuration: front/back
     led_list:
-      - redled
-      - greenled
+      - head
+      - neck
     led_positions:
-      - right
-      - left
-  - name: S05
-    task_name: Sleep
-    led_configuration: single
+      - front
+      - back
+  - name: 9-XFN1-XFN3
+    task_name: SocialW_Left
+    led_configuration: front/back
     led_list:
-      - redled
+      - head
+      - neck
     led_positions:
-      - center
-  - name: S06
-    task_name: HomeAltVisitAll
-    led_configuration: left/right
-    led_list:
-      - redled
-      - greenled
-    led_positions:
-      - right
-      - left
-  - name: S07
-    task_name: Sleep
-    led_configuration: single
-    led_list:
-      - redled
-    led_positions:
-      - center
+      - front
+      - back
 
 Tasks:
-  - name: Sleep
-    description: The animal sleeps in a small empty box.
-    environment: SLP
+  - name: SocialW_Left
+    description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
+    environment: left_Wmaze
     camera_id:
       - 0
     task_epochs:
       - 1
-      - 3
       - 5
-      - 7
-  - name: HomeAltVisitAll
-    description: Shuttle task between home and 4 destinations.
-    environment: BOX
+      - 9
+  - name: SocialW_Right
+    description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
+    environment: right_Wmaze
     camera_id:
-      - 1
+      - 0
     task_epochs:
-      - 2
-      - 4
-      - 6
+      - 3
+      - 7

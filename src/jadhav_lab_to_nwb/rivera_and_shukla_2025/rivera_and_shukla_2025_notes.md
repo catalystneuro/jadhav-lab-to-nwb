@@ -11,3 +11,7 @@
 - Detailed subject info is present in Edward's Poster
 - DIO folders have video and timestamps, but no .dat files like in Jacob's project
 - Some dates have DLC data, but some just have DIO
+- DIO folders have sequential (in time) numbered files ex. 1, 3, 5, 7
+    - --> what about 2, 4, 6?
+    - sessions or epochs?
+- Some of the files are named XFN1-XFN3 and others are named XFN3-XFN1. Does this correspond to left vs right W Maze?
