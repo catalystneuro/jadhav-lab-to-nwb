@@ -7,8 +7,8 @@ from natsort import natsorted
 from neuroconv.basedatainterface import BaseDataInterface
 
 
-class Olson2024SortingInterface(BaseDataInterface):
-    """Sorting interface for olson_2024 conversion"""
+class RiveraAndShukla2025SortingInterface(BaseDataInterface):
+    """Sorting interface for rivera_and_shukla_2025 conversion"""
 
     keywords = ("extracellular electrophysiology", "spike sorting")
 

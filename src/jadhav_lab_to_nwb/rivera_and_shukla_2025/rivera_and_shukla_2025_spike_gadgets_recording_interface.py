@@ -69,8 +69,8 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         nwbfile.add_acquisition(electrical_series)
 
 
-class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
-    """SpikeGadgets RecordingInterface for olson_2024 conversion."""
+class RiveraAndShukla2025SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
+    """SpikeGadgets RecordingInterface for rivera_and_shukla_2025 conversion."""
 
     Extractor = SpikeGadgetsRecordingExtractor
 

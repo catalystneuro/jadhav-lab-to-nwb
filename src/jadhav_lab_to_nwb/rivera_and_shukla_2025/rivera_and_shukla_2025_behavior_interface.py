@@ -14,8 +14,8 @@ from pynwb import TimeSeries
 from .tools.spikegadgets import readTrodesExtractedDataFile
 
 
-class Olson2024BehaviorInterface(BaseDataInterface):
-    """Behavior interface for olson_2024 conversion"""
+class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
+    """Behavior interface for rivera_and_shukla_2025 conversion"""
 
     keywords = ("behavior",)
 

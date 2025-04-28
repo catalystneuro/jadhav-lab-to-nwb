@@ -14,8 +14,8 @@ from .tools.spikegadgets import readCameraModuleTimeStamps
 from .utils.utils import get_epoch_name
 
 
-class Olson2024VideoInterface(BaseDataInterface):
-    """Video interface for olson_2024 conversion"""
+class RiveraAndShukla2025VideoInterface(BaseDataInterface):
+    """Video interface for rivera_and_shukla_2025 conversion"""
 
     keywords = ("movie", "natural behavior", "tracking")
 

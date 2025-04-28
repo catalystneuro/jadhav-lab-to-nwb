@@ -9,25 +9,7 @@ from ndx_pose import (
 )  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
-from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
-
-
-def get_start_datetime(epoch_folder_name: str) -> datetime:
-    """Get the start datetime of the epoch from the folder name.
-
-    Parameters
-    ----------
-    epoch_folder_path : pathlib.Path
-        The path to the epoch folder.
-
-    Returns
-    -------
-    datetime.datetime
-        The start datetime of the epoch.
-    """
-    split_name = epoch_folder_name.split("_")
-    start_datetime = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
-    return start_datetime
+from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConverter
 
 
 def session_to_nwb(
@@ -117,7 +99,7 @@ def session_to_nwb(
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "olson_2024_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "rivera_and_shukla_2025_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 

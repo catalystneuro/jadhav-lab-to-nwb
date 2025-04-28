@@ -5,7 +5,7 @@ from pprint import pformat
 import traceback
 from tqdm import tqdm
 
-from .olson_2024_convert_session import session_to_nwb
+from .rivera_and_shukla_2025_convert_session import session_to_nwb
 
 
 def dataset_to_nwb(

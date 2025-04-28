@@ -12,8 +12,8 @@ from neuroconv.utils import get_base_schema
 from .tools.spikegadgets import readTrodesExtractedDataFile
 
 
-class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
-    """SpikeGadgets LFP interface for olson_2024 conversion"""
+class RiveraAndShukla2025SpikeGadgetsLFPInterface(BaseDataInterface):
+    """SpikeGadgets LFP interface for rivera_and_shukla_2025 conversion"""
 
     keywords = ("lfp",)
 

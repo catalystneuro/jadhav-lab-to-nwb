@@ -1,9 +1,7 @@
 """Primary NWBConverter class for this dataset."""
-from datetime import datetime
-from pathlib import Path
 from neuroconv import NWBConverter
 
-from jadhav_lab_to_nwb.olson_2024 import (
+from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     Olson2024BehaviorInterface,
     Olson2024VideoInterface,
     Olson2024DeepLabCutInterface,
@@ -14,8 +12,8 @@ from jadhav_lab_to_nwb.olson_2024 import (
 )
 
 
-class Olson2024NWBConverter(NWBConverter):
-    """Primary conversion class for my extracellular electrophysiology dataset."""
+class RiveraAndShukla2025NWBConverter(NWBConverter):
+    """Primary conversion class."""
 
     data_interface_classes = dict(
         Recording=Olson2024SpikeGadgetsRecordingInterface,
