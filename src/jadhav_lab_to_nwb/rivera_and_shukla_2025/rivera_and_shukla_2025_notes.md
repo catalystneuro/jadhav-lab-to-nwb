@@ -15,3 +15,6 @@
     - --> what about 2, 4, 6?
     - sessions or epochs?
 - Some of the files are named XFN1-XFN3 and others are named XFN3-XFN1. Does this correspond to left vs right W Maze?
+
+## DLC
+- *_full.mp4 video is labeled, other one is identical to .h264 video
