@@ -18,3 +18,5 @@
 
 ## DLC
 - *_full.mp4 video is labeled, other one is identical to .h264 video
+- Need config.yaml(s)
+- resnet50 vs dlcrnetms5?

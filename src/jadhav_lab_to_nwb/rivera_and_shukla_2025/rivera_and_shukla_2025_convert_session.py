@@ -35,18 +35,23 @@ def session_to_nwb(
     conversion_options.update(dict(Video=dict()))
 
     # # Add DLC
-    # dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
-    # file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
-    # if stub_test:  # TODO: Remove after this issue gets fixed: https://github.com/LorenFrankLab/spyglass/issues/1240
-    #     file_paths = file_paths[:1]
-    # source_data.update(
-    #     dict(
-    #         DeepLabCut=dict(
-    #             file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name=subject_id
-    #         )
-    #     )
-    # )
-    # conversion_options.update(dict(DeepLabCut=dict()))
+    file_paths = [
+        file_path
+        for file_path in dlc_folder_path.glob(r"*.h5")
+        if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
+    ]
+    for file_path in file_paths:
+        print(f"{file_path.name=}")
+    for video_timestamps_file_path in video_timestamps_file_paths:
+        print(f"{video_timestamps_file_path.name=}")
+    source_data.update(
+        dict(
+            DeepLabCut=dict(
+                file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name="rat 1"
+            )
+        )
+    )
+    conversion_options.update(dict(DeepLabCut=dict()))
 
     # # Add Behavior
     # folder_path = session_folder_path / f"{session_folder_path.name}.DIO"
