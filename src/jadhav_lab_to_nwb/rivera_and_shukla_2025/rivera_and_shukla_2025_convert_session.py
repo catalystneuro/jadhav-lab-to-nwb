@@ -40,10 +40,6 @@ def session_to_nwb(
         for file_path in dlc_folder_path.glob(r"*.h5")
         if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
     ]
-    for file_path in file_paths:
-        print(f"{file_path.name=}")
-    for video_timestamps_file_path in video_timestamps_file_paths:
-        print(f"{video_timestamps_file_path.name=}")
     source_data.update(
         dict(
             DeepLabCut=dict(
