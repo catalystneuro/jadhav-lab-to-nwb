@@ -6,8 +6,6 @@
     - Looks like those .csvs are the only files that tabulate individual trials and their outcomes (matched or not, etc.)
     - hiswell?
 - In Ashutosh's poster, head orientation angle relative to partner's COM are calculated, but I don't see that anywhere in the data.
-- Visual cue association task?
-- probabilistic foraging task?
 - Detailed subject info is present in Edward's Poster
 - DIO folders have video and timestamps, but no .dat files like in Jacob's project
 - Some dates have DLC data, but some just have DIO

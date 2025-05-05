@@ -21,7 +21,8 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         file_paths: list[FilePath],
         config_file_paths: Optional[list[FilePath]] = None,
         video_timestamps_file_paths: Optional[list[FilePath]] = None,
-        subject_name: str = "ind1",
+        individual_name: str = "ind1",
+        subject_id: str | None = None,
         verbose: bool = True,
     ):
         # file_paths must be sorted in the order that the videos were recorded
@@ -37,7 +38,8 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
             dlc_interface = DeepLabCutInterface(
                 file_path=file_path,
                 config_file_path=config_file_path,
-                subject_name=subject_name,
+                individual_name=individual_name,
+                subject_id=subject_id,
                 verbose=verbose,
             )
             dlc_interfaces.append(dlc_interface)

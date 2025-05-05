@@ -43,7 +43,10 @@ def session_to_nwb(
     source_data.update(
         dict(
             DeepLabCut=dict(
-                file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name="rat 1"
+                file_paths=file_paths,
+                video_timestamps_file_paths=video_timestamps_file_paths,
+                individual_name="rat 2",
+                subject_id="XFN3",
             )
         )
     )
