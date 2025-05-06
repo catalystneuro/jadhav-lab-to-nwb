@@ -8,7 +8,7 @@
 - In Ashutosh's poster, head orientation angle relative to partner's COM are calculated, but I don't see that anywhere in the data.
     - Head angle is considered a more advanced processed data stream --> not included
 - Detailed subject info is present in Edward's Poster
-- DIO folders have video and timestamps, but no .dat files like in Jacob's project
+- DIO folders have video and timestamps, but no .dat files like in Jacob's project --> use stateScriptLog files instead
 - Some dates have DLC data, but some just have DIO --> bc some DLC sessions were so bad they were omitted
 - DIO folders have sequential (in time) numbered files ex. 1, 3, 5, 7
     - --> what about 2, 4, 6? --> those are the other animal pair (XFN2-XFN4)
@@ -19,3 +19,10 @@
 - *_full.mp4 video is labeled, other one is identical to .h264 video
 - Need config.yaml(s)
 - resnet50 vs dlcrnetms5? --> use resnet50
+
+## Behavior
+
+- stateScriptLog files have some kind of custom script output
+- output script files are different for 50% and 100% conditions
+- nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
+- matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
