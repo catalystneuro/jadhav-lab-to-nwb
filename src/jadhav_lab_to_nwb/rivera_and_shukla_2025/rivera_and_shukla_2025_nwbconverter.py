@@ -15,6 +15,6 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     data_interface_classes = dict(
         Video=RiveraAndShukla2025VideoInterface,
         Behavior=RiveraAndShukla2025BehaviorInterface,
-        DeepLabCutSelf=RiveraAndShukla2025DeepLabCutInterface,
-        DeepLabCutPartner=RiveraAndShukla2025DeepLabCutInterface,
+        DeepLabCut1=RiveraAndShukla2025DeepLabCutInterface,
+        DeepLabCut2=RiveraAndShukla2025DeepLabCutInterface,
     )

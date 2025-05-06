@@ -40,24 +40,23 @@ def session_to_nwb(
         for file_path in dlc_folder_path.glob(r"*.h5")
         if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
     ]
+    subject_1, subject_2 = session_folder_path.parent.name.split("-")
     source_data.update(
         dict(
-            DeepLabCutSelf=dict(
+            DeepLabCut1=dict(
                 file_paths=file_paths,
                 video_timestamps_file_paths=video_timestamps_file_paths,
-                individual_name="rat 1",
-                subject_id="XFN1",
+                subject_id=subject_1,
             ),
-            DeepLabCutPartner=dict(
+            DeepLabCut2=dict(
                 file_paths=file_paths,
                 video_timestamps_file_paths=video_timestamps_file_paths,
-                individual_name="rat 2",
-                subject_id="XFN3",
+                subject_id=subject_2,
             ),
         )
     )
-    conversion_options.update(dict(DeepLabCutSelf=dict()))
-    conversion_options.update(dict(DeepLabCutPartner=dict()))
+    conversion_options.update(dict(DeepLabCut1=dict()))
+    conversion_options.update(dict(DeepLabCut2=dict()))
 
     # # Add Behavior
     # folder_path = session_folder_path / f"{session_folder_path.name}.DIO"

@@ -21,7 +21,6 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         file_paths: list[FilePath],
         config_file_paths: Optional[list[FilePath]] = None,
         video_timestamps_file_paths: Optional[list[FilePath]] = None,
-        individual_name: str = "ind1",
         subject_id: str | None = None,
         verbose: bool = True,
     ):
@@ -35,6 +34,10 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         assert len(file_paths) == len(config_file_paths) == len(video_timestamps_file_paths), msg
         dlc_interfaces = []
         for file_path, config_file_path in zip(file_paths, config_file_paths):
+            epoch_name = get_epoch_name(name=file_path.name)
+            epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
+            individual_name = "rat 1" if subject_id1 == subject_id else "rat 2"
+            subject_id = subject_id1 if subject_id1 == subject_id else subject_id2
             dlc_interface = DeepLabCutInterface(
                 file_path=file_path,
                 config_file_path=config_file_path,
