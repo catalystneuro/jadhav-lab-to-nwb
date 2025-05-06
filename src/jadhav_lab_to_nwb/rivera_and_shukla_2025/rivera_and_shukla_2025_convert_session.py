@@ -42,15 +42,22 @@ def session_to_nwb(
     ]
     source_data.update(
         dict(
-            DeepLabCut=dict(
+            DeepLabCutSelf=dict(
+                file_paths=file_paths,
+                video_timestamps_file_paths=video_timestamps_file_paths,
+                individual_name="rat 1",
+                subject_id="XFN1",
+            ),
+            DeepLabCutPartner=dict(
                 file_paths=file_paths,
                 video_timestamps_file_paths=video_timestamps_file_paths,
                 individual_name="rat 2",
                 subject_id="XFN3",
-            )
+            ),
         )
     )
-    conversion_options.update(dict(DeepLabCut=dict()))
+    conversion_options.update(dict(DeepLabCutSelf=dict()))
+    conversion_options.update(dict(DeepLabCutPartner=dict()))
 
     # # Add Behavior
     # folder_path = session_folder_path / f"{session_folder_path.name}.DIO"

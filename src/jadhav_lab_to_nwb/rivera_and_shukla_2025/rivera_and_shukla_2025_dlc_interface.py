@@ -45,6 +45,10 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
             dlc_interfaces.append(dlc_interface)
         self.dlc_interfaces = dlc_interfaces
         self.video_timestamps_file_paths = video_timestamps_file_paths
+        if subject_id is not None:
+            self.subject_id = subject_id
+        else:
+            self.subject_id = individual_name
 
     def get_metadata(self) -> DeepDict:
         metadata = super().get_metadata()
@@ -65,6 +69,6 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
                 dlc_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
             file_path = dlc_interface.source_data["file_path"]
             epoch_name = get_epoch_name(name=file_path.name)
-            dlc_interface.add_to_nwbfile(
-                nwbfile=nwbfile, metadata=metadata, container_name=f"PoseEstimation_{epoch_name}"
-            )
+            epoch_number = int(epoch_name.split("-")[0])
+            container_name = f"PoseEstimation_{epoch_number}-{self.subject_id}"
+            dlc_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, container_name=container_name)
