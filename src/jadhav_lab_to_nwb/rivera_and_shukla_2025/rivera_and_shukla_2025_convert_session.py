@@ -12,11 +12,11 @@ from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConve
 def session_to_nwb(
     session_folder_path: DirectoryPath,
     subject_id: str,
-    session_id: str,
     output_dir_path: DirectoryPath,
     stub_test: bool = False,
 ):
     session_folder_path = Path(session_folder_path)
+    session_id = session_folder_path.name
     dio_folder_path = session_folder_path / "DIO data" / "Raw"
     dlc_folder_path = session_folder_path / "DLC data" / "Raw"
     output_dir_path = Path(output_dir_path)
@@ -81,6 +81,7 @@ def session_to_nwb(
     editable_metadata_path = Path(__file__).parent / "rivera_and_shukla_2025_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
+    metadata["Subject"]["subject_id"] = subject_id
 
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
@@ -95,12 +96,15 @@ if __name__ == "__main__":
 
     # Example Session
     session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-20-2023"
-    subject_id = "XFN1"
-    session_id = "2023-07-20"
     session_to_nwb(
         session_folder_path=session_folder_path,
-        subject_id=subject_id,
-        session_id=session_id,
+        subject_id="XFN1",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN3",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
