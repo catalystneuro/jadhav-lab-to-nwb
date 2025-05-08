@@ -58,9 +58,9 @@ Ecephys:
         description: Local field potential data recorded by SpikeGadgets (1 channel per tetrode).
 
 Behavior:
-  # Module:
-  #   name: behavior
-  #   description: Behavioral data recorded during foraging shuttle task, in which the rat must shuttle between home and distal reward locations (reward well).
+  Module:
+    name: behavior
+    description: Behavioral data recorded during a cooperative maze task, in which a pair of rats must cooperate by picking the same well in order to get a joint reward.
   Video:
     description: Video of the rat in the box.
     CameraDevice:
@@ -76,79 +76,34 @@ Behavior:
       model: Mako G-158C
       lens: Theia SL183M
       camera_name: Room
-  # Events:
-  # - id: ECU_Din1
-  #   name: reward_well_1
-  #   description: Whenever the animal visits Reward Well 1
-  # - id: ECU_Din2
-  #   name: reward_well_2
-  #   description: Whenever the animal visits Reward Well 2
-  # - id: ECU_Din3
-  #   name: reward_well_3
-  #   description: Whenever the animal visits Reward Well 3
-  # - id: ECU_Din4
-  #   name: reward_well_4
-  #   description: Whenever the animal visits Reward Well 4
-  # - id: ECU_Din5
-  #   name: reward_well_5
-  #   description: Whenever the animal visits Reward Well 5
-  # - id: ECU_Din6
-  #   name: reward_well_6
-  #   description: Whenever the animal visits Reward Well 6
-  # - id: ECU_Din7
-  #   name: reward_well_7
-  #   description: Whenever the animal visits Reward Well 7
-  # - id: ECU_Din8
-  #   name: reward_well_8
-  #   description: Whenever the animal visits Reward Well 8
-  # - id: ECU_Dout1
-  #   name: reward_pump_1
-  #   description: Whenever a reward is delivered from Reward Pump 1
-  # - id: ECU_Dout2
-  #   name: reward_pump_2
-  #   description: Whenever a reward is delivered from Reward Pump 2
-  # - id: ECU_Dout3
-  #   name: reward_pump_3
-  #   description: Whenever a reward is delivered from Reward Pump 3
-  # - id: ECU_Dout4
-  #   name: reward_pump_4
-  #   description: Whenever a reward is delivered from Reward Pump 4
-  # - id: ECU_Dout5
-  #   name: reward_pump_5
-  #   description: Whenever a reward is delivered from Reward Pump 5
-  # - id: ECU_Dout6
-  #   name: reward_pump_6
-  #   description: Whenever a reward is delivered from Reward Pump 6
-  # - id: ECU_Dout7
-  #   name: reward_pump_7
-  #   description: Whenever a reward is delivered from Reward Pump 7
-  # - id: ECU_Dout8
-  #   name: reward_pump_8
-  #   description: Whenever a reward is delivered from Reward Pump 8
-  # - id: ECU_Dout17
-  #   name: barrier_1
-  #   description: Whenever Barrier 1 is placed in the box
-  # - id: ECU_Dout18
-  #   name: barrier_2
-  #   description: Whenever Barrier 2 is placed in the box
-  # - id: ECU_Dout19
-  #   name: barrier_3
-  #   description: Whenever Barrier 3 is placed in the box
-  # - id: ECU_Dout20
-  #   name: barrier_4
-  #   description: Whenever Barrier 4 is placed in the box
-  # - id: ECU_Dout21
-  #   name: barrier_5
-  #   description: Whenever Barrier 5 is placed in the box
-  # - id: ECU_Dout22
-  #   name: barrier_6
-  #   description: Whenever Barrier 6 is placed in the box
-  # - id: ECU_Dout23
-  #   name: barrier_7
-  #   description: Whenever Barrier 7 is placed in the box
-  # - id: ECU_Dout24
-  #   name: barrier_8
-  #   description: Whenever Barrier 8 is placed in the box
+  Events:
+  - id: Poke in well1
+    name: reward_well_1
+    description: Whenever the animal in the left W maze visits Reward Well 1.
+  - id: Poke in well2
+    name: reward_well_2
+    description: Whenever the animal in the left W maze visits Reward Well 2.
+  - id: Poke in well3
+    name: reward_well_3
+    description: Whenever the animal in the left W maze visits Reward Well 3.
+  - id: Poke in wellA
+    name: reward_well_A
+    description: Whenever the animal in the right W maze visits Reward Well A.
+  - id: Poke in wellB
+    name: reward_well_B
+    description: Whenever the animal visits Reward Well B in the right W maze.
+  - id: Poke in wellC
+    name: reward_well_C
+    description: Whenever the animal visits Reward Well C in the right W maze.
+  - id: Matched poke in position A1
+    name: matched_poke_A1
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 1 and Reward Well A).
+  - id: Matched Pokes in position B2
+    name: matched_poke_B2
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 2 and Reward Well B).
+  - id: Matched Pokes in position C3
+    name: matched_poke_C3
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 3 and Reward Well C).
 
 Epochs:
   - name: 1-XFN1-XFN3

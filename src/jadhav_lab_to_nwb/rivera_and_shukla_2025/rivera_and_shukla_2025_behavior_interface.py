@@ -1,6 +1,6 @@
 """Primary class for converting experiment-specific behavior."""
 from pynwb.file import NWBFile
-from pydantic import DirectoryPath
+from pydantic import FilePath
 import numpy as np
 from pathlib import Path
 
@@ -19,8 +19,8 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
 
     keywords = ("behavior",)
 
-    def __init__(self, folder_path: DirectoryPath):
-        super().__init__(folder_path=folder_path)
+    def __init__(self, file_paths: list[FilePath]):
+        super().__init__(file_paths=file_paths)
 
     def get_metadata_schema(self):
         metadata_schema = super().get_metadata_schema()
@@ -45,22 +45,37 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        folder_path = Path(self.source_data["folder_path"])
+        clock_rate = 1_000.0  # TODO: Get this from the video data
+        file_paths = self.source_data["file_paths"]
         behavior_module = nwb_helpers.get_module(
             nwbfile=nwbfile,
             name=metadata["Behavior"]["Module"]["name"],
             description=metadata["Behavior"]["Module"]["description"],
         )
         behavioral_events = BehavioralEvents(name="behavioral_events")
-        for file_path in folder_path.glob(r"*.dat"):
-            fieldsText = readTrodesExtractedDataFile(file_path)
-            rate = np.asarray(fieldsText["clockrate"], dtype="float64")
-            timestamps = fieldsText["data"]["time"][fieldsText["data"]["state"] == 1]
-            timestamps = np.asarray(timestamps, dtype="float64") / rate
-            event_id = fieldsText["id"]
-            event_metadata = next(
-                event_metadata for event_metadata in metadata["Behavior"]["Events"] if event_metadata["id"] == event_id
-            )
+        event_id_to_timestamps = {}
+        for file_path in file_paths:
+            with open(file_path, "r") as file:
+                lines = file.readlines()
+            for line in lines:
+                line = line.strip()
+                if line.startswith("#"):
+                    continue  # skip comments
+                timestamp, event_id = line.split(" ", 1)
+                timestamp = float(timestamp) / clock_rate
+                if event_id in event_id_to_timestamps:
+                    event_id_to_timestamps[event_id].append(timestamp)
+                else:
+                    event_id_to_timestamps[event_id] = [timestamp]
+
+        for event_id, timestamps in event_id_to_timestamps.items():
+            event_id_is_in_metadata = False
+            for event_metadata in metadata["Behavior"]["Events"]:
+                if event_metadata["id"] == event_id:
+                    event_id_is_in_metadata = True
+                    break
+            if not event_id_is_in_metadata:
+                continue  # If the event ID is not in the metadata, skip it
             time_series = TimeSeries(
                 name=event_metadata["name"],
                 description=event_metadata["description"],

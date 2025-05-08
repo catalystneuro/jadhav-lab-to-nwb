@@ -58,10 +58,10 @@ def session_to_nwb(
     conversion_options.update(dict(DeepLabCut1=dict()))
     conversion_options.update(dict(DeepLabCut2=dict()))
 
-    # # Add Behavior
-    # folder_path = session_folder_path / f"{session_folder_path.name}.DIO"
-    # source_data.update(dict(Behavior=dict(folder_path=folder_path)))
-    # conversion_options.update(dict(Behavior=dict()))
+    # Add Behavior
+    file_paths = list(dio_folder_path.glob("*.stateScriptLog"))
+    source_data.update(dict(Behavior=dict(file_paths=file_paths)))
+    conversion_options.update(dict(Behavior=dict()))
 
     # # Add Epoch
     # source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
