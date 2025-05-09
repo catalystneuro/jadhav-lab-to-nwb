@@ -242,11 +242,7 @@ def test_video(nwbfile_path: Path):
     spyglass_external_file = image_series.external_file[0]
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
-        image_series = (
-            nwbfile.processing["behavior"]
-            .data_interfaces["video"]
-            .time_series["Video SL18_D19_S01_F01_BOX_SLP_20230503_112642.1"]
-        )
+        image_series = nwbfile.acquisition["Video_S01_F01_BOX_SLP"]
         nwb_external_file = image_series.external_file[0]
     assert spyglass_external_file == nwb_external_file
 
