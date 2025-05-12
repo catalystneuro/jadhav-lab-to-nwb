@@ -38,7 +38,10 @@ def session_to_nwb(
     output_dir_path = Path(output_dir_path)
     output_dir_path.mkdir(parents=True, exist_ok=True)
     session_folder_path = data_dir_path / f"{subject_id}_{session_id}"
-    nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
+    if stub_test:
+        nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}_stub.nwb"
+    else:
+        nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
     if nwbfile_path.exists():
         nwbfile_path.unlink()
 
@@ -130,7 +133,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
-    stub_test = False
+    stub_test = True
 
     # Example Session
     subject_id = "SL18"
