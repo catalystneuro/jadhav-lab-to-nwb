@@ -8,6 +8,7 @@ from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConverter
 from jadhav_lab_to_nwb.rivera_and_shukla_2025.utils.utils import get_epoch_name
+from jadhav_lab_to_nwb.olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
 
 
 def session_to_nwb(
@@ -64,8 +65,12 @@ def session_to_nwb(
     # conversion_options.update(dict(DeepLabCut2=dict()))
 
     # Add Behavior
-    file_paths = list(dio_folder_path.glob("*.stateScriptLog"))
-    source_data.update(dict(Behavior=dict(file_paths=file_paths)))
+    file_paths = sorted(list(dio_folder_path.glob("*.stateScriptLog")))
+    clock_rates = []
+    for video_timestamps_file_path in video_timestamps_file_paths:
+        _, clock_rate = readCameraModuleTimeStamps(video_timestamps_file_path)
+        clock_rates.append(clock_rate)
+    source_data.update(dict(Behavior=dict(file_paths=file_paths, clock_rates=clock_rates)))
     conversion_options.update(dict(Behavior=dict()))
 
     # # Add Epoch

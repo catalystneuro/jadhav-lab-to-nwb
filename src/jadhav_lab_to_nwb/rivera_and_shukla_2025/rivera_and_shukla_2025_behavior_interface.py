@@ -19,8 +19,8 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
 
     keywords = ("behavior",)
 
-    def __init__(self, file_paths: list[FilePath]):
-        super().__init__(file_paths=file_paths)
+    def __init__(self, file_paths: list[FilePath], clock_rates: list[float]):
+        super().__init__(file_paths=file_paths, clock_rates=clock_rates)
 
     def get_metadata_schema(self):
         metadata_schema = super().get_metadata_schema()
@@ -45,8 +45,8 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        clock_rate = 1_000.0  # TODO: Get this from the video data
         file_paths = self.source_data["file_paths"]
+        clock_rates = self.source_data["clock_rates"]
         behavior_module = nwb_helpers.get_module(
             nwbfile=nwbfile,
             name=metadata["Behavior"]["Module"]["name"],
@@ -54,7 +54,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         )
         behavioral_events = BehavioralEvents(name="behavioral_events")
         event_id_to_timestamps = {}
-        for file_path in file_paths:
+        for file_path, clock_rate in zip(file_paths, clock_rates):
             with open(file_path, "r") as file:
                 lines = file.readlines()
             for line in lines:
