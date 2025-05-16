@@ -126,7 +126,7 @@ def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWB
     group_names = _get_group_name(recording=recording)
     locations = recording.get_property("location", ids=channel_ids)
     if locations is None:
-        locations = np.ones((len(channel_ids), 3)) * np.NaN
+        locations = np.ones((len(channel_ids), 3)) * np.nan
     group_name_to_shanks_electrodes = {name: [] for name in np.unique(group_names)}
     for channel_id, location, group_name in zip(channel_ids, locations, group_names):
         if location.shape[0] == 2:
@@ -148,29 +148,30 @@ def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWB
         shanks_electrodes = group_name_to_shanks_electrodes[group_name]
         shank = Shank(name="0", shanks_electrodes=shanks_electrodes)
         probe_name = group_metadata.get("probe_name", f"{group_name}_probe")
-        probe_type = group_metadata.get(
-            "probe_type", f"{group_name}_probe_type"
-        )  # TODO: Condense probe types once https://github.com/LorenFrankLab/spyglass/issues/1216 is fixed.
+        # TODO: Condense probe types and descriptions once https://github.com/LorenFrankLab/spyglass/issues/1216 is fixed.
+        probe_type = group_metadata.get("probe_type", f"{group_name}_probe_type")
         probe_units = group_metadata.get("probe_units", "unknown")
-        probe_description = group_metadata.get("probe_description", "no description")
+        probe_description = group_metadata.get("probe_description", f"{probe_name} description")
         probe_contact_side_numbering = group_metadata.get("probe_contact_side_numbering", False)
-        probe_contact_size = group_metadata.get("probe_contact_size", np.NaN)
-        probe = Probe(
-            name=probe_name,
-            id=i,
-            probe_type=probe_type,
-            units=probe_units,
-            probe_description=probe_description,
-            contact_side_numbering=probe_contact_side_numbering,
-            contact_size=probe_contact_size,
-            shanks=[shank],
-        )
-        if not probe_name in nwbfile.devices:
+        probe_contact_size = group_metadata.get("probe_contact_size", np.nan)
+        if probe_name in nwbfile.devices:
+            probe = nwbfile.devices[probe_name]
+        else:
+            probe = Probe(
+                name=probe_name,
+                id=i,
+                probe_type=probe_type,
+                units=probe_units,
+                probe_description=probe_description,
+                contact_side_numbering=probe_contact_side_numbering,
+                contact_size=probe_contact_size,
+                shanks=[shank],
+            )
             nwbfile.add_device(probe)
         description = group_metadata.get("description", "no description")
         location = group_metadata.get("location", "unknown")
         targeted_location = group_metadata.get("targeted_location", "unknown")
-        targeted_x, targeted_y, targeted_z = group_metadata.get("targeted_coordinates", (np.NaN, np.NaN, np.NaN))
+        targeted_x, targeted_y, targeted_z = group_metadata.get("targeted_coordinates", (np.nan, np.nan, np.nan))
         targeted_coordinates_units = group_metadata.get("targeted_coordinates_units", "mm")
         electrode_group = NwbElectrodeGroup(
             name=group_name,

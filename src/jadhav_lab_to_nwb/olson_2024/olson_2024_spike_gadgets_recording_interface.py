@@ -115,15 +115,10 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
             "type": "array",
             "minItems": 1,
             "items": {
-                "required": ["name", "location", "device", "nTrodes"],
+                "required": ["name", "location", "nTrodes"],
                 "properties": {
                     "name": {"description": "the name of this Trode group", "pattern": "^[^/]*$", "type": "string"},
                     "location": {"description": "description of location of this Trode group", "type": "string"},
-                    "device": {
-                        "description": "the device that was used to record from this Trode group",
-                        "type": "string",
-                        "target": "pynwb.device.Device",
-                    },
                     "nTrodes": {
                         "description": "the tetrode numbers that belong to this Trode group",
                         "type": "array",
@@ -135,7 +130,7 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
                     },
                 },
                 "type": "object",
-                "additionalProperties": False,
+                "additionalProperties": True,
                 "tag": "pynwb.ecephys.ElectrodeGroup",
             },
         }
