@@ -103,8 +103,24 @@ if __name__ == "__main__":
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
     stub_test = False
 
-    # Example Session
+    # Example Session 100% reward
     session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-20-2023"
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN1",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN3",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+    # Example Session 50% reward
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN1",

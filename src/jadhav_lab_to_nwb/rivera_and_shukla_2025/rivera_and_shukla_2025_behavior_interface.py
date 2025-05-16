@@ -57,7 +57,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         for file_path, clock_rate in zip(file_paths, clock_rates):
             with open(file_path, "r") as file:
                 lines = file.readlines()
-            for line in lines:
+            for i, line in enumerate(lines):
                 line = line.strip()
                 if line.startswith("#"):
                     continue  # skip comments
@@ -68,14 +68,26 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
                 else:
                     event_id_to_timestamps[event_id] = [timestamp]
 
-        for event_id, timestamps in event_id_to_timestamps.items():
-            event_id_is_in_metadata = False
-            for event_metadata in metadata["Behavior"]["Events"]:
-                if event_metadata["id"] == event_id:
-                    event_id_is_in_metadata = True
-                    break
-            if not event_id_is_in_metadata:
-                continue  # If the event ID is not in the metadata, skip it
+                # Check if matched poke resulted in a reward
+                if i + 1 == len(lines):
+                    continue
+                next_event_id = lines[i + 1].strip().split(" ", 1)[-1]
+                if "Matched" in event_id and next_event_id != "but, no reward":
+                    event_id = "rewarded_poke"
+                    if event_id in event_id_to_timestamps:
+                        event_id_to_timestamps[event_id].append(timestamp)
+                    else:
+                        event_id_to_timestamps[event_id] = [timestamp]
+
+        for event_metadata in metadata["Behavior"]["Events"]:
+            event_ids = event_metadata["ids"]
+            timestamps = []
+            for event_id in event_ids:
+                if event_id in event_id_to_timestamps:
+                    timestamps.extend(event_id_to_timestamps[event_id])
+            timestamps = sorted(timestamps)
+            if len(timestamps) == 0:
+                continue  # If no timestamps were found for this event, skip it
             time_series = TimeSeries(
                 name=event_metadata["name"],
                 description=event_metadata["description"],
@@ -84,4 +96,17 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
                 unit="n.a.",
             )
             behavioral_events.add_timeseries(time_series)
+
+        # Add reward events manually
+        if "rewarded_poke" in event_id_to_timestamps:
+            reward_timestamps = sorted(event_id_to_timestamps["rewarded_poke"])
+            time_series = TimeSeries(
+                name="rewarded_poke",
+                description="Whenever a matched poke resulted in a reward.",
+                data=np.ones((len(reward_timestamps), 1)),
+                timestamps=reward_timestamps,
+                unit="n.a.",
+            )
+            behavioral_events.add_timeseries(time_series)
+
         behavior_module.add(behavioral_events)
