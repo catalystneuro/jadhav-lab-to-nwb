@@ -6,12 +6,11 @@ import re
 
 from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
-from neuroconv.datainterfaces import VideoInterface
+from neuroconv.datainterfaces import ExternalVideoInterface
 from neuroconv.utils import get_base_schema
 from ndx_franklab_novela import CameraDevice
 
 from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
-from ..olson_2024.olson_2024_video_interface import SpyglassVideoInterface
 
 from .utils.utils import get_epoch_name
 
@@ -30,8 +29,8 @@ class RiveraAndShukla2025VideoInterface(BaseDataInterface):
         video_interfaces = []
         for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
             epoch_name = get_epoch_name(name=file_path.name)
-            metadata_key_name = "Video" + "_" + epoch_name  # TODO: Document this naming convention in the docstring
-            video_interface = SpyglassVideoInterface(file_paths=[file_path], metadata_key_name=metadata_key_name)
+            video_name = "Video" + "_" + epoch_name  # TODO: Document this naming convention in the docstring
+            video_interface = ExternalVideoInterface(file_paths=[file_path], video_name=video_name)
             timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
             video_interface.set_aligned_timestamps(aligned_timestamps=[timestamps])
             video_interfaces.append(video_interface)
@@ -97,11 +96,12 @@ class RiveraAndShukla2025VideoInterface(BaseDataInterface):
             nwbfile.add_device(camera_device)
         video_description = metadata["Behavior"]["Video"]["description"]
         for video_interface in self.video_interfaces:
-            task_epoch = int(video_interface.metadata_key_name.split("Video_")[-1].split("-")[0])
+            task_epoch = int(
+                video_interface.video_name.split("Video_")[-1].split("-")[0]
+            )  # ex. Video_1-XFN1-XFN3 --> 1
             task_metadata = next(meta for meta in metadata["Tasks"] if task_epoch in meta["task_epochs"])
             camera_id = task_metadata["camera_id"][0]
             device_name = f"camera_device {camera_id}"
-            metadata["Behavior"][video_interface.metadata_key_name][0]["description"] = video_description
-            video_interface.add_to_nwbfile(
-                nwbfile=nwbfile, metadata=metadata, module_name="behavior", device_name=device_name
-            )
+            metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["device"] = dict(name=device_name)
+            metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["description"] = video_description
+            video_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)

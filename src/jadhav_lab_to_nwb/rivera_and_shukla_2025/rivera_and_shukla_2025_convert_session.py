@@ -7,6 +7,7 @@ from pydantic import FilePath, DirectoryPath
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConverter
+from jadhav_lab_to_nwb.rivera_and_shukla_2025.utils.utils import get_epoch_name
 
 
 def session_to_nwb(
@@ -29,34 +30,38 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add Video
-    file_paths = list(dio_folder_path.glob("*.h264"))
-    video_timestamps_file_paths = list(dio_folder_path.glob("*.videoTimeStamps"))
+    file_paths = sorted(list(dio_folder_path.glob("*.h264")))
+    video_timestamps_file_paths = sorted(list(dio_folder_path.glob("*.videoTimeStamps")))
+    for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
+        file_epoch_name = get_epoch_name(name=file_path.name)
+        timestamps_epoch_name = get_epoch_name(name=video_timestamps_file_path.name)
+        assert file_epoch_name == timestamps_epoch_name, "Video files were not sorted correctly."
     source_data.update(dict(Video=dict(file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Video=dict()))
 
-    # # Add DLC
-    file_paths = [
-        file_path
-        for file_path in dlc_folder_path.glob(r"*.h5")
-        if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
-    ]
-    subject_1, subject_2 = session_folder_path.parent.name.split("-")
-    source_data.update(
-        dict(
-            DeepLabCut1=dict(
-                file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
-                subject_id=subject_1,
-            ),
-            DeepLabCut2=dict(
-                file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
-                subject_id=subject_2,
-            ),
-        )
-    )
-    conversion_options.update(dict(DeepLabCut1=dict()))
-    conversion_options.update(dict(DeepLabCut2=dict()))
+    # Add DLC
+    # file_paths = [
+    #     file_path
+    #     for file_path in dlc_folder_path.glob(r"*.h5")
+    #     if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
+    # ]
+    # subject_1, subject_2 = session_folder_path.parent.name.split("-")
+    # source_data.update(
+    #     dict(
+    #         DeepLabCut1=dict(
+    #             file_paths=file_paths,
+    #             video_timestamps_file_paths=video_timestamps_file_paths,
+    #             subject_id=subject_1,
+    #         ),
+    #         DeepLabCut2=dict(
+    #             file_paths=file_paths,
+    #             video_timestamps_file_paths=video_timestamps_file_paths,
+    #             subject_id=subject_2,
+    #         ),
+    #     )
+    # )
+    # conversion_options.update(dict(DeepLabCut1=dict()))
+    # conversion_options.update(dict(DeepLabCut2=dict()))
 
     # Add Behavior
     file_paths = list(dio_folder_path.glob("*.stateScriptLog"))
