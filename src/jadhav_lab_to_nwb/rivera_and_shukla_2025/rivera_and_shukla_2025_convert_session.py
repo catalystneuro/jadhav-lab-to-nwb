@@ -92,10 +92,6 @@ def session_to_nwb(
     metadata = dict_deep_update(metadata, editable_metadata)
     metadata["Subject"]["subject_id"] = subject_id
 
-    # from pprint import pprint
-    # pprint(dict(metadata["PoseEstimation"]["Skeletons"]))
-    # assert False, "Debugging PoseEstimation metadata"
-
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 

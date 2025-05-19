@@ -59,6 +59,8 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
             )
             subject_id = dlc_interface.pose_estimation_metadata_key.split("-")[-1]
             interface_metadata["PoseEstimation"]["Skeletons"][skeleton_name]["subject"] = subject_id
+            new_skeleton_name = f"Skeleton{dlc_interface.pose_estimation_metadata_key}"
+            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_name]["name"] = new_skeleton_name
             metadata = dict_deep_update(metadata, interface_metadata)
         return metadata
 
