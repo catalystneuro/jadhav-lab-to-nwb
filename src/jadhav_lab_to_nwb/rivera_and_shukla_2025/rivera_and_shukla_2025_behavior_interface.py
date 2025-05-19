@@ -2,7 +2,6 @@
 from pynwb.file import NWBFile
 from pydantic import FilePath
 import numpy as np
-from pathlib import Path
 
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools import nwb_helpers
@@ -10,8 +9,6 @@ from neuroconv.utils import get_base_schema
 
 from pynwb.behavior import BehavioralEvents
 from pynwb import TimeSeries
-
-from ..olson_2024.tools.spikegadgets import readTrodesExtractedDataFile
 
 
 class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
