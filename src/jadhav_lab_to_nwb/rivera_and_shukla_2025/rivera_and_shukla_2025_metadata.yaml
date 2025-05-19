@@ -181,3 +181,46 @@ Tasks:
     task_epochs:
       - 3
       - 7
+
+# PoseEstimation:
+#   PoseEstimationContainers:
+#     PoseEstimationContainerName:
+#       name: PoseEstimationContainerName
+#       description: 2D keypoint coordinates estimated using DeepLabCut.
+#       source_software: DeepLabCut
+#       dimensions: [0, 0]
+#       skeleton: SubjectIDSkeleton
+#       devices: [CameraPoseEstimationContainerName]
+#       scorer: DLC_resnet50_openfieldAug20shuffle1_30000
+#       original_videos: null
+#       PoseEstimationSeries:
+#         snout:
+#           name: ind1_snout
+#           description: Keypoint snout from individual ind1.
+#           unit: pixels
+#           reference_frame: "(0,0) corresponds to the bottom left corner of the video."
+#           confidence_definition: Softmax output of the deep neural network.
+#         leftear:
+#           name: ind1_leftear
+#           description: Keypoint leftear from individual ind1.
+#           unit: pixels
+#           reference_frame: "(0,0) corresponds to the bottom left corner of the video."
+#           confidence_definition: Softmax output of the deep neural network.
+#         rightear:
+#           name: ind1_rightear
+#           description: Keypoint rightear from individual ind1.
+#           unit: pixels
+#           reference_frame: "(0,0) corresponds to the bottom left corner of the video."
+#           confidence_definition: Softmax output of the deep neural network.
+#         tailbase:
+#           name: ind1_tailbase
+#           description: Keypoint tailbase from individual ind1.
+#           unit: pixels
+#           reference_frame: "(0,0) corresponds to the bottom left corner of the video."
+#           confidence_definition: Softmax output of the deep neural network.
+#   Skeletons:
+#     SubjectIDSkeleton:
+#       name: SkeletonPoseEstimationContainerName_Ind1
+#       nodes: [snout, leftear, rightear, tailbase]
+#       edges: []
+#       subject: the_subject_id

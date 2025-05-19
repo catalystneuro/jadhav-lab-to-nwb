@@ -41,28 +41,28 @@ def session_to_nwb(
     conversion_options.update(dict(Video=dict()))
 
     # Add DLC
-    # file_paths = [
-    #     file_path
-    #     for file_path in dlc_folder_path.glob(r"*.h5")
-    #     if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
-    # ]
-    # subject_1, subject_2 = session_folder_path.parent.name.split("-")
-    # source_data.update(
-    #     dict(
-    #         DeepLabCut1=dict(
-    #             file_paths=file_paths,
-    #             video_timestamps_file_paths=video_timestamps_file_paths,
-    #             subject_id=subject_1,
-    #         ),
-    #         DeepLabCut2=dict(
-    #             file_paths=file_paths,
-    #             video_timestamps_file_paths=video_timestamps_file_paths,
-    #             subject_id=subject_2,
-    #         ),
-    #     )
-    # )
-    # conversion_options.update(dict(DeepLabCut1=dict()))
-    # conversion_options.update(dict(DeepLabCut2=dict()))
+    file_paths = [
+        file_path
+        for file_path in dlc_folder_path.glob(r"*.h5")
+        if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
+    ]
+    subject_1, subject_2 = session_folder_path.parent.name.split("-")
+    source_data.update(
+        dict(
+            DeepLabCut1=dict(
+                file_paths=file_paths,
+                video_timestamps_file_paths=video_timestamps_file_paths,
+                subject_id=subject_1,
+            ),
+            DeepLabCut2=dict(
+                file_paths=file_paths,
+                video_timestamps_file_paths=video_timestamps_file_paths,
+                subject_id=subject_2,
+            ),
+        )
+    )
+    conversion_options.update(dict(DeepLabCut1=dict()))
+    conversion_options.update(dict(DeepLabCut2=dict()))
 
     # Add Behavior
     file_paths = sorted(list(dio_folder_path.glob("*.stateScriptLog")))
@@ -92,6 +92,10 @@ def session_to_nwb(
     metadata = dict_deep_update(metadata, editable_metadata)
     metadata["Subject"]["subject_id"] = subject_id
 
+    # from pprint import pprint
+    # pprint(dict(metadata["PoseEstimation"]["Skeletons"]))
+    # assert False, "Debugging PoseEstimation metadata"
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -119,17 +123,17 @@ if __name__ == "__main__":
         stub_test=stub_test,
     )
 
-    # Example Session 50% reward
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
+    # # Example Session 50% reward
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )

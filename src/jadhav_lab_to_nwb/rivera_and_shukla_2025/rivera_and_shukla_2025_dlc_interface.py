@@ -36,27 +36,30 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         for file_path, config_file_path in zip(file_paths, config_file_paths):
             epoch_name = get_epoch_name(name=file_path.name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
-            individual_name = "rat 1" if subject_id1 == subject_id else "rat 2"
+            subject_name = "rat 1" if subject_id1 == subject_id else "rat 2"
             subject_id = subject_id1 if subject_id1 == subject_id else subject_id2
+            pose_estimation_metadata_key = f"PoseEstimation_{epoch_number}-{subject_id}"
             dlc_interface = DeepLabCutInterface(
                 file_path=file_path,
                 config_file_path=config_file_path,
-                individual_name=individual_name,
-                subject_id=subject_id,
+                subject_name=subject_name,
+                pose_estimation_metadata_key=pose_estimation_metadata_key,
                 verbose=verbose,
             )
             dlc_interfaces.append(dlc_interface)
         self.dlc_interfaces = dlc_interfaces
         self.video_timestamps_file_paths = video_timestamps_file_paths
-        if subject_id is not None:
-            self.subject_id = subject_id
-        else:
-            self.subject_id = individual_name
 
     def get_metadata(self) -> DeepDict:
         metadata = super().get_metadata()
         for dlc_interface in self.dlc_interfaces:
-            metadata = dict_deep_update(metadata, dlc_interface.get_metadata())
+            interface_metadata = dlc_interface.get_metadata()
+            skeleton_name = (
+                f"Skeleton{dlc_interface.pose_estimation_metadata_key}_{dlc_interface.subject_name.capitalize()}"
+            )
+            subject_id = dlc_interface.pose_estimation_metadata_key.split("-")[-1]
+            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_name]["subject"] = subject_id
+            metadata = dict_deep_update(metadata, interface_metadata)
         return metadata
 
     def get_metadata_schema(self) -> DeepDict:
@@ -70,8 +73,4 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
             if video_timestamps_file_path is not None:
                 timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
                 dlc_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
-            file_path = dlc_interface.source_data["file_path"]
-            epoch_name = get_epoch_name(name=file_path.name)
-            epoch_number = int(epoch_name.split("-")[0])
-            container_name = f"PoseEstimation_{epoch_number}-{self.subject_id}"
-            dlc_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, container_name=container_name)
+            dlc_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
