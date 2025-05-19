@@ -77,43 +77,43 @@ Behavior:
       lens: Theia SL183M
       camera_name: Room
   Events:
-  - ids:
+  - name: reward_well_1
+    ids:
     - Poke in well1
-    name: reward_well_1
     description: Whenever the animal in the left W maze visits Reward Well 1.
-  - ids:
+  - name: reward_well_2
+    ids:
     - Poke in well2
-    name: reward_well_2
     description: Whenever the animal in the left W maze visits Reward Well 2.
-  - ids:
+  - name: reward_well_3
+    ids:
     - Poke in well3
-    name: reward_well_3
     description: Whenever the animal in the left W maze visits Reward Well 3.
-  - ids:
+  - name: reward_well_A
+    ids:
     - Poke in wellA
-    name: reward_well_A
     description: Whenever the animal in the right W maze visits Reward Well A.
-  - ids:
+  - name: reward_well_B
+    ids:
     - Poke in wellB
-    name: reward_well_B
     description: Whenever the animal visits Reward Well B in the right W maze.
-  - ids:
+  - name: reward_well_C
+    ids:
     - Poke in wellC
-    name: reward_well_C
     description: Whenever the animal visits Reward Well C in the right W maze.
-  - ids:
+  - name: matched_poke_A1
+    ids:
     - Matched poke in position A1
     - Matched Pokes in position A1
-    name: matched_poke_A1
     description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 1 and Reward Well A).
-  - ids:
+  - name: matched_poke_B2
+    ids:
     - Matched Pokes in position B2
     - Matched pokes in position B2
-    name: matched_poke_B2
     description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 2 and Reward Well B).
-  - ids:
+  - name: matched_poke_C3
+    ids:
     - Matched Pokes in position C3
-    name: matched_poke_C3
     description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 3 and Reward Well C).
 
 Epochs:

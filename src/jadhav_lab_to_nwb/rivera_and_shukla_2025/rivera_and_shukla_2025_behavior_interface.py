@@ -31,9 +31,9 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
             "items": {
                 "type": "object",
                 "properties": {
-                    "id": {"type": "string"},
                     "name": {"type": "string"},
                     "description": {"type": "string"},
+                    "ids": {"type": "array", "items": {"type": "string"}},
                 },
             },
         }
