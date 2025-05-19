@@ -1,12 +1,12 @@
 """Primary class for converting experiment-specific behavior."""
 from pynwb.file import NWBFile
+from pynwb.behavior import BehavioralEvents
+from pynwb import TimeSeries
 from pydantic import FilePath
 import numpy as np
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools import nwb_helpers
 from neuroconv.utils import get_base_schema
-from pynwb.behavior import BehavioralEvents
-from pynwb import TimeSeries
 
 
 class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
