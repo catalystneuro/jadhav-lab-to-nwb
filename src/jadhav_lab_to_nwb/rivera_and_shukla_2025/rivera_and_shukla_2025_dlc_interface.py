@@ -54,13 +54,17 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         metadata = super().get_metadata()
         for dlc_interface in self.dlc_interfaces:
             interface_metadata = dlc_interface.get_metadata()
-            skeleton_name = (
+            skeleton_key = (
                 f"Skeleton{dlc_interface.pose_estimation_metadata_key}_{dlc_interface.subject_name.capitalize()}"
             )
             subject_id = dlc_interface.pose_estimation_metadata_key.split("-")[-1]
-            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_name]["subject"] = subject_id
-            new_skeleton_name = f"Skeleton{dlc_interface.pose_estimation_metadata_key}"
-            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_name]["name"] = new_skeleton_name
+            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_key]["subject"] = subject_id
+            skeleton_name = f"Skeleton{dlc_interface.pose_estimation_metadata_key}"
+            interface_metadata["PoseEstimation"]["Skeletons"][skeleton_key]["name"] = skeleton_name
+            interface_metadata["PoseEstimation"]["PoseEstimationContainers"][
+                dlc_interface.pose_estimation_metadata_key
+            ]["devices"] = ["camera_device 0"]
+            interface_metadata["PoseEstimation"]["Devices"]["camera_device 0"] = dict(name="camera_device 0")
             metadata = dict_deep_update(metadata, interface_metadata)
         return metadata
 
