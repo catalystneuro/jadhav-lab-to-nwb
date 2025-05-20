@@ -96,10 +96,12 @@ class RiveraAndShukla2025VideoInterface(BaseDataInterface):
             nwbfile.add_device(camera_device)
         video_description = metadata["Behavior"]["Video"]["description"]
         for video_interface in self.video_interfaces:
-            task_epoch = int(
-                video_interface.video_name.split("Video_")[-1].split("-")[0]
-            )  # ex. Video_1-XFN1-XFN3 --> 1
-            task_metadata = next(meta for meta in metadata["Tasks"] if task_epoch in meta["task_epochs"])
+            epoch_name = video_interface.video_name.split("_")[-1]  # ex. Video_1-XFN1-XFN3 --> 1-XFN1-XFN3
+            epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
+            if metadata["Subject"]["subject_id"] == subject_id1:
+                task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == "SocialW_Left")
+            elif metadata["Subject"]["subject_id"] == subject_id2:
+                task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == "SocialW_Right")
             camera_id = task_metadata["camera_id"][0]
             device_name = f"camera_device {camera_id}"
             metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["device"] = dict(name=device_name)

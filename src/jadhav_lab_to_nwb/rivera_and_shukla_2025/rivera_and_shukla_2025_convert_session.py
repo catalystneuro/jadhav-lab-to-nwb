@@ -73,9 +73,9 @@ def session_to_nwb(
     source_data.update(dict(Behavior=dict(file_paths=file_paths, clock_rates=clock_rates)))
     conversion_options.update(dict(Behavior=dict()))
 
-    # # Add Epoch
-    # source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
-    # conversion_options.update(dict(Epoch=dict()))
+    # Add Epoch
+    source_data.update(dict(Epoch=dict(video_timestamps_file_paths=video_timestamps_file_paths)))
+    conversion_options.update(dict(Epoch=dict()))
 
     converter = RiveraAndShukla2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()

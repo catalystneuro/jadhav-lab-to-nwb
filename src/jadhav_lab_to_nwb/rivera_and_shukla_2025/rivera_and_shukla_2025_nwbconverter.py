@@ -5,8 +5,8 @@ from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     RiveraAndShukla2025BehaviorInterface,
     RiveraAndShukla2025VideoInterface,
     RiveraAndShukla2025DeepLabCutInterface,
+    RiveraAndShukla2025EpochInterface,
 )
-from jadhav_lab_to_nwb.olson_2024 import Olson2024DeepLabCutInterface
 
 
 class RiveraAndShukla2025NWBConverter(NWBConverter):
@@ -17,4 +17,5 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         Behavior=RiveraAndShukla2025BehaviorInterface,
         DeepLabCut1=RiveraAndShukla2025DeepLabCutInterface,
         DeepLabCut2=RiveraAndShukla2025DeepLabCutInterface,
+        Epoch=RiveraAndShukla2025EpochInterface,
     )

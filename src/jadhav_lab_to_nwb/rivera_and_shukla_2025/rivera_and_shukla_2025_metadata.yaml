@@ -116,68 +116,28 @@ Behavior:
     - Matched Pokes in position C3
     description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 3 and Reward Well C).
 
-Epochs:
-  - name: 1-XFN1-XFN3
-    task_name: SocialW_Left
-    led_configuration: front/back
-    led_list:
-      - head
-      - neck
-    led_positions:
-      - front
-      - back
-  - name: 3-XFN3-XFN1
-    task_name: SocialW_Right
-    led_configuration: front/back
-    led_list:
-      - head
-      - neck
-    led_positions:
-      - front
-      - back
-  - name: 5-XFN1-XFN3
-    task_name: SocialW_Left
-    led_configuration: front/back
-    led_list:
-      - head
-      - neck
-    led_positions:
-      - front
-      - back
-  - name: 7-XFN3-XFN1
-    task_name: SocialW_Right
-    led_configuration: front/back
-    led_list:
-      - head
-      - neck
-    led_positions:
-      - front
-      - back
-  - name: 9-XFN1-XFN3
-    task_name: SocialW_Left
-    led_configuration: front/back
-    led_list:
-      - head
-      - neck
-    led_positions:
-      - front
-      - back
-
 Tasks:
   - name: SocialW_Left
     description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
     environment: left_Wmaze
     camera_id:
       - 0
-    task_epochs:
-      - 1
-      - 5
-      - 9
+    led_configuration: front/back
+    led_list:
+      - head
+      - neck
+    led_positions:
+      - front
+      - back
   - name: SocialW_Right
     description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
     environment: right_Wmaze
     camera_id:
       - 0
-    task_epochs:
-      - 3
-      - 7
+    led_configuration: front/back
+    led_list:
+      - head
+      - neck
+    led_positions:
+      - front
+      - back
