@@ -92,6 +92,9 @@ def session_to_nwb(
     metadata = dict_deep_update(metadata, editable_metadata)
     metadata["Subject"]["subject_id"] = subject_id
 
+    # Add genotype
+    metadata["Subject"]["genotype"] = metadata["SubjectMaps"]["subject_id_to_genotype"][subject_id]
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -119,17 +122,17 @@ if __name__ == "__main__":
         stub_test=stub_test,
     )
 
-    # # Example Session 50% reward
-    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
-    # session_to_nwb(
-    #     session_folder_path=session_folder_path,
-    #     subject_id="XFN1",
-    #     output_dir_path=output_dir_path,
-    #     stub_test=stub_test,
-    # )
-    # session_to_nwb(
-    #     session_folder_path=session_folder_path,
-    #     subject_id="XFN3",
-    #     output_dir_path=output_dir_path,
-    #     stub_test=stub_test,
-    # )
+    # Example Session 50% reward
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN1",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN3",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )

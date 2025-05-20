@@ -1,11 +1,17 @@
 NWBFile:
   session_description:
-    A rich text description of the experiment. Can also just be the abstract of the publication.
+    Pro-social behaviors involve affiliative social interactions between individuals aimed at either mutual benefits for individuals involved or benefiting others.
+    These behaviors are essential for social cohesiveness and well-being of social species.
+    Individuals with autism spectrum disorders have severe cognitive and social deficits.
+    However, little is known about the underlying causes and neural mechanisms associated with these deficits.
+    Our study involves looking into the behavior of wild-type and Fmr1-/y rat pairs on W mazes where they are required to cooperate in order to get a joint reward.
   institution: Brandeis University
   lab: Jadhav
   experimenter:
-    - Last, First Middle
-    - Last, First Middle
+    - Shukla, Ashutosh
+    - Rivera, Edward L.
+    - Bladon, John H.
+    - Jadhav, Shantanu P.
 
 Subject:
   description: Long Evans Rat
@@ -14,68 +20,27 @@ Subject:
   species: Rattus norvegicus
   age: P3M/5M
 
-Ecephys:
-  DataAcqDevice:
-      - name: MCU
-        system: MCU
-        description: Main Control Unit from SpikeGadgets - Handles Analog and Digital Signals, and Coordination across hardware
-        manufacturer: SpikeGadgets
-        amplifier: TBD
-        adc_circuit: TBD
-      - name: ECU
-        system: ECU
-        description: Environmental Control Unit from SpikeGadgets - I/O control hardware
-        manufacturer: SpikeGadgets
-        amplifier: TBD
-        adc_circuit: TBD
-      - name: AdaptAMaze
-        system: AdaptAMaze
-        description: Maze Control System
-        manufacturer: JadhavLab (JMOlson)
-        amplifier: TBD
-        adc_circuit: TBD
-  TrodeGroups:
-    - name: CA1_R
-      location: Right hippocampal subfield CA1
-      device: ProbeNameTBD
-      nTrodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,60,61,62,63,64]
-    - name: CA1_L
-      location: Left hippocampal subfield CA1
-      device: ProbeNameTBD
-      nTrodes: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
-    - name: SUB_L
-      location: Left Subiculum
-      device: ProbeNameTBD
-      nTrodes: [28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43]
-    - name: SUB_R
-      location: Right Subiculum
-      device: ProbeNameTBD
-      nTrodes: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]
-  ElectricalSeries_description: Raw acquisition of extracellular electrophysiology data recorded by SpikeGadgets.
-  LFP:
-    ElectricalSeries:
-      - name: ElectricalSeriesLFP
-        description: Local field potential data recorded by SpikeGadgets (1 channel per tetrode).
+SubjectMaps:
+  subject_id_to_genotype:
+    XFN1: Fmr1-/y
+    XFN2: WT
+    XFN3: Fmr1-/y
+    XFN4: WT
 
 Behavior:
   Module:
     name: behavior
     description: Behavioral data recorded during a cooperative maze task, in which a pair of rats must cooperate by picking the same well in order to get a joint reward.
   Video:
-    description: Video of the rat in the box.
+    description: Video of the pair of rats in the social W mazes.
     CameraDevice:
     - name: camera_device 0 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
-      meters_per_pixel: 0.002
+      meters_per_pixel: 0.0016 # rough guess for BP
       manufacturer: Allied Vision
       model: Mako G-158C
       lens: Theia SL183M
-      camera_name: SleepBox
-    - name: camera_device 1 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
-      meters_per_pixel: 0.0026
-      manufacturer: Allied Vision
-      model: Mako G-158C
-      lens: Theia SL183M
-      camera_name: Room
+      camera_name: Track
+
   Events:
   - name: reward_well_1
     ids:
