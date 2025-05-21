@@ -50,6 +50,11 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         behavioral_events = BehavioralEvents(name="behavioral_events")
         event_id_to_timestamps = {}
         for file_path, clock_rate in zip(file_paths, clock_rates):
+            import os
+
+            if file_path.name.startswith("._"):
+                os.remove(file_path)
+                continue
             with open(file_path, "r") as file:
                 lines = file.readlines()
             for i, line in enumerate(lines):

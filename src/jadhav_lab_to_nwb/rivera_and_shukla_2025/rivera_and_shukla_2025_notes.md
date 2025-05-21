@@ -26,3 +26,4 @@
 - output script files are different for 50% and 100% conditions
 - nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
 - matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
+- Spyglass DIOEvents depends on ephys, but the example data provided doesn't have ephys... --> what to do, what to do?

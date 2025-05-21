@@ -14,142 +14,11 @@ import spyglass.common as sgc  # this import connects to the database
 import spyglass.data_import as sgi
 from spyglass.utils.nwb_helper_fn import get_nwb_copy_filename
 
-# Spike Sorting Imports
-from spyglass.spikesorting.spikesorting_merge import SpikeSortingOutput
-import spyglass.spikesorting.v1 as sgs
-from spyglass.spikesorting.analysis.v1.group import SortedSpikesGroup
-from spyglass.spikesorting.analysis.v1.group import UnitSelectionParams
-from spyglass.spikesorting.analysis.v1.unit_annotation import UnitAnnotation
-
 # Custom Table Imports
 sys.path.append(
     "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/rivera_and_shukla_2025/spyglass_extensions"
 )
 from epoch import TaskLEDs
-
-# LFP Imports
-import spyglass.lfp as sglfp
-from spyglass.utils.nwb_helper_fn import estimate_sampling_rate
-from pynwb.ecephys import ElectricalSeries, LFP
-
-from tqdm import tqdm
-
-
-def insert_sorting(nwbfile_path: Path):
-    """
-    Insert spike sorting data from an NWB file into a spyglass database.
-
-    This function adds UnitAnnotation data from the units table in the NWB file to the UnitAnnotation table in the
-    spyglass database. The annotations are added as labels or quantifications depending on the type of annotation.
-
-    Parameters
-    ----------
-    nwbfile_path : Path
-        The path to the NWB file to insert.
-    """
-    io = NWBHDF5IO(nwbfile_path, "r")
-    nwbfile = io.read()
-    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
-    merge_id = str((SpikeSortingOutput.ImportedSpikeSorting & {"nwb_file_name": nwb_copy_file_name}).fetch1("merge_id"))
-
-    UnitSelectionParams().insert_default()
-    group_name = "all_units"
-    SortedSpikesGroup().create_group(
-        group_name=group_name,
-        nwb_file_name=nwb_copy_file_name,
-        keys=[{"spikesorting_merge_id": merge_id}],
-    )
-    annotation_to_type = {
-        "nTrode": "label",
-        "unitInd": "label",
-        "globalID": "label",
-        "nWaveforms": "quantification",
-        "waveformFWHM": "quantification",
-        "waveformPeakMinusTrough": "quantification",
-    }
-    group_key = {
-        "nwb_file_name": nwb_copy_file_name,
-        "sorted_spikes_group_name": group_name,
-    }
-    group_key = (SortedSpikesGroup & group_key).fetch1("KEY")
-    _, unit_ids = SortedSpikesGroup().fetch_spike_data(group_key, return_unit_ids=True)
-
-    for unit_key in tqdm(unit_ids, desc="Inserting Unit Annotations"):
-        unit_id = unit_key["unit_id"]
-        for annotation, annotation_type in annotation_to_type.items():
-            annotation_value = nwbfile.units.get((unit_id, annotation))
-            annotation_key = {
-                **unit_key,
-                "annotation": annotation,
-                annotation_type: annotation_value,
-            }
-            UnitAnnotation().add_annotation(annotation_key, skip_duplicates=True)
-    io.close()
-
-
-def insert_lfp(nwbfile_path: Path):
-    """
-    Insert LFP data from an NWB file into a spyglass database.
-
-    Parameters
-    ----------
-    nwbfile_path : Path
-        The path to the NWB file to insert.
-    """
-    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
-    lfp_file_name = sgc.AnalysisNwbfile().create(nwb_copy_file_name)
-    analysis_file_abspath = sgc.AnalysisNwbfile().get_abs_path(lfp_file_name)
-
-    raw_io = NWBHDF5IO(nwbfile_path, "r")
-    raw_nwbfile = raw_io.read()
-    lfp_eseries = raw_nwbfile.processing["ecephys"]["LFP"].electrical_series["ElectricalSeriesLFP"]
-    eseries_kwargs = {
-        "data": lfp_eseries.data,
-        "timestamps": lfp_eseries.timestamps,
-        "description": lfp_eseries.description,
-    }
-
-    # Create dynamic table region and electrode series, write/close file
-    analysis_io = NWBHDF5IO(path=analysis_file_abspath, mode="a", load_namespaces=True)
-    analysis_nwbfile = analysis_io.read()
-
-    # get the indices of the electrodes in the electrode table
-    electrodes_table = analysis_nwbfile.electrodes.to_dataframe()
-    lfp_electrode_indices = electrodes_table.index[electrodes_table.hasLFP].tolist()
-
-    electrode_table_region = analysis_nwbfile.create_electrode_table_region(
-        lfp_electrode_indices, "filtered electrode table"
-    )
-    eseries_kwargs["name"] = "filtered data"
-    eseries_kwargs["electrodes"] = electrode_table_region
-    es = ElectricalSeries(**eseries_kwargs)
-    lfp_object_id = es.object_id
-    ecephys_module = analysis_nwbfile.create_processing_module(name="ecephys", description="ecephys module")
-    ecephys_module.add(LFP(electrical_series=es))
-    analysis_io.write(analysis_nwbfile, link_data=False)
-    analysis_io.close()
-
-    sgc.AnalysisNwbfile().add(nwb_copy_file_name, lfp_file_name)
-
-    lfp_electrode_group_name = "lfp_electrode_group"
-    sglfp.lfp_electrode.LFPElectrodeGroup.create_lfp_electrode_group(
-        nwb_file_name=nwb_copy_file_name,
-        group_name=lfp_electrode_group_name,
-        electrode_list=lfp_electrode_indices,
-    )
-    lfp_sampling_rate = estimate_sampling_rate(eseries_kwargs["timestamps"][:1_000_000])
-    key = {
-        "nwb_file_name": nwb_copy_file_name,
-        "lfp_electrode_group_name": lfp_electrode_group_name,
-        "interval_list_name": "raw data valid times",
-        "lfp_sampling_rate": lfp_sampling_rate,
-        "lfp_object_id": lfp_object_id,
-        "analysis_file_name": lfp_file_name,
-    }
-    sglfp.ImportedLFP.insert1(key, allow_direct_insert=True)
-    sglfp.lfp_merge.LFPOutput.insert1(key, allow_direct_insert=True)
-
-    raw_io.close()
 
 
 def insert_task(nwbfile_path: Path):
@@ -179,8 +48,6 @@ def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err:
         Whether to raise an error if an error occurs.
     """
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=rollback_on_fail, raise_err=raise_err)
-    insert_sorting(nwbfile_path=nwbfile_path)
-    insert_lfp(nwbfile_path=nwbfile_path)
     insert_task(nwbfile_path=nwbfile_path)
 
 
@@ -191,22 +58,6 @@ def print_tables(nwbfile_path: Path):
         print(sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}, file=f)
         print("=== Session ===", file=f)
         print(sgc.Session & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== DIOEvents ===", file=f)
-        print(sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== Electrode ===", file=f)
-        print(sgc.Electrode & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== Electrode Group ===", file=f)
-        print(sgc.ElectrodeGroup & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== Probe ===", file=f)
-        print(sgc.Probe & {"probe_id": "my_probe_type"}, file=f)
-        print("=== Probe Shank ===", file=f)
-        print(sgc.Probe.Shank & {"probe_id": "my_probe_type"}, file=f)
-        print("=== Probe Electrode ===", file=f)
-        print(sgc.Probe.Electrode & {"probe_id": "my_probe_type"}, file=f)
-        print("=== Raw ===", file=f)
-        print(sgc.Raw & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== DataAcquisitionDevice ===", file=f)
-        print(sgc.DataAcquisitionDevice & {"nwb_file_name": nwb_copy_file_name}, file=f)
         print("=== IntervalList ===", file=f)
         print(sgc.IntervalList(), file=f)
         print("=== Task ===", file=f)
@@ -215,19 +66,6 @@ def print_tables(nwbfile_path: Path):
         print(sgc.TaskEpoch(), file=f)
         print("=== Task LEDs ===", file=f)
         print(TaskLEDs(), file=f)
-        print("=== AnalysisNwbfile ===", file=f)
-        print(sgc.AnalysisNwbfile & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== LFPElectrodeGroup ===", file=f)
-        print(sglfp.lfp_electrode.LFPElectrodeGroup & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== ImportedLFP ===", file=f)
-        print(sglfp.ImportedLFP & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        print("=== LFPOutput ===", file=f)
-        print(sglfp.lfp_merge.LFPOutput & {"nwb_file_name": nwb_copy_file_name}, file=f)
-        merge_id = str(
-            (SpikeSortingOutput.ImportedSpikeSorting & {"nwb_file_name": nwb_copy_file_name}).fetch1("merge_id")
-        )
-        print("=== Unit Annotation ===", file=f)
-        print(UnitAnnotation().Annotation & {"spike_sorting_merge_id": merge_id}, file=f)
         print("=== VideoFile ===", file=f)
         print(sgc.VideoFile & {"nwb_file_name": nwb_copy_file_name}, file=f)
         camera_names = (sgc.VideoFile & {"nwb_file_name": nwb_copy_file_name}).fetch("camera_name")

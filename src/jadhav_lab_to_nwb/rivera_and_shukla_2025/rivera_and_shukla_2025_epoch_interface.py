@@ -48,10 +48,11 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
             timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
             start_time = timestamps[0]
             stop_time = timestamps[-1]
+            tag = f"{int(epoch_number):02d}"  # Spyglass requires 2-digit string epoch numbers
             nwbfile.add_epoch(
                 start_time=start_time,
                 stop_time=stop_time,
-                tags=[epoch_number],  # TODO: Double check that tags don't need to be "01", "02", etc.
+                tags=[tag],
             )
             if subject_id == subject_id1:
                 left_epochs.append(epoch_number)
