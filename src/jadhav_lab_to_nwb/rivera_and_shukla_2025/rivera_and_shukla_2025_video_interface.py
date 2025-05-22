@@ -10,9 +10,8 @@ from neuroconv.datainterfaces import ExternalVideoInterface
 from neuroconv.utils import get_base_schema
 from ndx_franklab_novela import CameraDevice
 
-from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
-
-from .utils.utils import get_epoch_name
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 class RiveraAndShukla2025VideoInterface(BaseDataInterface):
@@ -28,7 +27,7 @@ class RiveraAndShukla2025VideoInterface(BaseDataInterface):
         ), "The number of file paths must match the number of video timestamps file paths."
         video_interfaces = []
         for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
-            epoch_name = get_epoch_name(name=file_path.name)
+            epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
             video_name = "Video" + "_" + epoch_name  # TODO: Document this naming convention in the docstring
             video_interface = ExternalVideoInterface(file_paths=[file_path], video_name=video_name)
             timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)

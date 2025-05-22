@@ -5,8 +5,8 @@ from pydantic import DirectoryPath
 import numpy as np
 
 from neuroconv.basedatainterface import BaseDataInterface
-from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
-from .utils.utils import get_epoch_name
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 class RiveraAndShukla2025EpochInterface(BaseDataInterface):
@@ -43,7 +43,7 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
         subject_id = metadata["Subject"]["subject_id"]
         left_epochs, right_epochs = [], []
         for video_timestamps_file_path in video_timestamps_file_paths:
-            epoch_name = get_epoch_name(video_timestamps_file_path.name)
+            epoch_name = rivera_and_shukla_2025_get_epoch_name(video_timestamps_file_path.name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
             timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
             start_time = timestamps[0]

@@ -7,8 +7,8 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import DeepLabCutInterface
 
-from .utils.utils import get_epoch_name
-from .tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.utils.utils import olson_2024_get_epoch_name
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
 
 
 class Olson2024DeepLabCutInterface(BaseDataInterface):
@@ -62,7 +62,7 @@ class Olson2024DeepLabCutInterface(BaseDataInterface):
                 timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
                 dlc_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
             file_path = dlc_interface.source_data["file_path"]
-            epoch_name = get_epoch_name(name=file_path.name)
+            epoch_name = olson_2024_get_epoch_name(name=file_path.name)
             dlc_interface.add_to_nwbfile(
                 nwbfile=nwbfile, metadata=metadata, container_name=f"PoseEstimation_{epoch_name}"
             )

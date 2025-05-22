@@ -9,7 +9,7 @@ from neuroconv import BaseDataInterface
 from neuroconv.tools import nwb_helpers
 from neuroconv.utils import get_base_schema
 
-from .tools.spikegadgets import readTrodesExtractedDataFile
+from ..common.tools.spikegadgets import readTrodesExtractedDataFile
 
 
 class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):

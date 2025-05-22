@@ -5,8 +5,8 @@ from pydantic import DirectoryPath
 import numpy as np
 
 from neuroconv.basedatainterface import BaseDataInterface
-from .tools.spikegadgets import readCameraModuleTimeStamps
-from .utils.utils import get_epoch_name
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.utils.utils import olson_2024_get_epoch_name
 
 
 class Olson2024EpochInterface(BaseDataInterface):
@@ -79,7 +79,7 @@ class Olson2024EpochInterface(BaseDataInterface):
         nwbfile.add_epoch_column(name="led_list", description="Comma-separated list of LED names")
         nwbfile.add_epoch_column(name="led_positions", description="Comma-separated list of LED positions")
         for epoch_folder_path in epoch_folder_paths:
-            epoch_name = get_epoch_name(epoch_folder_path.name)
+            epoch_name = olson_2024_get_epoch_name(epoch_folder_path.name)
             epoch_id, frag_id, _, _ = epoch_name.split("_")
             epoch_metadata = next(meta for meta in metadata["Epochs"] if meta["name"] == epoch_id)
             task_name = epoch_metadata["task_name"]

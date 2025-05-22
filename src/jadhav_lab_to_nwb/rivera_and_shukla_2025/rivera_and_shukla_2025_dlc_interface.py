@@ -7,8 +7,8 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import DeepLabCutInterface
 
-from .utils.utils import get_epoch_name
-from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.utils.utils import rivera_and_shukla_2025_get_epoch_name
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
 
 
 class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
@@ -34,7 +34,7 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDataInterface):
         assert len(file_paths) == len(config_file_paths) == len(video_timestamps_file_paths), msg
         dlc_interfaces = []
         for file_path, config_file_path in zip(file_paths, config_file_paths):
-            epoch_name = get_epoch_name(name=file_path.name)
+            epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
             subject_name = "rat 1" if subject_id1 == subject_id else "rat 2"
             subject_id = subject_id1 if subject_id1 == subject_id else subject_id2
