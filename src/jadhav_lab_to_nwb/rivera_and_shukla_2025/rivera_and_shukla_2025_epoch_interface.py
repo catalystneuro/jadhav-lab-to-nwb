@@ -67,8 +67,8 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
             environment = task_metadata["environment"]
             camera_id = task_metadata["camera_id"]
             led_configuration = task_metadata["led_configuration"]
-            led_list = task_metadata["led_list"]
-            led_positions = task_metadata["led_positions"]
+            led_list = ",".join(task_metadata["led_list"])
+            led_positions = ",".join(task_metadata["led_positions"])
             task_epochs = left_epochs if name == "SocialW_Left" else right_epochs
             task_table = DynamicTable(name=name, description=description)
             task_table.add_column(name="task_name", description="Name of the task.")
@@ -76,8 +76,8 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
             task_table.add_column(name="task_environment", description="The environment the animal was in.")
             task_table.add_column(name="camera_id", description="Camera ID.")
             task_table.add_column(name="led_configuration", description="LED configuration")
-            task_table.add_column(name="led_list", description="List of LED names")
-            task_table.add_column(name="led_positions", description="List of LED positions")
+            task_table.add_column(name="led_list", description="Comma-separated list of LED names")
+            task_table.add_column(name="led_positions", description="Comma-separated list of LED positions")
             task_table.add_column(name="task_epochs", description="Task epochs.")
             task_table.add_row(
                 task_name=name,
