@@ -51,12 +51,10 @@ def session_to_nwb(
         dict(
             DeepLabCut1=dict(
                 file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
                 subject_id=subject_1,
             ),
             DeepLabCut2=dict(
                 file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
                 subject_id=subject_2,
             ),
         )

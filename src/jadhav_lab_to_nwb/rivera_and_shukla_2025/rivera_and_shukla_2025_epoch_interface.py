@@ -4,18 +4,19 @@ from pynwb.core import DynamicTable
 from pydantic import DirectoryPath
 import numpy as np
 
-from neuroconv.basedatainterface import BaseDataInterface
+from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterface
 from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
 from .utils.utils import get_epoch_name
 
 
-class RiveraAndShukla2025EpochInterface(BaseDataInterface):
+class RiveraAndShukla2025EpochInterface(BaseTemporalAlignmentInterface):
     """Epoch interface for rivera_and_shukla_2025 conversion"""
 
     keywords = ("behavior",)
 
     def __init__(self, video_timestamps_file_paths: list[DirectoryPath]):
         super().__init__(video_timestamps_file_paths=video_timestamps_file_paths)
+        self.timestamps = None
 
     def get_metadata_schema(self):
         metadata_schema = super().get_metadata_schema()
@@ -40,14 +41,14 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
+        timestamps = self.get_timestamps()
         subject_id = metadata["Subject"]["subject_id"]
         left_epochs, right_epochs = [], []
-        for video_timestamps_file_path in video_timestamps_file_paths:
+        for epoch_timestamps, video_timestamps_file_path in zip(timestamps, video_timestamps_file_paths):
             epoch_name = get_epoch_name(video_timestamps_file_path.name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
-            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
-            start_time = timestamps[0]
-            stop_time = timestamps[-1]
+            start_time = epoch_timestamps[0]
+            stop_time = epoch_timestamps[-1]
             tag = f"{int(epoch_number):02d}"  # Spyglass requires 2-digit string epoch numbers
             nwbfile.add_epoch(
                 start_time=start_time,
@@ -90,3 +91,18 @@ class RiveraAndShukla2025EpochInterface(BaseDataInterface):
                 task_epochs=task_epochs,
             )
             tasks_module.add(task_table)
+
+    def get_original_timestamps(self) -> list[np.ndarray]:
+        """Get the original timestamps for the video files."""
+        video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
+        original_timestamps = []
+        for video_timestamps_file_path in video_timestamps_file_paths:
+            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
+            original_timestamps.append(timestamps)
+        return original_timestamps
+
+    def get_timestamps(self) -> list[np.ndarray]:
+        return self.timestamps if self.timestamps is not None else self.get_original_timestamps()
+
+    def set_aligned_timestamps(self, aligned_timestamps: list[np.ndarray]):
+        self.timestamps = aligned_timestamps
