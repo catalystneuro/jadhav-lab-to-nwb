@@ -43,16 +43,25 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         video_interfaces = self.data_interface_objects["Video"].video_interfaces
         dlc1_interfaces = self.data_interface_objects["DeepLabCut1"].dlc_interfaces
         dlc2_interfaces = self.data_interface_objects["DeepLabCut2"].dlc_interfaces
-        aligned_timestamps = []
+        aligned_timestamps, starting_time_shifts, clock_rates = [], [], []
         for i, (video_timestamps_file_path, video_interface, dlc1_interface, dlc2_interface) in enumerate(
             zip(video_timestamps_file_paths, video_interfaces, dlc1_interfaces, dlc2_interfaces)
         ):
-            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
+            timestamps, clock_rate = readCameraModuleTimeStamps(video_timestamps_file_path)
+            starting_time_shift = 0.0
             for reset_index in clock_resets:
                 if i >= reset_index:
-                    timestamps += stop_times[reset_index - 1] + INTER_EPOCH_INTERVAL
+                    starting_time_shift += stop_times[reset_index - 1] + INTER_EPOCH_INTERVAL
+            timestamps += starting_time_shift
+            starting_time_shifts.append(starting_time_shift)
+            clock_rates.append(clock_rate)
+
             video_interface.set_aligned_timestamps(aligned_timestamps=[timestamps])
             dlc1_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
             dlc2_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
             aligned_timestamps.append(timestamps)
         self.data_interface_objects["Epoch"].set_aligned_timestamps(aligned_timestamps=aligned_timestamps)
+        self.data_interface_objects["Behavior"].set_epoch_starting_time_shifts(
+            starting_time_shifts=starting_time_shifts
+        )
+        self.data_interface_objects["Behavior"].set_clock_rates(clock_rates=clock_rates)
