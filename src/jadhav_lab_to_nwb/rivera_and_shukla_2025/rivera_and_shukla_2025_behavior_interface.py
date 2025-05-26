@@ -14,8 +14,10 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
 
     keywords = ("behavior",)
 
-    def __init__(self, file_paths: list[FilePath], clock_rates: list[float]):
-        super().__init__(file_paths=file_paths, clock_rates=clock_rates)
+    def __init__(self, file_paths: list[FilePath]):
+        super().__init__(file_paths=file_paths)
+        self.epoch_starting_time_shifts = None
+        self.clock_rates = None
 
     def get_metadata_schema(self):
         metadata_schema = super().get_metadata_schema()
@@ -41,7 +43,8 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         file_paths = self.source_data["file_paths"]
-        clock_rates = self.source_data["clock_rates"]
+        clock_rates = self.get_clock_rates()
+        epoch_starting_time_shifts = self.get_epoch_starting_time_shifts()
         behavior_module = nwb_helpers.get_module(
             nwbfile=nwbfile,
             name=metadata["Behavior"]["Module"]["name"],
@@ -49,7 +52,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
         )
         behavioral_events = BehavioralEvents(name="behavioral_events")
         event_id_to_timestamps = {}
-        for file_path, clock_rate in zip(file_paths, clock_rates):
+        for file_path, clock_rate, starting_time_shift in zip(file_paths, clock_rates, epoch_starting_time_shifts):
             import os
 
             if file_path.name.startswith("._"):
@@ -62,7 +65,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
                 if line.startswith("#"):
                     continue  # skip comments
                 timestamp, event_id = line.split(" ", 1)
-                timestamp = float(timestamp) / clock_rate
+                timestamp = float(timestamp) / clock_rate + starting_time_shift
                 if event_id in event_id_to_timestamps:
                     event_id_to_timestamps[event_id].append(timestamp)
                 else:
@@ -110,3 +113,19 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
             behavioral_events.add_timeseries(time_series)
 
         behavior_module.add(behavioral_events)
+
+    def set_epoch_starting_time_shifts(self, starting_time_shifts: list[float]):
+        self.epoch_starting_time_shifts = starting_time_shifts
+
+    def get_epoch_starting_time_shifts(self) -> list[float]:
+        if self.epoch_starting_time_shifts is None:
+            self.epoch_starting_time_shifts = [0.0] * len(self.source_data["file_paths"])
+        return self.epoch_starting_time_shifts
+
+    def set_clock_rates(self, clock_rates: list[float]):
+        self.clock_rates = clock_rates
+
+    def get_clock_rates(self) -> list[float]:
+        if self.clock_rates is None:
+            self.clock_rates = [1.0] * len(self.source_data["file_paths"])
+        return self.clock_rates

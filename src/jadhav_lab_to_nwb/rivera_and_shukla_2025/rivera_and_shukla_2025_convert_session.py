@@ -51,12 +51,10 @@ def session_to_nwb(
         dict(
             DeepLabCut1=dict(
                 file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
                 subject_id=subject_1,
             ),
             DeepLabCut2=dict(
                 file_paths=file_paths,
-                video_timestamps_file_paths=video_timestamps_file_paths,
                 subject_id=subject_2,
             ),
         )
@@ -66,11 +64,7 @@ def session_to_nwb(
 
     # Add Behavior
     file_paths = sorted(list(dio_folder_path.glob("*.stateScriptLog")))
-    clock_rates = []
-    for video_timestamps_file_path in video_timestamps_file_paths:
-        _, clock_rate = readCameraModuleTimeStamps(video_timestamps_file_path)
-        clock_rates.append(clock_rate)
-    source_data.update(dict(Behavior=dict(file_paths=file_paths, clock_rates=clock_rates)))
+    source_data.update(dict(Behavior=dict(file_paths=file_paths)))
     conversion_options.update(dict(Behavior=dict()))
 
     # Add Epoch
