@@ -106,7 +106,7 @@ def session_to_nwb(
     conversion_options.update(dict(Behavior=dict()))
 
     # Add Epoch
-    source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
+    source_data.update(dict(Epoch=dict(video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Epoch=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)

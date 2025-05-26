@@ -1,49 +1,18 @@
 """Primary class for converting experiment-specific behavior."""
 from pynwb.file import NWBFile
-from pynwb.core import DynamicTable
-from pydantic import DirectoryPath
-import numpy as np
 
-from ..common.tools.spikegadgets import readCameraModuleTimeStamps
 from ..common.utils.utils import rivera_and_shukla_2025_get_epoch_name
-from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterface
+from ..datainterfaces.base_epoch_interface import BaseEpochInterface
 
 
-class RiveraAndShukla2025EpochInterface(BaseTemporalAlignmentInterface):
+class RiveraAndShukla2025EpochInterface(BaseEpochInterface):
     """Epoch interface for rivera_and_shukla_2025 conversion"""
 
-    keywords = ("behavior",)
-
-    def __init__(self, video_timestamps_file_paths: list[DirectoryPath]):
-        super().__init__(video_timestamps_file_paths=video_timestamps_file_paths)
-        self.timestamps = None
-
-    def get_metadata_schema(self):
-        metadata_schema = super().get_metadata_schema()
-        metadata_schema["properties"]["Tasks"] = {
-            "description": "Metadata for each task",
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "name": {"type": "string"},
-                    "description": {"type": "string"},
-                    "environment": {"type": "string"},
-                    "camera_id": {"type": "array", "items": {"type": "integer"}},
-                    "led_configuration": {"type": "string"},
-                    "led_list": {"type": "array", "items": {"type": "string"}},
-                    "led_positions": {"type": "array", "items": {"type": "string"}},
-                },
-                "required": ["name", "description", "environment", "camera_id"],
-            },
-        }
-        return metadata_schema
-
-    def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
+    def add_epochs_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         timestamps = self.get_timestamps()
+        video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
         subject_id = metadata["Subject"]["subject_id"]
-        left_epochs, right_epochs = [], []
+
         for epoch_timestamps, video_timestamps_file_path in zip(timestamps, video_timestamps_file_paths):
             epoch_name = rivera_and_shukla_2025_get_epoch_name(video_timestamps_file_path.name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
@@ -56,53 +25,14 @@ class RiveraAndShukla2025EpochInterface(BaseTemporalAlignmentInterface):
                 tags=[tag],
             )
             if subject_id == subject_id1:
-                left_epochs.append(epoch_number)
+                task_name = "SocialW_Left"
+                task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == task_name)
+                task_epochs = task_metadata.get("task_epochs", [])
+                task_epochs.append(epoch_number)
+                task_metadata["task_epochs"] = task_epochs
             elif subject_id == subject_id2:
-                right_epochs.append(epoch_number)
-
-        tasks_metadata = metadata["Tasks"]
-        tasks_module = nwbfile.create_processing_module(name="tasks", description="tasks module")
-        for task_metadata in tasks_metadata:
-            name = task_metadata["name"]
-            description = task_metadata["description"]
-            environment = task_metadata["environment"]
-            camera_id = task_metadata["camera_id"]
-            led_configuration = task_metadata["led_configuration"]
-            led_list = ",".join(task_metadata["led_list"])
-            led_positions = ",".join(task_metadata["led_positions"])
-            task_epochs = left_epochs if name == "SocialW_Left" else right_epochs
-            task_table = DynamicTable(name=name, description=description)
-            task_table.add_column(name="task_name", description="Name of the task.")
-            task_table.add_column(name="task_description", description="Description of the task.")
-            task_table.add_column(name="task_environment", description="The environment the animal was in.")
-            task_table.add_column(name="camera_id", description="Camera ID.")
-            task_table.add_column(name="led_configuration", description="LED configuration")
-            task_table.add_column(name="led_list", description="Comma-separated list of LED names")
-            task_table.add_column(name="led_positions", description="Comma-separated list of LED positions")
-            task_table.add_column(name="task_epochs", description="Task epochs.")
-            task_table.add_row(
-                task_name=name,
-                task_description=description,
-                task_environment=environment,
-                camera_id=camera_id,
-                led_configuration=led_configuration,
-                led_list=led_list,
-                led_positions=led_positions,
-                task_epochs=task_epochs,
-            )
-            tasks_module.add(task_table)
-
-    def get_original_timestamps(self) -> list[np.ndarray]:
-        """Get the original timestamps for the video files."""
-        video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
-        original_timestamps = []
-        for video_timestamps_file_path in video_timestamps_file_paths:
-            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
-            original_timestamps.append(timestamps)
-        return original_timestamps
-
-    def get_timestamps(self) -> list[np.ndarray]:
-        return self.timestamps if self.timestamps is not None else self.get_original_timestamps()
-
-    def set_aligned_timestamps(self, aligned_timestamps: list[np.ndarray]):
-        self.timestamps = aligned_timestamps
+                task_name = "SocialW_Right"
+                task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == task_name)
+                task_epochs = task_metadata.get("task_epochs", [])
+                task_epochs.append(epoch_number)
+                task_metadata["task_epochs"] = task_epochs
