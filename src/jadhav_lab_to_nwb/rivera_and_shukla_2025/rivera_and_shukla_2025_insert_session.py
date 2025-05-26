@@ -128,7 +128,7 @@ def main():
 
     # test_behavior(nwbfile_path=nwbfile_path) # TODO: Fix DIO Events
     test_epoch(nwbfile_path=nwbfile_path)
-    # test_video(nwbfile_path=nwbfile_path) # TODO: Add this test back when video timestamps are fixed
+    test_video(nwbfile_path=nwbfile_path)
 
 
 if __name__ == "__main__":
