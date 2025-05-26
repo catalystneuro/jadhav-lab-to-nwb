@@ -94,9 +94,11 @@ class Olson2024VideoInterface(BaseDataInterface):
             nwbfile.add_device(camera_device)
         video_description = metadata["Behavior"]["Video"]["description"]
         for video_interface in self.video_interfaces:
-            session_id = re.search("S[0-9][0-9]", video_interface.video_name).group(0)
-            task_epoch = int(session_id[1:])
-            task_metadata = next(meta for meta in metadata["Tasks"] if task_epoch in meta["task_epochs"])
+            if "SLP" in video_interface.video_name:
+                task_name = "Sleep"
+            elif "HomeAltVisitAll" in video_interface.video_name:
+                task_name = "HomeAltVisitAll"
+            task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == task_name)
             camera_id = task_metadata["camera_id"][0]
             device_name = f"camera_device {camera_id}"
             metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["device"] = dict(name=device_name)

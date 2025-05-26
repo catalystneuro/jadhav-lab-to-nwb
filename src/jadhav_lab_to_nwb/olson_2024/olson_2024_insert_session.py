@@ -23,9 +23,9 @@ from spyglass.spikesorting.analysis.v1.unit_annotation import UnitAnnotation
 
 # Custom Table Imports
 sys.path.append(
-    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/olson_2024/spyglass_extensions"
+    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_extensions"
 )
-from epoch import TaskLEDs
+from task_leds import TaskLEDs
 
 # LFP Imports
 import spyglass.lfp as sglfp
