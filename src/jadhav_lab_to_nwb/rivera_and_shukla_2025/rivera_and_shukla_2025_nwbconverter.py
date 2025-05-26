@@ -8,7 +8,7 @@ from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     RiveraAndShukla2025EpochInterface,
 )
 
-from ..olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
+from ..common.tools.spikegadgets import readCameraModuleTimeStamps
 
 
 class RiveraAndShukla2025NWBConverter(NWBConverter):
