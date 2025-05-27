@@ -34,6 +34,10 @@ class Olson2024NWBConverter(NWBConverter):
 
         # Align interface timestamps
         video_interfaces = self.data_interface_objects["Video"].video_interfaces
-        for video_timestamps_file_path, video_interface in zip(video_timestamps_file_paths, video_interfaces):
+        dlc_interfaces = self.data_interface_objects["DeepLabCut"].dlc_interfaces
+        for video_timestamps_file_path, video_interface, dlc_interface in zip(
+            video_timestamps_file_paths, video_interfaces, dlc_interfaces
+        ):
             timestamps, clock_rate = readCameraModuleTimeStamps(video_timestamps_file_path)
             video_interface.set_aligned_timestamps(aligned_timestamps=[timestamps])
+            dlc_interface.set_aligned_timestamps(aligned_timestamps=timestamps)

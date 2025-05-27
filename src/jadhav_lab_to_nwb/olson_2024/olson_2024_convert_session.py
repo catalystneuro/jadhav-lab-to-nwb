@@ -91,13 +91,7 @@ def session_to_nwb(
     # Add DLC
     dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
     file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
-    source_data.update(
-        dict(
-            DeepLabCut=dict(
-                file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name=subject_id
-            )
-        )
-    )
+    source_data.update(dict(DeepLabCut=dict(file_paths=file_paths)))
     conversion_options.update(dict(DeepLabCut=dict()))
 
     # Add Behavior
