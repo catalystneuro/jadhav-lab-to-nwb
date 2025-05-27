@@ -1,7 +1,7 @@
 """Primary class for converting experiment-specific behavior."""
 from pynwb.file import NWBFile
 
-from ..common.utils.utils import olson_2024_get_epoch_name
+from ..utils.utils import olson_2024_get_epoch_name
 from ..datainterfaces.base_epoch_interface import BaseEpochInterface
 
 

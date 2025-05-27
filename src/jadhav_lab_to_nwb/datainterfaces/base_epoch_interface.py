@@ -7,7 +7,7 @@ import numpy as np
 from copy import deepcopy
 
 
-from ..common.tools.spikegadgets import readCameraModuleTimeStamps
+from ..tools.spikegadgets import readCameraModuleTimeStamps
 from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterface
 
 

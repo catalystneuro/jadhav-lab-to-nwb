@@ -1,5 +1,5 @@
 """Primary class for converting experiment-specific behavioral video."""
-from ..common.utils.utils import rivera_and_shukla_2025_get_epoch_name
+from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
 from ..datainterfaces.base_video_interface import BaseVideoInterface
 
 

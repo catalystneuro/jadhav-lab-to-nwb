@@ -13,7 +13,7 @@ from jadhav_lab_to_nwb.olson_2024 import (
     Olson2024EpochInterface,
 )
 
-from ..common.tools.spikegadgets import readCameraModuleTimeStamps
+from ..tools.spikegadgets import readCameraModuleTimeStamps
 
 
 class Olson2024NWBConverter(NWBConverter):

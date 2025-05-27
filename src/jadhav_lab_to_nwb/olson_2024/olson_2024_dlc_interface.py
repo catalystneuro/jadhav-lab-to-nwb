@@ -1,5 +1,5 @@
 """Primary class for converting experiment-specific behavioral video."""
-from ..common.utils.utils import olson_2024_get_epoch_name
+from ..utils.utils import olson_2024_get_epoch_name
 from ..datainterfaces.base_dlc_interface import BaseDeepLabCutInterface
 
 

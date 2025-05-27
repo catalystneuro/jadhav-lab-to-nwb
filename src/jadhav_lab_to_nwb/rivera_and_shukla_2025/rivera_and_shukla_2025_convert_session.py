@@ -7,7 +7,7 @@ from pydantic import FilePath, DirectoryPath
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConverter
-from jadhav_lab_to_nwb.common.utils.utils import rivera_and_shukla_2025_get_epoch_name
+from jadhav_lab_to_nwb.utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 def session_to_nwb(
