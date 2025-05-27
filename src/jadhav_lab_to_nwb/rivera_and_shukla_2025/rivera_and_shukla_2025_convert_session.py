@@ -92,8 +92,7 @@ def session_to_nwb(
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
 
-if __name__ == "__main__":
-
+def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/CoopLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
@@ -129,3 +128,37 @@ if __name__ == "__main__":
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
+
+    # Example Session Opaque
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "Opaque" / "XFN1-XFN3" / "08-16-2023"
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN1",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN3",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+    # Example Session WT
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-14-2023"
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN2",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+    session_to_nwb(
+        session_folder_path=session_folder_path,
+        subject_id="XFN4",
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+
+if __name__ == "__main__":
+    main()
