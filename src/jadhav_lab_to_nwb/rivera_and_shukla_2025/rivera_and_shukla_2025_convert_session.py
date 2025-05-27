@@ -3,6 +3,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from pydantic import FilePath, DirectoryPath
+from natsort import natsorted
 
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
@@ -30,8 +31,8 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add Video
-    file_paths = sorted(list(dio_folder_path.glob("*.h264")))
-    video_timestamps_file_paths = sorted(list(dio_folder_path.glob("*.videoTimeStamps")))
+    file_paths = natsorted(list(dio_folder_path.glob("*.h264")))
+    video_timestamps_file_paths = natsorted(list(dio_folder_path.glob("*.videoTimeStamps")))
     for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
         file_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
         timestamps_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=video_timestamps_file_path.name)
@@ -62,7 +63,7 @@ def session_to_nwb(
     conversion_options.update(dict(DeepLabCut2=dict()))
 
     # Add Behavior
-    file_paths = sorted(list(dio_folder_path.glob("*.stateScriptLog")))
+    file_paths = natsorted(list(dio_folder_path.glob("*.stateScriptLog")))
     source_data.update(dict(Behavior=dict(file_paths=file_paths)))
     conversion_options.update(dict(Behavior=dict()))
 

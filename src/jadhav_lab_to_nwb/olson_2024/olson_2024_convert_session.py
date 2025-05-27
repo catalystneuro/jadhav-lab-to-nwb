@@ -3,6 +3,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import shutil
+from natsort import natsorted
 
 from ndx_pose import (
     PoseEstimationSeries,
@@ -47,7 +48,7 @@ def session_to_nwb(
 
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
-    epoch_folder_paths = sorted(epoch_folder_paths)
+    epoch_folder_paths = natsorted(epoch_folder_paths)
 
     source_data = dict()
     conversion_options = dict()
