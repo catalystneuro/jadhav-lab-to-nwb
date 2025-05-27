@@ -58,7 +58,9 @@ class BaseEpochInterface(BaseTemporalAlignmentInterface):
             led_configuration = task_metadata["led_configuration"]
             led_list = ",".join(task_metadata["led_list"])
             led_positions = ",".join(task_metadata["led_positions"])
-            task_epochs = task_metadata["task_epochs"]
+            task_epochs = task_metadata.get("task_epochs", [])
+            if len(task_epochs) == 0:
+                continue  # Skip tasks with no epochs
             task_table = DynamicTable(name=name, description=description)
             task_table.add_column(name="task_name", description="Name of the task.")
             task_table.add_column(name="task_description", description="Description of the task.")
