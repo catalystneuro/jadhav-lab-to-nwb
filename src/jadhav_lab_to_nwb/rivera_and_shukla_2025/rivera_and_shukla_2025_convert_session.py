@@ -16,6 +16,7 @@ def session_to_nwb(
     subject_id: str,
     output_dir_path: DirectoryPath,
     stub_test: bool = False,
+    verbose: bool = False,
 ):
     session_folder_path = Path(session_folder_path)
     session_id = session_folder_path.name
@@ -46,6 +47,7 @@ def session_to_nwb(
         for file_path in dlc_folder_path.glob(r"*.h5")
         if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
     ]
+    file_paths = natsorted(file_paths)
     subject_1, subject_2 = session_folder_path.parent.name.split("-")
     source_data.update(
         dict(
@@ -71,7 +73,7 @@ def session_to_nwb(
     source_data.update(dict(Epoch=dict(video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Epoch=dict()))
 
-    converter = RiveraAndShukla2025NWBConverter(source_data=source_data)
+    converter = RiveraAndShukla2025NWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
 
     # Add datetime to conversion
@@ -92,12 +94,16 @@ def session_to_nwb(
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
+    if verbose:
+        print(f"Successfully converted session {session_id} for subject {subject_id} to NWB format.")
+
 
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/CoopLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
     stub_test = False
+    verbose = True
 
     # Example Session 100% reward
     session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-20-2023"
@@ -106,6 +112,7 @@ def main():
         subject_id="XFN1",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
 
     session_to_nwb(
@@ -113,6 +120,7 @@ def main():
         subject_id="XFN3",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
 
     # Example Session 50% reward
@@ -122,12 +130,14 @@ def main():
         subject_id="XFN1",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
 
     # Example Session Opaque
@@ -137,27 +147,31 @@ def main():
         subject_id="XFN1",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
 
     # Example Session WT
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-14-2023"
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-19-2023"
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN2",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN4",
         output_dir_path=output_dir_path,
         stub_test=stub_test,
+        verbose=verbose,
     )
 
 
