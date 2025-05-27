@@ -27,3 +27,6 @@
 - nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
 - matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
 - Spyglass DIOEvents depends on ephys, but the example data provided doesn't have ephys... --> what to do, what to do?
+
+## Edge cases
+- One of the sessions (CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
