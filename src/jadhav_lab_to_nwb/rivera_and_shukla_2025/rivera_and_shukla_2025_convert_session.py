@@ -7,8 +7,7 @@ from pydantic import FilePath, DirectoryPath
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import RiveraAndShukla2025NWBConverter
-from jadhav_lab_to_nwb.rivera_and_shukla_2025.utils.utils import get_epoch_name
-from jadhav_lab_to_nwb.olson_2024.tools.spikegadgets import readCameraModuleTimeStamps
+from jadhav_lab_to_nwb.utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 def session_to_nwb(
@@ -34,8 +33,8 @@ def session_to_nwb(
     file_paths = sorted(list(dio_folder_path.glob("*.h264")))
     video_timestamps_file_paths = sorted(list(dio_folder_path.glob("*.videoTimeStamps")))
     for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths):
-        file_epoch_name = get_epoch_name(name=file_path.name)
-        timestamps_epoch_name = get_epoch_name(name=video_timestamps_file_path.name)
+        file_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
+        timestamps_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=video_timestamps_file_path.name)
         assert file_epoch_name == timestamps_epoch_name, "Video files were not sorted correctly."
     source_data.update(dict(Video=dict(file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Video=dict()))

@@ -13,6 +13,8 @@ from jadhav_lab_to_nwb.olson_2024 import (
     Olson2024EpochInterface,
 )
 
+from ..tools.spikegadgets import readCameraModuleTimeStamps
+
 
 class Olson2024NWBConverter(NWBConverter):
     """Primary conversion class for my extracellular electrophysiology dataset."""
@@ -26,3 +28,16 @@ class Olson2024NWBConverter(NWBConverter):
         Behavior=Olson2024BehaviorInterface,
         Epoch=Olson2024EpochInterface,
     )
+
+    def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
+
+        # Align interface timestamps
+        video_interfaces = self.data_interface_objects["Video"].video_interfaces
+        dlc_interfaces = self.data_interface_objects["DeepLabCut"].dlc_interfaces
+        for video_timestamps_file_path, video_interface, dlc_interface in zip(
+            video_timestamps_file_paths, video_interfaces, dlc_interfaces
+        ):
+            timestamps, clock_rate = readCameraModuleTimeStamps(video_timestamps_file_path)
+            video_interface.set_aligned_timestamps(aligned_timestamps=[timestamps])
+            dlc_interface.set_aligned_timestamps(aligned_timestamps=timestamps)

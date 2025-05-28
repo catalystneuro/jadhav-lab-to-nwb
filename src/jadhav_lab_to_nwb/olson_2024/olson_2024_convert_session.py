@@ -48,8 +48,6 @@ def session_to_nwb(
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
     epoch_folder_paths = sorted(epoch_folder_paths)
-    if stub_test:  # TODO: Remove after this issue gets fixed: https://github.com/LorenFrankLab/spyglass/issues/1240
-        epoch_folder_paths = epoch_folder_paths[:1]
 
     source_data = dict()
     conversion_options = dict()
@@ -59,6 +57,9 @@ def session_to_nwb(
     comments_file_paths = [
         epoch_folder_path / f"{epoch_folder_path.name}.trodesComments" for epoch_folder_path in epoch_folder_paths
     ]
+    if stub_test:  # TODO: Remove after this issue gets fixed: https://github.com/LorenFrankLab/spyglass/issues/1240
+        file_paths = file_paths[:1]
+        comments_file_paths = comments_file_paths[:1]
     source_data.update(dict(Recording=dict(file_paths=file_paths, comments_file_paths=comments_file_paths)))
     conversion_options.update(dict(Recording=dict(stub_test=stub_test)))
 
@@ -90,15 +91,7 @@ def session_to_nwb(
     # Add DLC
     dlc_folder_path = session_folder_path / f"{session_folder_path.name}.DLC"
     file_paths = [file_path for file_path in dlc_folder_path.glob(r"*.csv") if not (file_path.name.startswith("._"))]
-    if stub_test:  # TODO: Remove after this issue gets fixed: https://github.com/LorenFrankLab/spyglass/issues/1240
-        file_paths = file_paths[:1]
-    source_data.update(
-        dict(
-            DeepLabCut=dict(
-                file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths, subject_name=subject_id
-            )
-        )
-    )
+    source_data.update(dict(DeepLabCut=dict(file_paths=file_paths)))
     conversion_options.update(dict(DeepLabCut=dict()))
 
     # Add Behavior
@@ -107,7 +100,7 @@ def session_to_nwb(
     conversion_options.update(dict(Behavior=dict()))
 
     # Add Epoch
-    source_data.update(dict(Epoch=dict(epoch_folder_paths=epoch_folder_paths)))
+    source_data.update(dict(Epoch=dict(video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Epoch=dict()))
 
     converter = Olson2024NWBConverter(source_data=source_data)

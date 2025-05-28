@@ -13,7 +13,7 @@ from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
 from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
-from .tools.spikeinterface import MultiRecordingDataChunkIterator
+from ..tools.spikeinterface import MultiRecordingDataChunkIterator
 
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
@@ -221,7 +221,7 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
         self.recording_extractor.set_property(key="ref_elect_id", ids=channel_ids, values=channel_ids)
 
         # from BaseRecordingExtractorInterface
-        from .tools.spikeinterface import add_recording_to_nwbfile, get_electrical_series_kwargs
+        from ..tools.spikeinterface import add_recording_to_nwbfile, get_electrical_series_kwargs
 
         if stub_test or self.subset_channels is not None:
             recording = self.subset_recording(stub_test=stub_test)

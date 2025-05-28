@@ -11,7 +11,7 @@ from neuroconv.utils import get_base_schema
 from pynwb.behavior import BehavioralEvents
 from pynwb import TimeSeries
 
-from .tools.spikegadgets import readTrodesExtractedDataFile
+from ..tools.spikegadgets import readTrodesExtractedDataFile
 
 
 class Olson2024BehaviorInterface(BaseDataInterface):
