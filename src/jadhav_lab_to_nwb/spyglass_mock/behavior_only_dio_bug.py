@@ -1,3 +1,4 @@
+"See Issue: https://github.com/LorenFrankLab/spyglass/issues/1313"
 from pynwb.testing.mock.file import mock_NWBFile
 from pynwb.testing.mock.ecephys import mock_ElectricalSeries
 from pynwb.testing.mock.behavior import mock_TimeSeries

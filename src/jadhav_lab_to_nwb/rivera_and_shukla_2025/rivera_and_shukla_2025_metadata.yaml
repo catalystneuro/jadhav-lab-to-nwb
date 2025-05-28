@@ -1,10 +1,11 @@
 NWBFile:
-  session_description:
+  experiment_description:
     Pro-social behaviors involve affiliative social interactions between individuals aimed at either mutual benefits for individuals involved or benefiting others.
     These behaviors are essential for social cohesiveness and well-being of social species.
     Individuals with autism spectrum disorders have severe cognitive and social deficits.
     However, little is known about the underlying causes and neural mechanisms associated with these deficits.
     Our study involves looking into the behavior of wild-type and Fmr1-/y rat pairs on W mazes where they are required to cooperate in order to get a joint reward.
+  session_description: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 100% of the time when both rats poked the same well.
   institution: Brandeis University
   lab: Jadhav
   experimenter:
