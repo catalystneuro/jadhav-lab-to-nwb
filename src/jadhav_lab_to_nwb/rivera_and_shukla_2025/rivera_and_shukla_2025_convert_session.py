@@ -83,7 +83,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Add datetime to conversion
-    session_start_time = datetime(2023, 7, 20, 0, 0, 0)  # TODO: Update this to the actual session start time
+    session_start_time = datetime.strptime(session_id, "%m-%d-%Y")
     est = ZoneInfo("US/Eastern")
     session_start_time = session_start_time.replace(tzinfo=est)
     metadata["NWBFile"]["session_start_time"] = session_start_time
