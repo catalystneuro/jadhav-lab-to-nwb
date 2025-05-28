@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/SubLearnProject")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
-    stub_test = True
+    stub_test = False
 
     # Example Session
     subject_id = "SL18"
