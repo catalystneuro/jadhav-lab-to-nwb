@@ -1,0 +1,109 @@
+NWBFile:
+  experiment_description:
+    Pro-social behaviors involve affiliative social interactions between individuals aimed at either mutual benefits for individuals involved or benefiting others.
+    These behaviors are essential for social cohesiveness and well-being of social species.
+    Individuals with autism spectrum disorders have severe cognitive and social deficits.
+    However, little is known about the underlying causes and neural mechanisms associated with these deficits.
+    Our study involves looking into the behavior of wild-type and Fmr1-/y rat pairs on W mazes where they are required to cooperate in order to get a joint reward.
+  session_description: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 100% of the time when both rats poked the same well.
+  institution: Brandeis University
+  lab: Jadhav
+  experimenter:
+    - Shukla, Ashutosh
+    - Rivera, Edward L.
+    - Bladon, John H.
+    - Jadhav, Shantanu P.
+
+Subject:
+  description: Long Evans Rat
+  genotype: Wild Type
+  sex: M
+  species: Rattus norvegicus
+  age: P3M/5M
+
+SubjectMaps:
+  subject_id_to_genotype:
+    XFN1: Fmr1-/y
+    XFN2: WT
+    XFN3: Fmr1-/y
+    XFN4: WT
+
+Behavior:
+  Module:
+    name: behavior
+    description: Behavioral data recorded during a cooperative maze task, in which a pair of rats must cooperate by picking the same well in order to get a joint reward.
+  Video:
+    description: Video of the pair of rats in the social W mazes.
+    CameraDevice:
+    - name: camera_device 0 # This MUST be formatted exactly "camera_device {camera_id}" to be compatible with spyglass
+      meters_per_pixel: 0.0016 # rough guess for BP
+      manufacturer: Allied Vision
+      model: Mako G-158C
+      lens: Theia SL183M
+      camera_name: Track
+
+  Events:
+  - name: reward_well_1
+    ids:
+    - Poke in well1
+    description: Whenever the animal in the left W maze visits Reward Well 1.
+  - name: reward_well_2
+    ids:
+    - Poke in well2
+    description: Whenever the animal in the left W maze visits Reward Well 2.
+  - name: reward_well_3
+    ids:
+    - Poke in well3
+    description: Whenever the animal in the left W maze visits Reward Well 3.
+  - name: reward_well_A
+    ids:
+    - Poke in wellA
+    description: Whenever the animal in the right W maze visits Reward Well A.
+  - name: reward_well_B
+    ids:
+    - Poke in wellB
+    description: Whenever the animal visits Reward Well B in the right W maze.
+  - name: reward_well_C
+    ids:
+    - Poke in wellC
+    description: Whenever the animal visits Reward Well C in the right W maze.
+  - name: matched_poke_A1
+    ids:
+    - Matched poke in position A1
+    - Matched Pokes in position A1
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 1 and Reward Well A).
+  - name: matched_poke_B2
+    ids:
+    - Matched Pokes in position B2
+    - Matched pokes in position B2
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 2 and Reward Well B).
+  - name: matched_poke_C3
+    ids:
+    - Matched Pokes in position C3
+    description: Whenever the animal in the left W maze matches the position of the partner in the right W maze (Reward Well 3 and Reward Well C).
+
+Tasks:
+  - name: SocialW_Left
+    description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
+    environment: left_Wmaze
+    camera_id:
+      - 0
+    led_configuration: front/back
+    led_list:
+      - head
+      - neck
+    led_positions:
+      - front
+      - back
+  - name: SocialW_Right
+    description: The animal makes coordinated well/arm transitions with a partner to collect joint rewards.
+    environment: right_Wmaze
+    camera_id:
+      - 0
+    led_configuration: front/back
+    led_list:
+      - head
+      - neck
+    led_positions:
+      - front
+      - back
