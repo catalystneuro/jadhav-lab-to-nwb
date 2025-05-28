@@ -4,6 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from pydantic import FilePath, DirectoryPath
 from natsort import natsorted
+from typing import Literal
 
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
@@ -15,6 +16,7 @@ def session_to_nwb(
     session_folder_path: DirectoryPath,
     subject_id: str,
     output_dir_path: DirectoryPath,
+    experimental_condition: Literal["100%", "50%", "Opaque"],
     stub_test: bool = False,
     verbose: bool = False,
 ):
@@ -95,6 +97,10 @@ def session_to_nwb(
     # Add genotype
     metadata["Subject"]["genotype"] = metadata["SubjectMaps"]["subject_id_to_genotype"][subject_id]
 
+    # Add session description
+    session_description = metadata["SessionMaps"]["condition_to_session_description"][experimental_condition]
+    metadata["NWBFile"]["session_description"] = session_description
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -115,6 +121,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN1",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -123,6 +130,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -133,6 +141,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN1",
         output_dir_path=output_dir_path,
+        experimental_condition="50%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -140,6 +149,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
+        experimental_condition="50%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -150,6 +160,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN1",
         output_dir_path=output_dir_path,
+        experimental_condition="Opaque",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -157,6 +168,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
+        experimental_condition="Opaque",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -167,6 +179,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN2",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -174,6 +187,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN4",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -184,6 +198,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN2",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -191,6 +206,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN4",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -201,6 +217,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN1",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -208,6 +225,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
+        experimental_condition="100%",
         stub_test=stub_test,
         verbose=verbose,
     )
