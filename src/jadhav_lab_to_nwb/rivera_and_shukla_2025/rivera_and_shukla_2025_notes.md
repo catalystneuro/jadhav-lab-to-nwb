@@ -29,4 +29,9 @@
 - Spyglass DIOEvents depends on ephys, but the example data provided doesn't have ephys... --> what to do, what to do?
 
 ## Edge cases
-- One of the sessions (CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-16-2023) are missing DLC epochs
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-15-2023) have incomplete epochs
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-27-2023) have corrupted hdf5 files
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-07-2023) have multiple videos/epoch
+    - Looks like the video got interrupted for some reason so there are 2 videos/timestamps for a single epoch
