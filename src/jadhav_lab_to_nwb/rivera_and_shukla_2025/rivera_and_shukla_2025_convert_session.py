@@ -55,32 +55,41 @@ def session_to_nwb(
     source_data.update(dict(Video=dict(file_paths=file_paths, video_timestamps_file_paths=video_timestamps_file_paths)))
     conversion_options.update(dict(Video=dict()))
 
-    # # Add DLC
-    # file_paths = [
-    #     file_path
-    #     for file_path in dlc_folder_path.glob(r"*.h5")
-    #     if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
-    # ]
-    # if len(file_paths) > 0:
-    #     file_paths = natsorted(file_paths)
-    #     subject_1, subject_2 = session_folder_path.parent.name.split("-")
-    #     source_data.update(
-    #         dict(
-    #             DeepLabCut1=dict(
-    #                 file_paths=file_paths,
-    #                 subject_id=subject_1,
-    #             ),
-    #             DeepLabCut2=dict(
-    #                 file_paths=file_paths,
-    #                 subject_id=subject_2,
-    #             ),
-    #         )
-    #     )
-    #     conversion_options.update(dict(DeepLabCut1=dict()))
-    #     conversion_options.update(dict(DeepLabCut2=dict()))
-    # else:
-    #     if verbose:
-    #         print(f"No DLC data found for session {session_id} and subject {subject_id}. Skipping DLC conversion.")
+    # Add DLC
+    file_paths = [
+        file_path
+        for file_path in dlc_folder_path.glob(r"*.h5")
+        if not (file_path.name.startswith("._")) and "resnet50" in file_path.name
+    ]
+    if len(file_paths) > 0:
+        file_paths = natsorted(file_paths)
+        epoch_name_to_file_paths = {}
+        for file_path in file_paths:
+            file_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
+            if file_epoch_name not in epoch_name_to_file_paths:
+                epoch_name_to_file_paths[file_epoch_name] = []
+            epoch_name_to_file_paths[file_epoch_name].append(file_path)
+        file_paths = []
+        for epoch_name in natsorted(epoch_name_to_file_paths.keys()):
+            file_paths.append(natsorted(epoch_name_to_file_paths[epoch_name]))
+        subject_1, subject_2 = session_folder_path.parent.name.split("-")
+        source_data.update(
+            dict(
+                DeepLabCut1=dict(
+                    file_paths=file_paths,
+                    subject_id=subject_1,
+                ),
+                DeepLabCut2=dict(
+                    file_paths=file_paths,
+                    subject_id=subject_2,
+                ),
+            )
+        )
+        conversion_options.update(dict(DeepLabCut1=dict()))
+        conversion_options.update(dict(DeepLabCut2=dict()))
+    else:
+        if verbose:
+            print(f"No DLC data found for session {session_id} and subject {subject_id}. Skipping DLC conversion.")
 
     # Add Behavior
     file_paths = natsorted(list(dio_folder_path.glob("*.stateScriptLog")))

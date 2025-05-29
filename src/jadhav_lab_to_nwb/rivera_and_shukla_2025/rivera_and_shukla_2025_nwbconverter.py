@@ -23,6 +23,7 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        # TODO: Add support for multi-segment DLC and make sure changes don't break olson_2024
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Check for clock resets
@@ -75,6 +76,13 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                 epoch_clock_rates.append(clock_rate)
                 epoch_starting_time_shifts.append(starting_time_shift)
                 epoch_starting_frames.append(starting_frame)
+
+                if "DeepLabCut1" in self.data_interface_objects:
+                    dlc1_interface = self.data_interface_objects["DeepLabCut1"].dlc_interfaces[i]
+                    dlc1_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
+                if "DeepLabCut2" in self.data_interface_objects:
+                    dlc2_interface = self.data_interface_objects["DeepLabCut2"].dlc_interfaces[i]
+                    dlc2_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
                 i += 1
             aligned_timestamps.append(epoch_timestamps)
             starting_time_shifts.append(epoch_starting_time_shifts[0])
@@ -82,14 +90,6 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             starting_frames.append(epoch_starting_frames)
 
             video_interface.set_aligned_timestamps(aligned_timestamps=epoch_timestamps)
-
-            # # For DLC interfaces, use the first timestamp array (assuming one DLC per epoch)
-            # if "DeepLabCut1" in self.data_interface_objects:
-            #     dlc1_interface = self.data_interface_objects["DeepLabCut1"].dlc_interfaces[i]
-            #     dlc1_interface.set_aligned_timestamps(aligned_timestamps=aligned_epoch_timestamps[0])
-            # if "DeepLabCut2" in self.data_interface_objects:
-            #     dlc2_interface = self.data_interface_objects["DeepLabCut2"].dlc_interfaces[i]
-            #     dlc2_interface.set_aligned_timestamps(aligned_timestamps=aligned_epoch_timestamps[0])
 
         self.data_interface_objects["Video"].set_starting_frames(starting_frames=starting_frames)
         self.data_interface_objects["Epoch"].set_aligned_timestamps(aligned_timestamps=aligned_timestamps)
