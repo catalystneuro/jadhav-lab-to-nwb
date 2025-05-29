@@ -23,7 +23,6 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
-        # TODO: Add support for multi-segment DLC and make sure changes don't break olson_2024
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Check for clock resets
