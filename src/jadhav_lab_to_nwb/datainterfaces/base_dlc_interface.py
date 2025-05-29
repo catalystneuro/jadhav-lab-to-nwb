@@ -7,8 +7,6 @@ from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import DeepLabCutInterface
 
-from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
-
 
 class BaseDeepLabCutInterface(BaseDataInterface):
     """DeepLabCut interface for rivera_and_shukla_2025 conversion"""
