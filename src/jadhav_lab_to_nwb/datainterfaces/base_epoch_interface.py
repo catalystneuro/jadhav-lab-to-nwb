@@ -2,7 +2,7 @@
 from abc import abstractmethod
 from pynwb.file import NWBFile
 from pynwb.core import DynamicTable
-from pydantic import DirectoryPath
+from pydantic import FilePath
 import numpy as np
 from copy import deepcopy
 
@@ -16,7 +16,7 @@ class BaseEpochInterface(BaseTemporalAlignmentInterface):
 
     keywords = ("behavior",)
 
-    def __init__(self, video_timestamps_file_paths: list[DirectoryPath]):
+    def __init__(self, video_timestamps_file_paths: list[FilePath | list[FilePath]]):
         super().__init__(video_timestamps_file_paths=video_timestamps_file_paths)
         self.timestamps = None
 
@@ -90,17 +90,22 @@ class BaseEpochInterface(BaseTemporalAlignmentInterface):
     ):
         pass
 
-    def get_original_timestamps(self) -> list[np.ndarray]:
+    def get_original_timestamps(self) -> list[list[np.ndarray]]:
         """Get the original timestamps for the video files."""
         video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
         original_timestamps = []
-        for video_timestamps_file_path in video_timestamps_file_paths:
-            timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
-            original_timestamps.append(timestamps)
+        for epoch_video_timestamps_file_paths in video_timestamps_file_paths:
+            if not isinstance(epoch_video_timestamps_file_paths, list):
+                epoch_video_timestamps_file_paths = [epoch_video_timestamps_file_paths]
+            original_epoch_timestamps = []
+            for video_timestamps_file_path in epoch_video_timestamps_file_paths:
+                timestamps, _ = readCameraModuleTimeStamps(video_timestamps_file_path)
+                original_epoch_timestamps.append(timestamps)
+            original_timestamps.append(original_epoch_timestamps)
         return original_timestamps
 
-    def get_timestamps(self) -> list[np.ndarray]:
+    def get_timestamps(self) -> list[list[np.ndarray]]:
         return self.timestamps if self.timestamps is not None else self.get_original_timestamps()
 
-    def set_aligned_timestamps(self, aligned_timestamps: list[np.ndarray]):
+    def set_aligned_timestamps(self, aligned_timestamps: list[list[np.ndarray]]):
         self.timestamps = aligned_timestamps

@@ -15,7 +15,7 @@ class BaseVideoInterface(BaseDataInterface):
 
     keywords = ("movie", "natural behavior", "tracking")
 
-    def __init__(self, file_paths: list[FilePath], video_timestamps_file_paths: list[FilePath]):
+    def __init__(self, file_paths: list[FilePath | list], video_timestamps_file_paths: list[FilePath | list]):
         # file_paths must be sorted in the order that the videos were recorded
         assert len(file_paths) > 0, "At least one file path must be provided."
         assert len(file_paths) == len(
@@ -24,11 +24,14 @@ class BaseVideoInterface(BaseDataInterface):
         self.video_timestamps_file_paths = video_timestamps_file_paths
 
         video_interfaces = []
-        for file_path in file_paths:
-            video_name = self.get_video_name(file_name=file_path.name)
-            video_interface = ExternalVideoInterface(file_paths=[file_path], video_name=video_name)
+        for epoch_file_paths in file_paths:
+            if not isinstance(epoch_file_paths, list):
+                epoch_file_paths = [epoch_file_paths]
+            video_name = self.get_video_name(file_name=epoch_file_paths[0].name)
+            video_interface = ExternalVideoInterface(file_paths=epoch_file_paths, video_name=video_name)
             video_interfaces.append(video_interface)
         self.video_interfaces = video_interfaces
+        self.starting_frames = [None] * len(self.video_interfaces)
 
     @abstractmethod
     def get_video_name(self, file_name: str) -> str:
@@ -93,15 +96,22 @@ class BaseVideoInterface(BaseDataInterface):
             )
             nwbfile.add_device(camera_device)
         video_description = metadata["Behavior"]["Video"]["description"]
-        for video_interface in self.video_interfaces:
+        for video_interface, starting_frames in zip(self.video_interfaces, self.starting_frames):
             task_name = self.get_task_name(metadata, video_interface.video_name)
             task_metadata = next(meta for meta in metadata["Tasks"] if meta["name"] == task_name)
             camera_id = task_metadata["camera_id"][0]
             device_name = f"camera_device {camera_id}"
             metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["device"] = dict(name=device_name)
             metadata["Behavior"]["ExternalVideos"][video_interface.video_name]["description"] = video_description
-            video_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
+            video_interface.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, starting_frames=starting_frames)
 
     @abstractmethod
     def get_task_name(self, metadata: dict, video_name: str) -> str:
         pass
+
+    def set_starting_frames(self, starting_frames: list[list[int]]):
+        """Set the starting frames for each video interface."""
+        assert len(starting_frames) == len(
+            self.video_interfaces
+        ), "The number of starting frames must match the number of video interfaces."
+        self.starting_frames = starting_frames
