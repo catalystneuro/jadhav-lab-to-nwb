@@ -292,13 +292,32 @@ def main():
     #     verbose=verbose,
     # )
 
-    # Example Session with incomplete epochs and mismatched timestamps
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-15-2023"
+    # # Example Session with incomplete epochs and mismatched timestamps
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-15-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+
+    # Example Session with missing DLC epochs
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-16-2023"
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN1",
         output_dir_path=output_dir_path,
-        experimental_condition="100%",
+        experimental_condition="50%",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -306,7 +325,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN3",
         output_dir_path=output_dir_path,
-        experimental_condition="100%",
+        experimental_condition="50%",
         stub_test=stub_test,
         verbose=verbose,
     )

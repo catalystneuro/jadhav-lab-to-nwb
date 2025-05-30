@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import warnings
+from natsort import natsorted
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     RiveraAndShukla2025BehaviorInterface,
@@ -13,6 +14,7 @@ from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
 )
 
 from ..tools.spikegadgets import readCameraModuleTimeStamps
+from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 class RiveraAndShukla2025NWBConverter(NWBConverter):
@@ -27,6 +29,25 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        if "DeepLabCut1" in self.data_interface_objects:
+            epoch_name_to_dlc1_interfaces = {}
+            for dlc_interface in self.data_interface_objects["DeepLabCut1"].dlc_interfaces:
+                file_path = Path(dlc_interface.source_data["file_path"])
+                epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
+                if epoch_name not in epoch_name_to_dlc1_interfaces:
+                    epoch_name_to_dlc1_interfaces[epoch_name] = [dlc_interface]
+                else:
+                    epoch_name_to_dlc1_interfaces[epoch_name].append(dlc_interface)
+        if "DeepLabCut2" in self.data_interface_objects:
+            epoch_name_to_dlc2_interfaces = {}
+            for dlc_interface in self.data_interface_objects["DeepLabCut2"].dlc_interfaces:
+                file_path = Path(dlc_interface.source_data["file_path"])
+                epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
+                if epoch_name not in epoch_name_to_dlc2_interfaces:
+                    epoch_name_to_dlc2_interfaces[epoch_name] = [dlc_interface]
+                else:
+                    epoch_name_to_dlc2_interfaces[epoch_name].append(dlc_interface)
+
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Check for clock resets
@@ -52,12 +73,17 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                 i += 1
 
         # Align interface timestamps
+        epoch_name_to_video_interface = {}
         video_interfaces = self.data_interface_objects["Video"].video_interfaces
         aligned_timestamps, starting_time_shifts, clock_rates, starting_frames = [], [], [], []
         i = 0
-        for epoch_video_timestamps_file_paths, video_interface in zip(video_timestamps_file_paths, video_interfaces):
+        for epoch_video_timestamps_file_paths, video_interface in zip(
+            video_timestamps_file_paths, video_interfaces, strict=True
+        ):
             if not isinstance(epoch_video_timestamps_file_paths, list):
                 epoch_video_timestamps_file_paths = [epoch_video_timestamps_file_paths]
+            epoch_name = rivera_and_shukla_2025_get_epoch_name(name=Path(epoch_video_timestamps_file_paths[0]).name)
+            epoch_name_to_video_interface[epoch_name] = video_interface
 
             epoch_timestamps, epoch_clock_rates, epoch_starting_time_shifts, epoch_starting_frames = [], [], [], []
             for segment_index, timestamp_file_path in enumerate(epoch_video_timestamps_file_paths):
@@ -79,13 +105,6 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                 epoch_clock_rates.append(clock_rate)
                 epoch_starting_time_shifts.append(starting_time_shift)
                 epoch_starting_frames.append(starting_frame)
-
-                if "DeepLabCut1" in self.data_interface_objects:
-                    dlc1_interface = self.data_interface_objects["DeepLabCut1"].dlc_interfaces[i]
-                    self.align_dlc_interface(aligned_timestamps=timestamps, dlc_interface=dlc1_interface)
-                if "DeepLabCut2" in self.data_interface_objects:
-                    dlc2_interface = self.data_interface_objects["DeepLabCut2"].dlc_interfaces[i]
-                    self.align_dlc_interface(aligned_timestamps=timestamps, dlc_interface=dlc2_interface)
                 i += 1
             aligned_timestamps.append(epoch_timestamps)
             starting_time_shifts.append(epoch_starting_time_shifts[0])
@@ -100,6 +119,19 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             starting_time_shifts=starting_time_shifts
         )
         self.data_interface_objects["Behavior"].set_clock_rates(clock_rates=clock_rates)
+
+        if "DeepLabCut1" in self.data_interface_objects:
+            for epoch_name, dlc1_interfaces in epoch_name_to_dlc1_interfaces.items():
+                video_interface = epoch_name_to_video_interface[epoch_name]
+                aligned_timestamps = video_interface.get_timestamps()
+                for dlc_interface, timestamps in zip(dlc1_interfaces, aligned_timestamps, strict=True):
+                    self.align_dlc_interface(timestamps, dlc_interface)
+        if "DeepLabCut2" in self.data_interface_objects:
+            for epoch_name, dlc2_interfaces in epoch_name_to_dlc2_interfaces.items():
+                video_interface = epoch_name_to_video_interface[epoch_name]
+                aligned_timestamps = video_interface.get_timestamps()
+                for dlc_interface, timestamps in zip(dlc2_interfaces, aligned_timestamps, strict=True):
+                    self.align_dlc_interface(timestamps, dlc_interface)
 
     def align_dlc_interface(self, aligned_timestamps: np.ndarray, dlc_interface):
         file_path = Path(dlc_interface.source_data["file_path"])
