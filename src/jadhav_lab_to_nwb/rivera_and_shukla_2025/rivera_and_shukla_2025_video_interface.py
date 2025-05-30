@@ -18,4 +18,10 @@ class RiveraAndShukla2025VideoInterface(BaseVideoInterface):
             task_name = "SocialW_Left"
         elif metadata["Subject"]["subject_id"] == subject_id2:
             task_name = "SocialW_Right"
+        else:
+            message = (
+                f"Metadata subject ID {metadata['Subject']['subject_id']} does not match the expected subject IDs "
+                f"{subject_id1} or {subject_id2}."
+            )
+            raise ValueError(message)
         return task_name

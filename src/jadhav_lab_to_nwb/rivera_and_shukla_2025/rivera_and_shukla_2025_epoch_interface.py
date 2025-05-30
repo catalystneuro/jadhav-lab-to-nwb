@@ -13,11 +13,11 @@ class RiveraAndShukla2025EpochInterface(BaseEpochInterface):
         video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
         subject_id = metadata["Subject"]["subject_id"]
 
-        for epoch_timestamps, video_timestamps_file_path in zip(timestamps, video_timestamps_file_paths):
-            epoch_name = rivera_and_shukla_2025_get_epoch_name(video_timestamps_file_path.name)
+        for epoch_timestamps, epoch_video_timestamps_file_paths in zip(timestamps, video_timestamps_file_paths):
+            epoch_name = rivera_and_shukla_2025_get_epoch_name(epoch_video_timestamps_file_paths[0].name)
             epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
-            start_time = epoch_timestamps[0]
-            stop_time = epoch_timestamps[-1]
+            start_time = epoch_timestamps[0][0]
+            stop_time = epoch_timestamps[-1][-1]
             tag = f"{int(epoch_number):02d}"  # Spyglass requires 2-digit string epoch numbers
             nwbfile.add_epoch(
                 start_time=start_time,

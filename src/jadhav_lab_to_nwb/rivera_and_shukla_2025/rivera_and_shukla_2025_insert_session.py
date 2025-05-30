@@ -16,7 +16,7 @@ from spyglass.utils.nwb_helper_fn import get_nwb_copy_filename
 
 # Custom Table Imports
 sys.path.append(
-    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/rivera_and_shukla_2025/spyglass_extensions"
+    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_extensions"
 )
 from task_leds import TaskLEDs
 
@@ -116,7 +116,7 @@ def test_video(nwbfile_path: Path):
 
 
 def main():
-    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN1_ses-07-20-2023.nwb")
+    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN4_ses-07-24-2023.nwb")
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
 
     (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()

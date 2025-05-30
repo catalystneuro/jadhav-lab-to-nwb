@@ -223,7 +223,7 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
         # from BaseRecordingExtractorInterface
         from ..tools.spikeinterface import add_recording_to_nwbfile, get_electrical_series_kwargs
 
-        if stub_test or self.subset_channels is not None:
+        if stub_test:
             recording = self.subset_recording(stub_test=stub_test)
         else:
             recording = self.recording_extractor

@@ -2,11 +2,8 @@
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import shutil
+from natsort import natsorted
 
-from ndx_pose import (
-    PoseEstimationSeries,
-)  # TODO: remove after this issue gets fixed: https://github.com/catalystneuro/neuroconv/issues/1143
 from neuroconv.utils import load_dict_from_file, dict_deep_update
 
 from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
@@ -47,7 +44,7 @@ def session_to_nwb(
 
     # Get epoch info
     epoch_folder_paths = list(session_folder_path.glob(rf"{session_folder_path.name}_S[0-9][0-9]_F[0-9][0-9]_*"))
-    epoch_folder_paths = sorted(epoch_folder_paths)
+    epoch_folder_paths = natsorted(epoch_folder_paths)
 
     source_data = dict()
     conversion_options = dict()
