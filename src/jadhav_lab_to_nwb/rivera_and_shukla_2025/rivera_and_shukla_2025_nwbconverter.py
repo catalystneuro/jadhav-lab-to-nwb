@@ -1,5 +1,9 @@
 """Primary NWBConverter class for this dataset."""
 from neuroconv import NWBConverter
+from pathlib import Path
+import pandas as pd
+import numpy as np
+import warnings
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     RiveraAndShukla2025BehaviorInterface,
@@ -78,10 +82,10 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
 
                 if "DeepLabCut1" in self.data_interface_objects:
                     dlc1_interface = self.data_interface_objects["DeepLabCut1"].dlc_interfaces[i]
-                    dlc1_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
+                    self.align_dlc_interface(aligned_timestamps=timestamps, dlc_interface=dlc1_interface)
                 if "DeepLabCut2" in self.data_interface_objects:
                     dlc2_interface = self.data_interface_objects["DeepLabCut2"].dlc_interfaces[i]
-                    dlc2_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
+                    self.align_dlc_interface(aligned_timestamps=timestamps, dlc_interface=dlc2_interface)
                 i += 1
             aligned_timestamps.append(epoch_timestamps)
             starting_time_shifts.append(epoch_starting_time_shifts[0])
@@ -96,3 +100,18 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             starting_time_shifts=starting_time_shifts
         )
         self.data_interface_objects["Behavior"].set_clock_rates(clock_rates=clock_rates)
+
+    def align_dlc_interface(self, aligned_timestamps: np.ndarray, dlc_interface):
+        file_path = Path(dlc_interface.source_data["file_path"])
+        if ".h5" in file_path.suffixes:
+            df = pd.read_hdf(file_path)
+        elif ".csv" in file_path.suffixes:
+            df = pd.read_csv(file_path, header=[0, 1, 2], index_col=0)
+        if df.shape[0] != len(aligned_timestamps):
+            msg = (
+                f"Number of rows in the DLC file ({df.shape[0]}) does not match the number of aligned timestamps "
+                f"({len(aligned_timestamps)}). Setting aligned timestamps to NaN."
+            )
+            warnings.warn(msg)
+            aligned_timestamps = np.ones((df.shape[0],)) * np.nan
+        dlc_interface.set_aligned_timestamps(aligned_timestamps=aligned_timestamps)
