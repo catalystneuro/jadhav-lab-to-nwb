@@ -116,7 +116,7 @@ def test_video(nwbfile_path: Path):
 
 
 def main():
-    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN4_ses-07-24-2023.nwb")
+    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN1_ses-07-20-2023.nwb")
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
 
     (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()
