@@ -120,13 +120,21 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             for epoch_name, dlc1_interfaces in epoch_name_to_dlc1_interfaces.items():
                 video_interface = epoch_name_to_video_interface[epoch_name]
                 aligned_timestamps = video_interface.get_timestamps()
-                for dlc_interface, timestamps in zip(dlc1_interfaces, aligned_timestamps, strict=True):
+                for dlc_interface in dlc1_interfaces:
+                    file_path = Path(dlc_interface.source_data["file_path"])
+                    segment_number = file_path.name.split(").")[1].split("DLC")[0]
+                    segment_index = int(segment_number) - 1
+                    timestamps = aligned_timestamps[segment_index]
                     self.align_dlc_interface(timestamps, dlc_interface)
         if "DeepLabCut2" in self.data_interface_objects:
             for epoch_name, dlc2_interfaces in epoch_name_to_dlc2_interfaces.items():
                 video_interface = epoch_name_to_video_interface[epoch_name]
                 aligned_timestamps = video_interface.get_timestamps()
-                for dlc_interface, timestamps in zip(dlc2_interfaces, aligned_timestamps, strict=True):
+                for dlc_interface in dlc2_interfaces:
+                    file_path = Path(dlc_interface.source_data["file_path"])
+                    segment_number = file_path.name.split(").")[1].split("DLC")[0]
+                    segment_index = int(segment_number) - 1
+                    timestamps = aligned_timestamps[segment_index]
                     self.align_dlc_interface(timestamps, dlc_interface)
 
     def get_epoch_name_mappings(self):

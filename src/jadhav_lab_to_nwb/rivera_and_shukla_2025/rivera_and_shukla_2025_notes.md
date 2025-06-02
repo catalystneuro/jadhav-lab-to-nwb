@@ -66,4 +66,5 @@
         CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-27-2023
 - Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-07-2023) have multiple videos/epoch
     - Added support for multi-segment epochs
-- The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it
+- The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it --> skipping
+- One session (CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023) has a missing DLC segment

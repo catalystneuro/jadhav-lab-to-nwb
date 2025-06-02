@@ -129,6 +129,8 @@ def get_session_to_nwb_kwargs_per_session(
         for subject_pair_folder in condition_folder_path.iterdir():
             subject_id1, subject_id2 = subject_pair_folder.name.split("-")
             for session_folder_path in subject_pair_folder.iterdir():
+                if session_folder_path.name == "07-17-2023":
+                    continue  # Skip this session bc it has duplicate data from another session (07-15-2023)
                 sub1_session_to_nwb_kwargs = dict(
                     session_folder_path=session_folder_path,
                     subject_id=subject_id1,
