@@ -68,3 +68,4 @@
     - Added support for multi-segment epochs
 - The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it --> skipping
 - One session (CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023) has a missing DLC segment
+- One session (CohortAS1/Social W/50%/XFN2-XFN4/09-21-2023) has ~~~ at the end of the behavior file
