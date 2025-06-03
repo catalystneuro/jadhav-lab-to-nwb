@@ -1,4 +1,9 @@
-"""Ingest all data from a converted NWB file into a spyglass database."""
+"""SpyGlass database insertion script for Rivera and Shukla 2025 dataset.
+
+This module provides functions for inserting converted NWB files from the Rivera and
+Shukla 2025 social behavior dataset into a SpyGlass database. It handles data ingestion,
+custom table population, and validation testing for the database integration pipeline.
+"""
 
 from pynwb import NWBHDF5IO
 import numpy as np
@@ -22,30 +27,37 @@ from task_leds import TaskLEDs
 
 
 def insert_task(nwbfile_path: Path):
-    """
-    Insert task data from an NWB file into a spyglass database.
+    """Insert task-specific data from NWB file into SpyGlass custom tables.
+
+    Populates custom TaskLEDs table with task-specific information extracted
+    from the NWB file. This function handles the insertion of experimental
+    task metadata that extends beyond standard SpyGlass tables.
 
     Parameters
     ----------
     nwbfile_path : Path
-        The path to the NWB file to insert.
+        Path to the NWB file containing task data to be inserted.
+        File must already be copied to SpyGlass raw data directory.
     """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
 
 
 def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err: bool = False):
-    """
-    Insert all data from a converted NWB file into a spyglass database.
+    """Insert complete session data from NWB file into SpyGlass database.
+
+    Performs comprehensive insertion of all session data including standard
+    SpyGlass tables and custom task-specific tables. This is the main entry
+    point for database ingestion of converted NWB files.
 
     Parameters
     ----------
     nwbfile_path : Path
-        The path to the NWB file to insert.
-    rollback_on_fail : bool
-        Whether to rollback the transaction if an error occurs.
-    raise_err : bool
-        Whether to raise an error if an error occurs.
+        Path to the converted NWB file to insert into the database.
+    rollback_on_fail : bool, optional
+        Whether to rollback database transaction if insertion fails, by default True.
+    raise_err : bool, optional
+        Whether to raise exceptions on insertion errors, by default False.
     """
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=rollback_on_fail, raise_err=raise_err)
     insert_task(nwbfile_path=nwbfile_path)
