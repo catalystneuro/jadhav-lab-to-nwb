@@ -1,4 +1,10 @@
-"""Primary NWBConverter class for this dataset."""
+"""NWB converter for Rivera and Shukla 2025 dataset conversion.
+
+This module provides the primary NWB converter class for the Rivera and Shukla 2025
+social behavior dataset. It orchestrates the conversion of multiple data streams
+(video, behavior, pose estimation, epochs) and handles temporal alignment across
+all data modalities with clock reset detection and correction.
+"""
 from neuroconv import NWBConverter
 from pathlib import Path
 import pandas as pd
@@ -17,7 +23,23 @@ from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 class RiveraAndShukla2025NWBConverter(NWBConverter):
-    """Primary conversion class."""
+    """NWB converter for Rivera and Shukla 2025 social behavior dataset.
+
+    This converter orchestrates the conversion of multi-modal experimental data
+    from social behavior experiments to NWB format. It handles temporal alignment
+    across video, behavioral events, pose estimation, and epoch data with
+    clock reset detection and correction algorithms.
+
+    The converter manages data from two subjects simultaneously and ensures
+    proper synchronization across all data streams despite potential timing
+    discontinuities from recording system resets.
+
+    Notes
+    -----
+    This converter is specifically designed for the Rivera and Shukla 2025 dataset
+    which involves multi-subject social behavior experiments with complex temporal
+    alignment requirements due to potential clock resets during long recordings.
+    """
 
     data_interface_classes = dict(
         Video=RiveraAndShukla2025VideoInterface,
@@ -28,6 +50,20 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        """Perform temporal alignment across all data interfaces.
+
+        Orchestrates the temporal alignment of all data modalities by detecting
+        clock resets, calculating aligned timestamps, and applying corrections
+        to each data interface. This method ensures temporal synchronization
+        across video, behavioral events, pose estimation, and epoch data.
+
+        Parameters
+        ----------
+        metadata : dict | None, optional
+            Metadata dictionary (not used in current implementation).
+        conversion_options : dict | None, optional
+            Conversion options dictionary (not used in current implementation).
+        """
         aligned_timestamps, starting_time_shifts, clock_rates, starting_frames = self.get_aligned_timing()
         self.align_video(aligned_timestamps=aligned_timestamps, starting_frames=starting_frames)
         self.align_epoch(aligned_timestamps=aligned_timestamps)
@@ -35,6 +71,17 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         self.align_dlc()
 
     def get_aligned_timing(self):
+        """Calculate aligned timestamps with clock reset detection and correction.
+
+        Analyzes video timestamp files to detect clock resets and calculates
+        corrected timestamps, time shifts, clock rates, and frame offsets for
+        all data streams. This is the core temporal alignment algorithm.
+
+        Returns
+        -------
+        tuple
+            A tuple containing aligned timestamps, time shifts, clock rates, and frame offsets.
+        """
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Check for clock resets
@@ -95,22 +142,68 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         return (aligned_timestamps, starting_time_shifts, clock_rates, starting_frames)
 
     def align_video(self, aligned_timestamps: list[list[np.ndarray]], starting_frames: list[list[int]]):
+        """Apply temporal alignment to video interfaces.
+
+        Sets aligned timestamps and starting frame offsets for all video interfaces
+        to ensure temporal synchronization across video segments and epochs.
+
+        Parameters
+        ----------
+        aligned_timestamps : list[list[np.ndarray]]
+            Nested list of timestamp arrays. Outer list corresponds to epochs,
+            inner list corresponds to segments within each epoch.
+        starting_frames : list[list[int]]
+            Nested list of starting frame indices for each video segment.
+        """
         video_interfaces = self.data_interface_objects["Video"].video_interfaces
         for video_interface, timestamps in zip(video_interfaces, aligned_timestamps, strict=True):
             video_interface.set_aligned_timestamps(aligned_timestamps=timestamps)
         self.data_interface_objects["Video"].set_starting_frames(starting_frames=starting_frames)
 
     def align_epoch(self, aligned_timestamps: list[list[np.ndarray]]):
+        """Apply temporal alignment to epoch interface.
+
+        Sets aligned timestamps for the epoch interface to ensure proper
+        temporal boundaries for experimental epochs.
+
+        Parameters
+        ----------
+        aligned_timestamps : list[list[np.ndarray]]
+            Nested list of timestamp arrays. Outer list corresponds to epochs,
+            inner list corresponds to segments within each epoch.
+        """
         epoch_interface = self.data_interface_objects["Epoch"]
         epoch_interface.set_aligned_timestamps(aligned_timestamps=aligned_timestamps)
 
     def align_behavior(self, starting_time_shifts: list[float], clock_rates: list[float]):
+        """Apply temporal alignment to behavior interface.
+
+        Sets time shifts and clock rates for the behavior interface to ensure
+        proper temporal alignment of behavioral events with other data streams.
+
+        Parameters
+        ----------
+        starting_time_shifts : list[float]
+            Time shift values for each epoch to account for clock resets.
+        clock_rates : list[float]
+            Clock rates (fps) for each epoch for timestamp conversion.
+        """
         behavior_interface = self.data_interface_objects["Behavior"]
         behavior_interface.set_epoch_starting_time_shifts(starting_time_shifts=starting_time_shifts)
         behavior_interface.set_clock_rates(clock_rates=clock_rates)
 
     def align_dlc(self):
-        # Note, this method requires that the video interfaces have already been aligned.
+        """Apply temporal alignment to DeepLabCut interfaces.
+
+        Aligns DeepLabCut pose estimation data with video timestamps by mapping
+        DLC files to their corresponding video segments and applying the aligned
+        timestamps from the video interfaces.
+
+        Notes
+        -----
+        This method requires that video interfaces have already been aligned
+        since it uses their timestamps for DLC alignment.
+        """
         (
             epoch_name_to_dlc1_interfaces,
             epoch_name_to_dlc2_interfaces,
@@ -138,6 +231,17 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                     self.align_dlc_interface(timestamps, dlc_interface)
 
     def get_epoch_name_mappings(self):
+        """Create mappings between epoch names and data interfaces.
+
+        Analyzes file names to extract epoch names and creates dictionaries
+        mapping epoch names to their corresponding DeepLabCut and video interfaces.
+        This enables proper alignment of DLC data with video timestamps.
+
+        Returns
+        -------
+        tuple
+            A tuple containing three dictionaries mapping epoch names to interfaces.
+        """
         epoch_name_to_dlc1_interfaces = {}
         if "DeepLabCut1" in self.data_interface_objects:
             for dlc_interface in self.data_interface_objects["DeepLabCut1"].dlc_interfaces:
@@ -167,6 +271,18 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         return epoch_name_to_dlc1_interfaces, epoch_name_to_dlc2_interfaces, epoch_name_to_video_interface
 
     def align_dlc_interface(self, aligned_timestamps: np.ndarray, dlc_interface):
+        """Apply temporal alignment to a single DeepLabCut interface.
+
+        Sets aligned timestamps for a DLC interface, handling potential mismatches
+        between the number of pose estimation frames and video timestamps.
+
+        Parameters
+        ----------
+        aligned_timestamps : np.ndarray
+            Array of aligned timestamps for this DLC segment.
+        dlc_interface : RiveraAndShukla2025DeepLabCutInterface
+            The DLC interface to align.
+        """
         file_path = Path(dlc_interface.source_data["file_path"])
         if ".h5" in file_path.suffixes:
             df = pd.read_hdf(file_path)
