@@ -1,3 +1,10 @@
+"""SpyGlass extension for task LED configuration data.
+
+This module provides a custom DataJoint table that extends SpyGlass functionality
+to store LED configuration information for behavioral tasks. It extracts LED
+setup details from NWB files and stores them in a structured database format
+for analysis and querying.
+"""
 import datajoint as dj
 from spyglass.utils import SpyglassMixin
 from spyglass.common.common_task import Task
@@ -9,7 +16,16 @@ schema = dj.schema("task_leds")
 
 @schema
 class TaskLEDs(SpyglassMixin, dj.Imported):
-    """Table to accompany spyglass.common.Task with extra information about LEDs used in tasks."""
+    """Custom SpyGlass table for storing task LED configuration information.
+
+    This table extends the standard SpyGlass Task table to include detailed
+    information about LED configurations used in behavioral experiments.
+    It stores individual LED names, their configurations, and spatial positions
+    for each experimental task.
+
+    The table inherits the primary key from the Task table and adds LED-specific
+    attributes, enabling queries that link task parameters with LED setup details.
+    """
 
     definition = """
     -> Task # Inherit primary key from Task
@@ -20,7 +36,24 @@ class TaskLEDs(SpyglassMixin, dj.Imported):
     """
 
     def make(self, key):
-        """Populate TaskLEDs from the epoch table in the NWB file."""
+        """Extract and populate LED configuration data from NWB file.
+
+        Reads task information from the NWB file's processing module and extracts
+        LED configuration details for each task. Parses comma-separated LED lists
+        and positions to create individual table entries for each LED.
+
+        Parameters
+        ----------
+        key : dict
+            Dictionary containing the primary key, must include 'nwb_file_name'.
+
+        Notes
+        -----
+        This method expects the NWB file to contain a 'tasks' processing module
+        with task tables that include 'led_list', 'led_positions', and
+        'led_configuration' columns. LED names and positions are parsed from
+        comma-separated strings to create individual database entries.
+        """
 
         nwb_file_name = key["nwb_file_name"]
         nwb_file_abspath = Nwbfile().get_abs_path(nwb_file_name)
