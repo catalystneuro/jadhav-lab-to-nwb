@@ -1,3 +1,23 @@
+"""SpikeInterface integration tools for NWB conversion with SpyGlass compatibility.
+
+This module provides comprehensive tools for converting SpikeInterface recording and sorting
+objects to NWB format while ensuring compatibility with the SpyGlass database system.
+It handles electrophysiology data including raw recordings, LFP, spike sorting results,
+and associated metadata.
+
+The module extends NeuroConv's SpikeInterface tools with custom device and electrode group
+classes from ndx-franklab-novela to ensure proper SpyGlass integration. It provides functions
+for adding devices, electrode groups, electrodes, electrical series, and units tables to
+NWB files with proper metadata handling and chunked data writing for large datasets.
+
+Key Features:
+- SpyGlass-compatible device and electrode group creation
+- Chunked data writing for memory-efficient processing
+- Comprehensive metadata handling and validation
+- Support for multi-segment recordings and sorting
+- Quality metrics and template data integration
+- Flexible electrode mapping and property handling
+"""
 import uuid
 import warnings
 from collections import defaultdict
