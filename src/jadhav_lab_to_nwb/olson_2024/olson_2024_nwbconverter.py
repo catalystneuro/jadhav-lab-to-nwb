@@ -1,4 +1,10 @@
-"""Primary NWBConverter class for this dataset."""
+"""NWB converter for Olson 2024 dataset.
+
+This module provides the main NWB converter class for the Olson 2024
+electrophysiology dataset. It orchestrates the conversion of multiple data
+modalities including electrophysiology, behavior, video, and pose estimation
+data into a unified NWB file format.
+"""
 from datetime import datetime
 from pathlib import Path
 from neuroconv import NWBConverter
@@ -17,7 +23,13 @@ from ..tools.spikegadgets import readCameraModuleTimeStamps
 
 
 class Olson2024NWBConverter(NWBConverter):
-    """Primary conversion class for my extracellular electrophysiology dataset."""
+    """Main NWB converter for Olson 2024 electrophysiology dataset.
+
+    This converter orchestrates the integration of multiple data modalities from
+    the Olson 2024 experiments into a unified NWB file. It handles temporal
+    alignment between video, pose estimation, electrophysiology, and behavioral
+    data streams to ensure proper synchronization across all recorded modalities.
+    """
 
     data_interface_classes = dict(
         Recording=Olson2024SpikeGadgetsRecordingInterface,
@@ -30,6 +42,19 @@ class Olson2024NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        """Temporally align video and pose estimation data interfaces.
+
+        Reads camera module timestamps from SpikeGadgets system and applies them
+        to both video and DeepLabCut interfaces to ensure temporal synchronization
+        between behavioral video recordings and pose estimation data.
+
+        Parameters
+        ----------
+        metadata : dict, optional
+            Metadata dictionary (not used in current implementation).
+        conversion_options : dict, optional
+            Conversion options dictionary (not used in current implementation).
+        """
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Align interface timestamps
