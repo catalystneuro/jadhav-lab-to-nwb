@@ -1,4 +1,9 @@
-"""Primary class for converting experiment-specific spike sorting."""
+"""Spike sorting interface for Olson 2024 dataset conversion.
+
+This module provides the spike sorting data interface for converting spike sorting
+results from the Olson 2024 electrophysiology dataset. It handles spike times
+and unit statistics from tetrode recordings and converts them to NWB format.
+"""
 from pynwb.file import NWBFile
 from pydantic import DirectoryPath
 from pathlib import Path
@@ -8,14 +13,43 @@ from neuroconv.basedatainterface import BaseDataInterface
 
 
 class Olson2024SortingInterface(BaseDataInterface):
-    """Sorting interface for olson_2024 conversion"""
+    """Data interface for converting Olson 2024 spike sorting data to NWB format.
+
+    This interface handles spike sorting results from tetrode recordings,
+    including spike times and unit statistics. It processes data from multiple
+    tetrodes and adds units with comprehensive metadata to the NWB file.
+    """
 
     keywords = ("extracellular electrophysiology", "spike sorting")
 
     def __init__(self, spike_times_folder_path: DirectoryPath, unit_stats_folder_path: DirectoryPath):
+        """Initialize the Olson 2024 spike sorting interface.
+
+        Parameters
+        ----------
+        spike_times_folder_path : DirectoryPath
+            Path to directory containing spike times files (.txt). Each file contains
+            spike times for units from a single tetrode with columns: unitInd, time.
+        unit_stats_folder_path : DirectoryPath
+            Path to directory containing unit statistics files (.unitexp.txt). Each file
+            contains waveform statistics and quality metrics for units from a tetrode.
+        """
         super().__init__(spike_times_folder_path=spike_times_folder_path, unit_stats_folder_path=unit_stats_folder_path)
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        """Add spike sorting data to the NWB file.
+
+        Processes spike times and unit statistics files to add units with comprehensive
+        metadata to the NWB file. Creates custom unit columns for tetrode-specific
+        information and waveform characteristics.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add spike sorting data to.
+        metadata : dict
+            Metadata dictionary (not used in current implementation).
+        """
         spike_times_folder_path = Path(self.source_data["spike_times_folder_path"])
         unit_stats_folder_path = Path(self.source_data["unit_stats_folder_path"])
         nwbfile.add_unit_column(name="nTrode", description="The tetrode number for this unit")
