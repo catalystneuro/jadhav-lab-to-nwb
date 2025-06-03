@@ -103,7 +103,6 @@ Each conversion is organized in a directory of its own in the `src` directory:
             │   ├── olson_2024_metadata.yaml
             │   ├── olson_2024_notes.md
             │   ├── olson_2024_nwbconverter.py
-            │   ├── olson_2024_requirements.txt
             │   ├── olson_2024_sorting_interface.py
             │   ├── olson_2024_spike_gadgets_lfp_interface.py
             │   ├── olson_2024_spike_gadgets_recording_interface.py
@@ -124,24 +123,6 @@ Each conversion is organized in a directory of its own in the `src` directory:
             ├── spyglass_extensions/
             │   ├── __init__.py
             │   └── task_leds.py
-            ├── spyglass_mock/
-            │   ├── __init__.py
-            │   ├── behavior_only_dio_bug.py
-            │   ├── custom_epoch_tables.py
-            │   ├── dj_local_conf.json
-            │   ├── ingest_behavior.py
-            │   ├── ingest_ephys.py
-            │   ├── ingest_epochs.py
-            │   ├── ingest_lfp.py
-            │   ├── ingest_sorting.py
-            │   ├── ingest_video.py
-            │   ├── mock_ephys_and_behavior_nwbfile.py
-            │   ├── mock_ephys_nwbfile.py
-            │   ├── mock_epoch_and_video_nwbfile.py
-            │   ├── mock_epoch_nwbfile.py
-            │   ├── mock_lfp_nwbfile.py
-            │   ├── mock_sorting_nwbfile.py
-            │   └── rate_based_pose_estimation_bug.py
             ├── tools/
             │   ├── __init__.py
             │   ├── spikegadgets.py
@@ -190,6 +171,8 @@ For the conversion `olson_2024` you can find a directory located in `src/jadhav_
 ### Conversion Scripts
 * `olson_2024_convert_session.py` : Converts a single experimental session with all data modalities. Automatically discovers epoch folders and configures all interfaces.
 * `olson_2024_convert_all_sessions.py` : Batch conversion script for multiple sessions with parallel processing and error handling.
+
+### NWB Converter
 * `olson_2024_nwbconverter.py` : Main converter class that orchestrates all data interfaces and handles temporal alignment between modalities.
 
 ### Spyglass Integration
@@ -198,7 +181,6 @@ For the conversion `olson_2024` you can find a directory located in `src/jadhav_
 ### Configuration Files
 * `olson_2024_metadata.yaml` : High-level metadata including subject information, experimental setup, and electrode configurations.
 * `olson_2024_notes.md` : Detailed conversion notes, edge cases, and dataset-specific considerations.
-* `olson_2024_requirements.txt` : Conversion-specific dependencies and package versions.
 
 ## Rivera and Shukla 2025 Dataset Conversion
 
@@ -213,6 +195,8 @@ For the conversion `rivera_and_shukla_2025` you can find a directory located in 
 ### Conversion Scripts
 * `rivera_and_shukla_2025_convert_session.py` : Single session conversion for this dataset.
 * `rivera_and_shukla_2025_convert_all_sessions.py` : Batch conversion with dataset-specific session discovery.
+
+### NWB Converter
 * `rivera_and_shukla_2025_nwbconverter.py` : Converter class configured for this dataset's data structure.
 
 ### Spyglass Integration
@@ -233,13 +217,6 @@ For the conversion `rivera_and_shukla_2025` you can find a directory located in 
 * `tools/spikeinterface.py` : SpikeInterface integration utilities for spike sorting data processing and validation.
 * `utils/utils.py` : General utility functions for file handling, data validation, and common conversion operations.
 
-### Spyglass Mock System
-The `spyglass_mock/` directory contains a complete testing framework for Spyglass integration:
-* Database ingestion scripts for each data modality
-* Mock NWB file generators for testing
-* Custom epoch table definitions
-* Bug reproduction and testing scripts
-
 ## Running a Conversion
 
 ### Converting the Olson 2024 Dataset
@@ -254,20 +231,22 @@ To convert a single session:
     python src/jadhav_lab_to_nwb/olson_2024/olson_2024_convert_session.py
     ```
 
-To convert the entire dataset:
-1. Update `data_dir_path` and `output_dir_path` in `src/jadhav_lab_to_nwb/olson_2024/olson_2024_convert_all_sessions.py`.
-2. Implement the `get_session_to_nwb_kwargs_per_session()` function to specify which sessions to convert.
-3. Run the batch conversion:
-    ```bash
-    python src/jadhav_lab_to_nwb/olson_2024/olson_2024_convert_all_sessions.py
-    ```
-
 ### Converting the Rivera and Shukla 2025 Dataset
 
-Similar process but using the `rivera_and_shukla_2025` scripts:
-```bash
-python src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_session.py
-```
+To convert a single session:
+1. In `src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_session.py`, update the `data_dir_path` and
+    `output_dir_path` to appropriate local paths following the same pattern as the Olson 2024 dataset.
+2. Run the conversion:
+    ```bash
+    python src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_session.py
+    ```
+
+To convert the entire dataset:
+1. Update `data_dir_path` and `output_dir_path` in `src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_all_sessions.py`.
+2. Run the batch conversion:
+    ```bash
+    python src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_all_sessions.py
+    ```
 
 ### Spyglass Database Insertion
 
@@ -306,7 +285,7 @@ data_dir_path/
 
 To create a new conversion:
 
-1. **Create a new dataset directory** following the naming convention `{lab}_{year}`
+1. **Create a new dataset directory** following the naming convention `{experimenter}_{year}`
 2. **Implement dataset-specific interfaces** by inheriting from base classes in `datainterfaces/`
 3. **Create an NWBConverter class** that combines all interfaces for your dataset
 4. **Write conversion scripts** for single sessions and batch processing
