@@ -1,4 +1,10 @@
-"""Primary class for converting experiment-specific behavior."""
+"""Epoch interface for Rivera and Shukla 2025 dataset conversion.
+
+This module provides the interface for converting epoch data from the Rivera and
+Shukla 2025 social behavior experiment to NWB format. It handles the creation of
+epoch tables with proper temporal boundaries and task associations for multi-subject
+social behavior experiments.
+"""
 from pynwb.file import NWBFile
 
 from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
@@ -6,9 +12,28 @@ from ..datainterfaces.base_epoch_interface import BaseEpochInterface
 
 
 class RiveraAndShukla2025EpochInterface(BaseEpochInterface):
-    """Epoch interface for rivera_and_shukla_2025 conversion"""
+    """Epoch interface for Rivera and Shukla 2025 social behavior dataset.
+
+    This interface handles the conversion of epoch data from social behavior
+    experiments involving two subjects. It creates epoch tables with proper
+    temporal boundaries derived from video timestamps and associates epochs
+    with appropriate tasks based on subject positioning and experimental design.
+    """
 
     def add_epochs_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        """Add epoch data to NWB file with subject-specific task associations.
+
+        Creates epoch entries in the NWB file based on video timestamp boundaries
+        and associates each epoch with the appropriate task based on the subject's
+        spatial positioning in the social behavior experiment.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add epoch data to.
+        metadata : dict
+            Metadata dictionary containing subject information and task definitions.
+        """
         timestamps = self.get_timestamps()
         video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
         subject_id = metadata["Subject"]["subject_id"]
