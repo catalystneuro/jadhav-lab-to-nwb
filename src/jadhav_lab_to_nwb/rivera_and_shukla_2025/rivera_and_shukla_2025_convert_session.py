@@ -1,4 +1,10 @@
-"""Primary script to run to convert an entire session for of data using the NWBConverter."""
+"""Session conversion script for Rivera and Shukla 2025 dataset.
+
+This module provides the primary conversion function for converting individual
+sessions from the Rivera and Shukla 2025 social behavior dataset to NWB format.
+It handles file discovery, data organization, metadata configuration, and
+conversion orchestration for multi-subject social behavior experiments.
+"""
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -21,6 +27,47 @@ def session_to_nwb(
     stub_test: bool = False,
     verbose: bool = False,
 ):
+    """Convert a single session from Rivera and Shukla 2025 dataset to NWB format.
+
+    Performs complete conversion of a social behavior session including video,
+    behavioral events, pose estimation, and epoch data. Handles file discovery,
+    data organization, temporal alignment, and metadata configuration for
+    multi-subject experiments.
+
+    The function automatically discovers and organizes data files by epoch,
+    configures subject-specific metadata, applies experimental condition
+    information, and runs the full conversion pipeline.
+
+    Parameters
+    ----------
+    session_folder_path : DirectoryPath
+        Path to the session folder containing 'DIO data' and 'DLC data' subfolders.
+        Session folder name should be in MM-DD-YYYY format.
+    subject_id : str
+        Identifier for the subject being converted (e.g., 'XFN1', 'XFN3').
+        Must match one of the subjects in the session folder parent name.
+    output_dir_path : DirectoryPath
+        Directory path where the converted NWB file will be saved.
+        File will be named 'sub-{subject_id}_ses-{session_id}.nwb'.
+    experimental_condition : Literal["100%", "50%", "Opaque"]
+        Experimental condition for the session, used to set session description.
+        - "100%": 100% reward probability condition
+        - "50%": 50% reward probability condition
+        - "Opaque": Opaque barrier condition
+    stub_test : bool, optional
+        Whether to run conversion in stub test mode (not implemented), by default False.
+    verbose : bool, optional
+        Whether to print progress messages during conversion, by default False.
+
+    Notes
+    -----
+    The function expects a specific directory structure:
+    - session_folder_path/DIO data/Raw/ (contains .h264, .videoTimeStamps, .stateScriptLog)
+    - session_folder_path/DLC data/Raw/ (contains .h5 pose estimation files)
+
+    Files are automatically organized by epoch using the naming convention parser.
+    Missing DLC data is handled gracefully with optional conversion.
+    """
     session_folder_path = Path(session_folder_path)
     session_id = session_folder_path.name
     dio_folder_path = session_folder_path / "DIO data" / "Raw"
