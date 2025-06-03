@@ -1,4 +1,9 @@
-"""Primary class for converting SpikeGadgets LFP data."""
+"""SpikeGadgets LFP interface for Olson 2024 dataset conversion.
+
+This module provides the LFP (Local Field Potential) data interface for converting
+SpikeGadgets LFP recordings from the Olson 2024 electrophysiology dataset. It handles
+processed LFP data files and integrates them with electrode information in NWB format.
+"""
 from pynwb.file import NWBFile
 from pathlib import Path
 from pydantic import DirectoryPath
@@ -13,14 +18,36 @@ from ..tools.spikegadgets import readTrodesExtractedDataFile
 
 
 class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
-    """SpikeGadgets LFP interface for olson_2024 conversion"""
+    """Data interface for converting Olson 2024 SpikeGadgets LFP data to NWB format.
+
+    This interface handles processed Local Field Potential (LFP) data from SpikeGadgets
+    recordings. It reads LFP data files (.dat), matches them with electrode information,
+    and creates properly formatted LFP electrical series in the NWB file.
+    """
 
     keywords = ("lfp",)
 
     def __init__(self, folder_path: DirectoryPath):
+        """Initialize the Olson 2024 SpikeGadgets LFP interface.
+
+        Parameters
+        ----------
+        folder_path : DirectoryPath
+            Path to directory containing LFP data files (.dat). Each file contains
+            LFP data for a single electrode channel with naming convention
+            'nt{tetrode_number}ch{channel_number}.dat'. Must also contain a
+            timestamps file 'SL18_D19.timestamps.dat'.
+        """
         super().__init__(folder_path=folder_path)
 
     def get_metadata_schema(self):
+        """Get metadata schema for LFP data.
+
+        Returns
+        -------
+        dict
+            Metadata schema including LFP electrical series requirements.
+        """
         metadata_schema = super().get_metadata_schema()
         metadata_schema["properties"]["Ecephys"] = get_base_schema(tag="Ecephys")
         metadata_schema["properties"]["Ecephys"]["properties"]["LFP"] = {
@@ -44,6 +71,28 @@ class Olson2024SpikeGadgetsLFPInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, stub_test: bool = False):
+        """Add LFP data to the NWB file.
+
+        Reads LFP data files, matches them with electrode information, and creates
+        an LFP electrical series in the ecephys processing module. Validates that
+        all channels marked as LFP channels have corresponding data files.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add LFP data to.
+        metadata : dict
+            Metadata dictionary containing LFP electrical series configuration.
+        stub_test : bool, optional
+            If True, only process first 100 samples for testing purposes.
+            Default is False.
+
+        Raises
+        ------
+        AssertionError
+            If a channel has LFP data but is not marked as an LFP channel,
+            or if LFP data files have different conversion factors.
+        """
         folder_path = Path(self.source_data["folder_path"])
         electrodes_table = nwbfile.electrodes.to_dataframe()
         lfp_data, lfp_electrodes, conversions = [], [], []
