@@ -1,4 +1,9 @@
-"""Primary class for converting experiment-specific behavior."""
+"""Epoch interface for Olson 2024 dataset conversion.
+
+This module provides the epoch data interface for converting experimental epoch
+information from the Olson 2024 electrophysiology dataset. It handles epoch
+boundaries and task assignments for different experimental conditions.
+"""
 from pynwb.file import NWBFile
 
 from ..utils.utils import olson_2024_get_epoch_name
@@ -6,9 +11,33 @@ from ..datainterfaces.base_epoch_interface import BaseEpochInterface
 
 
 class Olson2024EpochInterface(BaseEpochInterface):
-    """Epoch interface for olson_2024 conversion"""
+    """Data interface for converting Olson 2024 experimental epoch data to NWB format.
+
+    This interface extends the base epoch interface to handle dataset-specific
+    epoch naming conventions and task assignments for the Olson 2024
+    electrophysiology experiments.
+    """
 
     def add_epochs_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        """Add experimental epochs to the NWB file with task assignments.
+
+        Processes video timestamp files to extract epoch boundaries and assigns
+        epochs to appropriate tasks based on naming conventions. Updates task
+        metadata with epoch assignments for Sleep and HomeAltVisitAll tasks.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add epochs to.
+        metadata : dict
+            Metadata dictionary containing task definitions that will be updated
+            with epoch assignments.
+
+        Raises
+        ------
+        ValueError
+            If epoch name doesn't match expected task patterns (SLP or HomeAltVisitAll).
+        """
         timestamps = self.get_timestamps()
         video_timestamps_file_paths = self.source_data["video_timestamps_file_paths"]
         for epoch_timestamps, video_timestamps_file_path in zip(timestamps, video_timestamps_file_paths):
