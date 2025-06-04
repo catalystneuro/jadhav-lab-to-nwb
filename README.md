@@ -293,3 +293,9 @@ To create a new conversion:
 6. **Create metadata files** with dataset-specific experimental parameters
 
 Each conversion should be self-contained within its directory and follow the established patterns for consistency and maintainability.
+
+## TODOs
+Some items have been left as to-dos for the Jadhav Lab. Below is a complete list
+- Update the NIH Award Number on the 2 dandisets
+- Provide age for Olson 2024 SL18
+- Config.yamls
