@@ -148,7 +148,6 @@ def add_electrode_groups_to_nwbfile(recording: BaseRecording, nwbfile: pynwb.NWB
         shanks_electrodes = group_name_to_shanks_electrodes[group_name]
         shank = Shank(name="0", shanks_electrodes=shanks_electrodes)
         probe_name = group_metadata.get("probe_name", f"{group_name}_probe")
-        # TODO: Condense probe types and descriptions once https://github.com/LorenFrankLab/spyglass/issues/1216 is fixed.
         probe_type = group_metadata.get("probe_type", f"{group_name}_probe_type")
         probe_units = group_metadata.get("probe_units", "unknown")
         probe_description = group_metadata.get("probe_description", f"{probe_name} description")

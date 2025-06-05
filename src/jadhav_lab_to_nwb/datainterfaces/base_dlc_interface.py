@@ -2,13 +2,10 @@
 from abc import abstractmethod
 from pynwb.file import NWBFile
 from pydantic import FilePath
-from typing import Optional
 
 from neuroconv.utils import DeepDict, dict_deep_update
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.datainterfaces import DeepLabCutInterface
-
-from ..utils.utils import rivera_and_shukla_2025_get_epoch_name
 
 
 class BaseDeepLabCutInterface(BaseDataInterface):
@@ -18,31 +15,37 @@ class BaseDeepLabCutInterface(BaseDataInterface):
 
     def __init__(
         self,
-        file_paths: list[FilePath],
-        config_file_paths: Optional[list[FilePath]] = None,
+        file_paths: list[list[FilePath] | FilePath],
+        config_file_paths: list[list[FilePath] | FilePath] | None = None,
         subject_id: str | None = None,
         verbose: bool = True,
     ):
         # file_paths must be sorted in the order that the videos were recorded
         assert len(file_paths) > 0, "At least one file path must be provided."
         if config_file_paths is None:
-            config_file_paths = [None] * len(file_paths)
+            config_file_paths = [[None] * len(fp) if isinstance(fp, list) else None for fp in file_paths]
         msg = "The number of file paths must match the number of config file paths."
         assert len(file_paths) == len(config_file_paths), msg
         dlc_interfaces = []
-        for file_path, config_file_path in zip(file_paths, config_file_paths):
-            subject_name = self.get_subject_name(file_name=file_path.name, subject_id=subject_id)
-            pose_estimation_metadata_key = self.get_pose_estimation_metadata_key(
-                file_name=file_path.name, subject_id=subject_id
-            )
-            dlc_interface = DeepLabCutInterface(
-                file_path=file_path,
-                config_file_path=config_file_path,
-                subject_name=subject_name,
-                pose_estimation_metadata_key=pose_estimation_metadata_key,
-                verbose=verbose,
-            )
-            dlc_interfaces.append(dlc_interface)
+        for epoch_file_paths, epoch_config_file_paths in zip(file_paths, config_file_paths):
+            if not isinstance(epoch_file_paths, list):
+                epoch_file_paths = [epoch_file_paths]
+            if not isinstance(epoch_config_file_paths, list):
+                epoch_config_file_paths = [epoch_config_file_paths]
+            assert len(epoch_file_paths) == len(epoch_config_file_paths), msg
+            for file_path, config_file_path in zip(epoch_file_paths, epoch_config_file_paths):
+                subject_name = self.get_subject_name(file_name=file_path.name, subject_id=subject_id)
+                pose_estimation_metadata_key = self.get_pose_estimation_metadata_key(
+                    file_name=file_path.name, subject_id=subject_id
+                )
+                dlc_interface = DeepLabCutInterface(
+                    file_path=file_path,
+                    config_file_path=config_file_path,
+                    subject_name=subject_name,
+                    pose_estimation_metadata_key=pose_estimation_metadata_key,
+                    verbose=verbose,
+                )
+                dlc_interfaces.append(dlc_interface)
         self.dlc_interfaces = dlc_interfaces
 
     @abstractmethod

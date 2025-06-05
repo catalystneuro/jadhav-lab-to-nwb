@@ -16,7 +16,7 @@ from spyglass.utils.nwb_helper_fn import get_nwb_copy_filename
 
 # Custom Table Imports
 sys.path.append(
-    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/rivera_and_shukla_2025/spyglass_extensions"
+    "/Users/pauladkisson/Documents/CatalystNeuro/JadhavConv/jadhav-lab-to-nwb/src/jadhav_lab_to_nwb/spyglass_extensions"
 )
 from task_leds import TaskLEDs
 

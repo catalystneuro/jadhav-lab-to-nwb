@@ -29,9 +29,10 @@ class RiveraAndShukla2025DeepLabCutInterface(BaseDeepLabCutInterface):
 
     def get_pose_estimation_metadata_key(self, file_name: str, subject_id: str | None = None) -> str:
         epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_name)
+        segment_number = file_name.split(").")[1].split("DLC")[0]
         epoch_number, subject_id1, subject_id2 = epoch_name.split("-")
         subject_id = subject_id1 if subject_id1 == subject_id else subject_id2
-        pose_estimation_metadata_key = f"PoseEstimation_{epoch_number}-{subject_id}"
+        pose_estimation_metadata_key = f"PoseEstimation_{epoch_number}-{subject_id}-{segment_number}"
         return pose_estimation_metadata_key
 
     def get_task_name(self, dlc_interface) -> str:

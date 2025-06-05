@@ -62,7 +62,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
                 lines = file.readlines()
             for i, line in enumerate(lines):
                 line = line.strip()
-                if line.startswith("#"):
+                if line.startswith("#") or line == "~~~":
                     continue  # skip comments
                 timestamp, event_id = line.split(" ", 1)
                 timestamp = float(timestamp) / clock_rate + starting_time_shift

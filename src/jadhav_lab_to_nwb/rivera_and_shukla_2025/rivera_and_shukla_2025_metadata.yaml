@@ -5,7 +5,6 @@ NWBFile:
     Individuals with autism spectrum disorders have severe cognitive and social deficits.
     However, little is known about the underlying causes and neural mechanisms associated with these deficits.
     Our study involves looking into the behavior of wild-type and Fmr1-/y rat pairs on W mazes where they are required to cooperate in order to get a joint reward.
-  session_description: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 100% of the time when both rats poked the same well.
   institution: Brandeis University
   lab: Jadhav
   experimenter:
@@ -13,6 +12,12 @@ NWBFile:
     - Rivera, Edward L.
     - Bladon, John H.
     - Jadhav, Shantanu P.
+
+SessionMaps:
+   condition_to_session_description:
+    100%: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 100% of the time when both rats poked the same well.
+    50%: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 50% of the time when both rats poked the same well.
+    Opaque: Rats performed a cooperative maze task in which a pair of rats must cooperate by picking the same well in order to get a joint reward. Rewards were delivered 100% of the time when both rats poked the same well, but an opaque barrier was placed between the two mazes so the rats could not see each other.
 
 Subject:
   description: Long Evans Rat

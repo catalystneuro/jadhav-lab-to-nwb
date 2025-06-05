@@ -27,3 +27,45 @@
 - nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
 - matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
 - Spyglass DIOEvents depends on ephys, but the example data provided doesn't have ephys... --> what to do, what to do?
+
+## Edge cases
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
+    - Full List
+        CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-14-2023
+        CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-21-2023
+        CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023
+        CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-31-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-24-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-30-2023
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-16-2023) are missing DLC epochs
+    - Full List
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-16-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-06-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-13-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-14-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-15-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-18-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-20-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-21-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/09-22-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-17-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-18-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-28-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/08-29-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/09-01-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/09-06-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/09-13-2023
+        CoopLearnProject/CohortAS1/Social W/50%/XFN2-XFN4/09-14-2023
+- One of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-15-2023) have incomplete epochs
+    - This is just a video of the mazes without behavior --> skipping
+- 2 of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-27-2023) have corrupted hdf5 (and csv) files
+    - Skipping corrupted DLC
+    - Full List
+        CoopLearnProject/CohortAS1/Social W/100%/XFN1-XFN3/07-27-2023
+        CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-27-2023
+- Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-07-2023) have multiple videos/epoch
+    - Added support for multi-segment epochs
+- The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it --> skipping
+- One session (CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023) has a missing DLC segment
+- One session (CohortAS1/Social W/50%/XFN2-XFN4/09-21-2023) has ~~~ at the end of the behavior file
