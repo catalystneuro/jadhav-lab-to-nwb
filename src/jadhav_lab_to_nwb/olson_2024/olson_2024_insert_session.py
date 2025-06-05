@@ -1,4 +1,10 @@
-"""Ingest all data from a converted NWB file into a spyglass database."""
+"""SpyGlass database insertion script for Olson 2024 dataset.
+
+This module provides functionality for inserting converted NWB files from the
+Olson 2024 dataset into a SpyGlass database. It handles the complete ingestion
+workflow including electrophysiology, behavior, video, spike sorting, and custom
+task data, along with testing to verify data integrity.
+"""
 
 from pynwb import NWBHDF5IO
 import numpy as np
@@ -36,16 +42,23 @@ from tqdm import tqdm
 
 
 def insert_sorting(nwbfile_path: Path):
-    """
-    Insert spike sorting data from an NWB file into a spyglass database.
+    """Insert spike sorting data and unit annotations into SpyGlass database.
 
-    This function adds UnitAnnotation data from the units table in the NWB file to the UnitAnnotation table in the
-    spyglass database. The annotations are added as labels or quantifications depending on the type of annotation.
+    Creates a sorted spikes group containing all units and adds detailed unit
+    annotations including tetrode information, waveform statistics, and unit
+    identifiers. Annotations are categorized as either labels (categorical)
+    or quantifications (numerical) based on their data type.
 
     Parameters
     ----------
     nwbfile_path : Path
-        The path to the NWB file to insert.
+        Path to the NWB file containing spike sorting results and unit metadata.
+
+    Notes
+    -----
+    The function creates the following annotations:
+    - Labels: nTrode, unitInd, globalID
+    - Quantifications: nWaveforms, waveformFWHM, waveformPeakMinusTrough
     """
     io = NWBHDF5IO(nwbfile_path, "r")
     nwbfile = io.read()
@@ -88,30 +101,39 @@ def insert_sorting(nwbfile_path: Path):
 
 
 def insert_task(nwbfile_path: Path):
-    """
-    Insert task data from an NWB file into a spyglass database.
+    """Insert custom task LED data into SpyGlass database.
+
+    Processes task-specific LED behavioral data using the custom TaskLEDs
+    extension table. This handles experiment-specific behavioral markers
+    and task events that are not part of standard SpyGlass tables.
 
     Parameters
     ----------
     nwbfile_path : Path
-        The path to the NWB file to insert.
+        Path to the NWB file containing task and behavioral data.
     """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
 
 
 def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err: bool = False):
-    """
-    Insert all data from a converted NWB file into a spyglass database.
+    """Insert complete experimental session data into SpyGlass database.
+
+    Orchestrates the full insertion workflow for an NWB file including standard
+    SpyGlass session data (ephys, behavior, video, LFP) and custom extensions
+    (spike sorting annotations, task LEDs). This is the main entry point for
+    database ingestion.
 
     Parameters
     ----------
     nwbfile_path : Path
-        The path to the NWB file to insert.
-    rollback_on_fail : bool
-        Whether to rollback the transaction if an error occurs.
-    raise_err : bool
-        Whether to raise an error if an error occurs.
+        Path to the converted NWB file to insert into the database.
+    rollback_on_fail : bool, optional
+        Whether to rollback database transaction if any insertion fails.
+        Default is True for data integrity.
+    raise_err : bool, optional
+        Whether to raise exceptions on insertion errors. Default is False
+        to allow graceful error handling.
     """
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=rollback_on_fail, raise_err=raise_err)
     insert_sorting(nwbfile_path=nwbfile_path)
@@ -119,6 +141,17 @@ def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err:
 
 
 def print_tables(nwbfile_path: Path):
+    """Print database table contents for debugging and verification.
+
+    Outputs the contents of all relevant SpyGlass tables to a text file
+    for inspection and debugging purposes. Useful for verifying that
+    data was inserted correctly.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the NWB file that was inserted into the database.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     with open("tables.txt", "w") as f:
         print("=== NWB File ===", file=f)
@@ -170,6 +203,22 @@ def print_tables(nwbfile_path: Path):
 
 
 def test_behavior(nwbfile_path: Path):
+    """Test behavioral data integrity between NWB file and SpyGlass database.
+
+    Verifies that DIO event data was correctly inserted by comparing the first
+    100 data points of reward_well_1 events between the original NWB file and
+    the SpyGlass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If data arrays do not match between NWB and SpyGlass.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     time_series = (
         sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name, "dio_event_name": "reward_well_1"}
@@ -184,6 +233,21 @@ def test_behavior(nwbfile_path: Path):
 
 
 def test_ephys(nwbfile_path: Path):
+    """Test electrophysiology data integrity between NWB file and SpyGlass database.
+
+    Verifies that raw electrical series data was correctly inserted by comparing
+    the first 100 data points between the original NWB file and SpyGlass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If data arrays do not match between NWB and SpyGlass.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     electrical_series = (sgc.Raw & {"nwb_file_name": nwb_copy_file_name}).fetch_nwb()[0]["raw"]
     spyglass_raw_data = np.asarray(electrical_series.data[:100])
@@ -194,6 +258,21 @@ def test_ephys(nwbfile_path: Path):
 
 
 def test_epoch(nwbfile_path: Path):
+    """Test epoch data integrity between NWB file and SpyGlass database.
+
+    Verifies that task epoch information was correctly inserted by comparing
+    the first task epoch metadata between expected values and database contents.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If epoch metadata does not match expected values.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     first_task_epoch = (sgc.TaskEpoch & {"nwb_file_name": nwb_copy_file_name, "epoch": 1}).fetch1()
     expected_first_task_epoch = {
@@ -209,6 +288,21 @@ def test_epoch(nwbfile_path: Path):
 
 
 def test_lfp(nwbfile_path: Path):
+    """Test LFP data integrity between NWB file and SpyGlass database.
+
+    Verifies that local field potential data was correctly inserted by comparing
+    the first 100 data points between the original NWB file and SpyGlass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If data arrays do not match between NWB and SpyGlass.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     lfp_electrical_series = (sglfp.ImportedLFP & {"nwb_file_name": nwb_copy_file_name}).fetch_nwb()[0]["lfp"]
     spyglass_lfp_data = np.asarray(lfp_electrical_series.data[:100])
@@ -221,6 +315,21 @@ def test_lfp(nwbfile_path: Path):
 
 
 def test_sorting(nwbfile_path: Path):
+    """Test spike sorting data integrity between NWB file and SpyGlass database.
+
+    Verifies that spike times for all units were correctly inserted by comparing
+    spike time arrays between the original NWB file and SpyGlass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If spike time arrays do not match between NWB and SpyGlass.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
@@ -237,6 +346,21 @@ def test_sorting(nwbfile_path: Path):
 
 
 def test_video(nwbfile_path: Path):
+    """Test video data integrity between NWB file and SpyGlass database.
+
+    Verifies that video file references were correctly inserted by comparing
+    external file paths between the original NWB file and SpyGlass database.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the original NWB file for comparison.
+
+    Raises
+    ------
+    AssertionError
+        If external file paths do not match between NWB and SpyGlass.
+    """
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     image_series = (sgc.VideoFile & {"nwb_file_name": nwb_copy_file_name}).fetch_nwb()[0]["video_file"]
     spyglass_external_file = image_series.external_file[0]

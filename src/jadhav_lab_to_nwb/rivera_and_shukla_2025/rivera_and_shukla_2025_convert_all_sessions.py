@@ -1,4 +1,9 @@
-"""Primary script to run to convert all sessions in a dataset using session_to_nwb."""
+"""Batch conversion script for Rivera and Shukla 2025 dataset.
+
+This module provides functions for converting all sessions in the Rivera and Shukla 2025
+social behavior dataset to NWB format. It handles parallel processing, error handling,
+and progress tracking for large-scale dataset conversion operations.
+"""
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pprint import pformat
@@ -16,18 +21,22 @@ def dataset_to_nwb(
     max_workers: int = 1,
     verbose: bool = True,
 ):
-    """Convert the entire dataset to NWB.
+    """Convert the entire Rivera and Shukla 2025 dataset to NWB format.
+
+    Performs batch conversion of all sessions in the dataset using parallel processing.
+    Automatically discovers all sessions across experimental conditions and subject pairs,
+    handles error logging, and provides progress tracking for large-scale conversions.
 
     Parameters
     ----------
     data_dir_path : str | Path
-        The path to the directory containing the raw data.
+        Path to the root directory containing the raw dataset.
     output_dir_path : str | Path
-        The path to the directory where the NWB files will be saved.
+        Directory where NWB files and log folders will be saved.
     max_workers : int, optional
-        The number of workers to use for parallel processing, by default 1
+        Number of parallel workers for concurrent session processing, by default 1.
     verbose : bool, optional
-        Whether to print verbose output, by default True
+        Whether to print detailed progress messages during conversion, by default True.
     """
     data_dir_path = Path(data_dir_path)
     session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
@@ -66,16 +75,20 @@ def dataset_to_nwb(
 def safe_session_to_nwb(
     *, session_to_nwb_kwargs: dict, exception_file_path: str | Path, warnings_file_path: str | Path
 ):
-    """Convert a session to NWB while handling any errors by recording error messages to the exception_file_path.
+    """Safely convert a session to NWB with comprehensive error and warning handling.
+
+    Wraps the session_to_nwb function with error catching and logging capabilities.
+    Captures both exceptions and warnings, writing detailed information to separate
+    log files for troubleshooting and quality control.
 
     Parameters
     ----------
     session_to_nwb_kwargs : dict
-        The arguments for session_to_nwb.
-    exception_file_path : Path
-        The path to the file where the exception messages will be saved.
-    warnings_file_path : Path
-        The path to the file where warnings will be saved.
+        Dictionary containing all arguments for the session_to_nwb function.
+    exception_file_path : str | Path
+        Path where exception details and stack traces will be written if errors occur.
+    warnings_file_path : str | Path
+        Path where warning messages and their sources will be logged.
     """
     exception_file_path = Path(exception_file_path)
     warnings_file_path = Path(warnings_file_path)

@@ -1,4 +1,10 @@
-"""Primary script to insert all sessions into the spyglass database."""
+"""Batch SpyGlass insertion script for Rivera and Shukla 2025 dataset.
+
+This module provides functionality for inserting all converted NWB files from the
+Rivera and Shukla 2025 social behavior dataset into a SpyGlass database. It handles
+batch processing, database cleanup, and progress tracking for large-scale database
+population operations.
+"""
 
 import datajoint as dj
 from pathlib import Path
@@ -24,6 +30,16 @@ from rivera_and_shukla_2025_insert_session import insert_session
 
 
 def main():
+    """Insert all Rivera and Shukla 2025 NWB files into SpyGlass database.
+
+    Performs batch insertion of all converted NWB files for the Rivera and Shukla 2025
+    dataset. The function clears existing database entries, discovers all NWB files
+    for the dataset subjects, and inserts them with progress tracking.
+
+    The function suppresses logging and warnings for cleaner progress display
+    and uses non-blocking error handling to ensure all files are processed
+    even if individual insertions fail.
+    """
     # Suppress logging and warnings for cleaner progress bar
     import logging
     import warnings

@@ -1,4 +1,14 @@
-"""Useful tools for dealing with spikegadgets data."""
+"""Tools for reading and processing SpikeGadgets data files.
+
+This module provides utility functions for reading various SpikeGadgets data formats,
+including Trodes Extracted Data Files (.dat) and video timestamp files (.videoTimeStamps).
+These functions are essential for the temporal alignment and data extraction pipeline
+in the Jadhav Lab NWB conversion project.
+
+The functions handle the binary data formats used by SpikeGadgets hardware and software,
+particularly for electrophysiology recordings and behavioral video synchronization.
+"""
+
 from pydantic import FilePath
 import numpy as np
 import re

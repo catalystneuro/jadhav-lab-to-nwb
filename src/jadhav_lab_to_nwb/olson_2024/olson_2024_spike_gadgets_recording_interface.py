@@ -1,4 +1,9 @@
-"""Primary class for converting SpikeGadgets Ephys Recordings."""
+"""SpikeGadgets recording interface for Olson 2024 dataset conversion.
+
+This module provides data interfaces for converting SpikeGadgets electrophysiology
+recordings from the Olson 2024 dataset. It handles multi-epoch recordings with
+tetrode configurations and integrates with NWB format for neural data analysis.
+"""
 from pynwb.file import NWBFile
 from pynwb.ecephys import ElectricalSeries
 from pathlib import Path
@@ -17,7 +22,26 @@ from ..tools.spikeinterface import MultiRecordingDataChunkIterator
 
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
+    """Multi-epoch SpikeGadgets recording interface for Olson 2024 dataset.
+
+    This interface handles multiple SpikeGadgets recording epochs and combines them
+    into a single electrical series with concatenated timestamps. It manages
+    tetrode configurations and ensures proper temporal alignment across epochs.
+    """
+
     def __init__(self, file_paths: list[FilePath], comments_file_paths: list[FilePath], **kwargs):
+        """Initialize the multi-epoch SpikeGadgets recording interface.
+
+        Parameters
+        ----------
+        file_paths : list[FilePath]
+            List of paths to SpikeGadgets .rec files, one per epoch.
+        comments_file_paths : list[FilePath]
+            List of paths to comments files containing timing information,
+            one per epoch. Must match the length of file_paths.
+        **kwargs
+            Additional keyword arguments passed to individual epoch interfaces.
+        """
         assert len(file_paths) == len(comments_file_paths), "Number of comments files must match number of recordings"
         recording_interfaces = []
         for file_path, comments_file_path in zip(file_paths, comments_file_paths):
@@ -31,12 +55,26 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         self.starting_times = None
 
     def get_metadata(self) -> DeepDict:
+        """Get metadata from all recording interfaces.
+
+        Returns
+        -------
+        DeepDict
+            Combined metadata from all epoch interfaces.
+        """
         metadata = super().get_metadata()
         for recording_interface in self.recording_interfaces:
             metadata = dict_deep_update(metadata, recording_interface.get_metadata())
         return metadata
 
     def get_metadata_schema(self) -> DeepDict:
+        """Get metadata schema from all recording interfaces.
+
+        Returns
+        -------
+        DeepDict
+            Combined metadata schema from all epoch interfaces.
+        """
         metadata_schema = super().get_metadata_schema()
         for recording_interface in self.recording_interfaces:
             metadata_schema = dict_deep_update(metadata_schema, recording_interface.get_metadata_schema())
@@ -44,6 +82,21 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+        """Add multi-epoch recording data to the NWB file.
+
+        Combines recordings from all epochs into a single electrical series with
+        concatenated timestamps and data. Each epoch is processed individually
+        before concatenation.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add recording data to.
+        metadata : dict
+            Metadata dictionary containing electrode and device information.
+        **conversion_options
+            Additional conversion options passed to individual epoch interfaces.
+        """
         timestamps = []
         for recording_interface in self.recording_interfaces:
             metadata["Ecephys"][recording_interface.es_key]["description"] = metadata["Ecephys"][
@@ -70,7 +123,12 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
 
 
 class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingInterface):
-    """SpikeGadgets RecordingInterface for olson_2024 conversion."""
+    """Single-epoch SpikeGadgets recording interface for Olson 2024 dataset.
+
+    This interface handles individual SpikeGadgets recording epochs with tetrode
+    configuration parsing and SpyGlass-compatible electrode properties. It extracts
+    tetrode mappings from the recording header and sets up proper electrode groups.
+    """
 
     Extractor = SpikeGadgetsRecordingExtractor
 

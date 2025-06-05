@@ -1,4 +1,10 @@
-"""Primary script to run to convert an entire session for of data using the NWBConverter."""
+"""Session conversion script for Olson 2024 dataset.
+
+This module provides the main conversion script for converting individual sessions
+from the Olson 2024 electrophysiology dataset to NWB format. It orchestrates the
+conversion of all data modalities (ephys, behavior, video, pose estimation) for
+a complete experimental session.
+"""
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -10,17 +16,20 @@ from jadhav_lab_to_nwb.olson_2024 import Olson2024NWBConverter
 
 
 def get_start_datetime(epoch_folder_name: str) -> datetime:
-    """Get the start datetime of the epoch from the folder name.
+    """Extract session start datetime from epoch folder name.
+
+    Parses the timestamp from epoch folder names with format:
+    {subject}_{session}_S{epoch}_F{file}_{YYYYMMDD}_{HHMMSS}
 
     Parameters
     ----------
-    epoch_folder_path : pathlib.Path
-        The path to the epoch folder.
+    epoch_folder_name : str
+        Name of the epoch folder containing timestamp information.
 
     Returns
     -------
-    datetime.datetime
-        The start datetime of the epoch.
+    datetime
+        The start datetime of the epoch extracted from the folder name.
     """
     split_name = epoch_folder_name.split("_")
     start_datetime = datetime.strptime(split_name[-2] + "_" + split_name[-1], "%Y%m%d_%H%M%S")
@@ -30,6 +39,43 @@ def get_start_datetime(epoch_folder_name: str) -> datetime:
 def session_to_nwb(
     data_dir_path: str | Path, subject_id: str, session_id: str, output_dir_path: str | Path, stub_test: bool = False
 ):
+    """Convert a complete experimental session to NWB format.
+
+    This function orchestrates the conversion of all data modalities from a single
+    experimental session including electrophysiology, spike sorting, LFP, behavioral
+    video, pose estimation, and digital I/O data. It automatically discovers epoch
+    folders and configures all data interfaces for the NWB converter.
+
+    Parameters
+    ----------
+    data_dir_path : str or Path
+        Path to the root data directory containing session folders.
+    subject_id : str
+        Subject identifier (e.g., 'SL18').
+    session_id : str
+        Session identifier (e.g., 'D19').
+    output_dir_path : str or Path
+        Path to directory where NWB files will be saved.
+    stub_test : bool, optional
+        If True, creates a minimal NWB file for testing purposes with reduced
+        data size and only the first epoch. Default is False.
+
+    Notes
+    -----
+    Expected directory structure:
+    data_dir_path/
+    └── {subject_id}_{session_id}/
+        ├── {subject_id}_{session_id}_S{epoch}_F{file}_{timestamp}/
+        │   ├── {epoch_name}.rec
+        │   ├── {epoch_name}.trodesComments
+        │   ├── {epoch_name}.1.h264
+        │   └── {epoch_name}.1.videoTimeStamps
+        ├── {session_name}.SpikesFinal/
+        ├── {session_name}.ExportedUnitStats/
+        ├── {session_name}.LFP/
+        ├── {session_name}.DLC/
+        └── {session_name}.DIO/
+    """
 
     data_dir_path = Path(data_dir_path)
     output_dir_path = Path(output_dir_path)
