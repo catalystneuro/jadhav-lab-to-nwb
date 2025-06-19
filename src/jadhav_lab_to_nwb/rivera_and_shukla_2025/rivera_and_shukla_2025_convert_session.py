@@ -206,214 +206,214 @@ def main():
         verbose=verbose,
     )
 
-    # Example Session 50% reward
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session 50% reward
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-08-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session Opaque
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "Opaque" / "XFN1-XFN3" / "08-16-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="Opaque",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="Opaque",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session Opaque
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "Opaque" / "XFN1-XFN3" / "08-16-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="Opaque",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="Opaque",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session WT
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-19-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN2",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN4",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session WT
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-19-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN2",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN4",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session Single Epoch
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-15-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN2",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN4",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session Single Epoch
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-15-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN2",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN4",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session DIO-only
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-03-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session DIO-only
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-03-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session Multiple Videos (segments) for a single epoch
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-07-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session Multiple Videos (segments) for a single epoch
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-07-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session with corrupted hdf5 files
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-27-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session with corrupted hdf5 files
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-27-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session with incomplete epochs and mismatched timestamps
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-15-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="100%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session with incomplete epochs and mismatched timestamps
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN1-XFN3" / "07-15-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="100%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session with missing DLC epochs
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-16-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN1",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN3",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session with missing DLC epochs
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN1-XFN3" / "08-16-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN1",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN3",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session with missing DLC segment
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN2-XFN4" / "08-03-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN2",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN4",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session with missing DLC segment
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN2-XFN4" / "08-03-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN2",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN4",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
-    # Example Session with ~~~ in the stateScriptLog
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN2-XFN4" / "09-21-2023"
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN2",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
-    session_to_nwb(
-        session_folder_path=session_folder_path,
-        subject_id="XFN4",
-        output_dir_path=output_dir_path,
-        experimental_condition="50%",
-        stub_test=stub_test,
-        verbose=verbose,
-    )
+    # # Example Session with ~~~ in the stateScriptLog
+    # session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "50%" / "XFN2-XFN4" / "09-21-2023"
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN2",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
+    # session_to_nwb(
+    #     session_folder_path=session_folder_path,
+    #     subject_id="XFN4",
+    #     output_dir_path=output_dir_path,
+    #     experimental_condition="50%",
+    #     stub_test=stub_test,
+    #     verbose=verbose,
+    # )
 
 
 if __name__ == "__main__":
