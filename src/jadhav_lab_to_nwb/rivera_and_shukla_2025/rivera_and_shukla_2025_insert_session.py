@@ -43,6 +43,38 @@ def insert_task(nwbfile_path: Path):
     TaskLEDs().make(key={"nwb_file_name": nwb_copy_file_name})
 
 
+def insert_invalid_intervals(nwbfile_path: Path):
+    """Insert invalid intervals from NWB file into SpyGlass IntervalList table.
+
+    Populates the IntervalList table with invalid intervals extracted from the
+    NWB file. This function ensures that periods of invalid data are properly
+    recorded in the database for accurate analysis.
+
+    Parameters
+    ----------
+    nwbfile_path : Path
+        Path to the NWB file containing invalid interval data to be inserted.
+        File must already be copied to SpyGlass raw data directory.
+    """
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
+    with NWBHDF5IO(nwbfile_path, "r") as io:
+        nwbfile = io.read()
+        if nwbfile.invalid_times is None:
+            return
+        invalid_times_table = nwbfile.invalid_times.to_dataframe()
+
+    inserts = invalid_times_table.apply(
+        lambda row: {
+            "nwb_file_name": nwb_copy_file_name,
+            "interval_list_name": f"{row.tag}_invalid_intervals" if row.tag else f"invalid_intervals",
+            "valid_times": np.asarray([[row.start_time, row.stop_time]]),
+        },
+        axis=1,
+    ).tolist()
+
+    sgc.IntervalList().insert(inserts, skip_duplicates=True)
+
+
 def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err: bool = False):
     """Insert complete session data from NWB file into SpyGlass database.
 
@@ -61,6 +93,7 @@ def insert_session(nwbfile_path: Path, rollback_on_fail: bool = True, raise_err:
     """
     sgi.insert_sessions(str(nwbfile_path), rollback_on_fail=rollback_on_fail, raise_err=raise_err)
     insert_task(nwbfile_path=nwbfile_path)
+    insert_invalid_intervals(nwbfile_path=nwbfile_path)
 
 
 def print_tables(nwbfile_path: Path):
@@ -127,6 +160,15 @@ def test_video(nwbfile_path: Path):
     ), f"Spyglass external file: {spyglass_external_file}, NWB external file: {nwb_external_file}"
 
 
+def test_invalid_intervals(nwbfile_path: Path):
+    nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
+    invalid_intervals = (
+        sgc.IntervalList & {"nwb_file_name": nwb_copy_file_name, "interval_list_name": "clock_reset_invalid_intervals"}
+    ).fetch1("valid_times")
+    expected_invalid_intervals = np.array([[8125.55, 9925.55]])
+    np.testing.assert_array_equal(invalid_intervals, expected_invalid_intervals)
+
+
 def main():
     nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN1_ses-07-20-2023.nwb")
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
@@ -141,6 +183,7 @@ def main():
     # test_behavior(nwbfile_path=nwbfile_path) # TODO: Fix DIO Events
     test_epoch(nwbfile_path=nwbfile_path)
     test_video(nwbfile_path=nwbfile_path)
+    test_invalid_intervals(nwbfile_path=nwbfile_path)
 
 
 if __name__ == "__main__":

@@ -358,7 +358,8 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                 epoch_video_timestamps_file_paths = [epoch_video_timestamps_file_paths]
             flattened_file_paths.extend(epoch_video_timestamps_file_paths)
 
-        nwbfile.add_invalid_times_column(name="comment", description="Reason for invalid time interval")
+        nwbfile.add_invalid_times_column(name="comment", description="Reason for invalid time interval.")
+        nwbfile.add_invalid_times_column(name="tag", description="Tag describing the type of invalid time interval.")
         comment = (
             f"Between epochs (some time after start_time) the experimenter closed the program used to acquire data, "
             f"causing the clock to reset. As a result, the interval between epochs was approximated as "
@@ -370,7 +371,11 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             timestamps, _ = readCameraModuleTimeStamps(last_file_path_pre_reset)
             start_time = timestamps[-1]
             stop_time = start_time + self.INTER_EPOCH_INTERVAL
-            nwbfile.add_invalid_time_interval(start_time=start_time, stop_time=stop_time, comment=comment)
+            nwbfile.add_invalid_time_interval(
+                start_time=start_time, stop_time=stop_time, comment=comment, tag="clock_reset"
+            )
 
         for start_time, stop_time, comment in dlc_timestamp_mismatches:
-            nwbfile.add_invalid_time_interval(start_time=start_time, stop_time=stop_time, comment=comment)
+            nwbfile.add_invalid_time_interval(
+                start_time=start_time, stop_time=stop_time, comment=comment, tag="DLC_timestamp_mismatch"
+            )
