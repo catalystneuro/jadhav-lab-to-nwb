@@ -36,9 +36,7 @@ def main():
     dataset. The function clears existing database entries, discovers all NWB files
     for the dataset subjects, and inserts them with progress tracking.
 
-    The function suppresses logging and warnings for cleaner progress display
-    and uses non-blocking error handling to ensure all files are processed
-    even if individual insertions fail.
+    The function suppresses logging and warnings for cleaner progress display.
     """
     # Suppress logging and warnings for cleaner progress bar
     import logging
@@ -57,7 +55,7 @@ def main():
         nwbfile_paths.extend(spyglass_raw_path.glob(f"sub-{subject_id}_ses-*.nwb"))
     nwbfile_paths = sorted(nwbfile_paths)
     for nwbfile_path in tqdm(nwbfile_paths, desc="Inserting sessions"):
-        insert_session(nwbfile_path, rollback_on_fail=False, raise_err=False)
+        insert_session(nwbfile_path, rollback_on_fail=True, raise_err=True)
 
 
 if __name__ == "__main__":

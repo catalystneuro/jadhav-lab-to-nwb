@@ -88,13 +88,13 @@ def print_tables(nwbfile_path: Path):
 def test_behavior(nwbfile_path: Path):
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     time_series = (
-        sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name, "dio_event_name": "reward_well_1"}
+        sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name, "dio_event_name": "matched_poke_A1"}
     ).fetch_nwb()[0]["dio"]
-    spyglass_dio_data = np.asarray(time_series.data[:100])
+    spyglass_dio_data = np.asarray(time_series.data[:])
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
         nwb_dio_data = np.asarray(
-            nwbfile.processing["behavior"].data_interfaces["behavioral_events"].time_series["reward_well_1"].data[:100]
+            nwbfile.processing["behavior"].data_interfaces["behavioral_events"].time_series["matched_poke_A1"].data[:]
         )
     np.testing.assert_array_equal(spyglass_dio_data, nwb_dio_data)
 
@@ -135,10 +135,10 @@ def main():
     sgc.Task.delete()
     TaskLEDs.delete()
 
-    insert_session(nwbfile_path, rollback_on_fail=False, raise_err=False)
+    insert_session(nwbfile_path, rollback_on_fail=True, raise_err=True)
     print_tables(nwbfile_path=nwbfile_path)
 
-    # test_behavior(nwbfile_path=nwbfile_path) # TODO: Fix DIO Events
+    test_behavior(nwbfile_path=nwbfile_path)
     test_epoch(nwbfile_path=nwbfile_path)
     test_video(nwbfile_path=nwbfile_path)
 
