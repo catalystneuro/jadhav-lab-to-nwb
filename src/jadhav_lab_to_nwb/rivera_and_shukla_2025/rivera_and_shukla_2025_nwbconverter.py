@@ -10,6 +10,8 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import warnings
+from pynwb import NWBFile
+from neuroconv.utils import DeepDict
 
 from jadhav_lab_to_nwb.rivera_and_shukla_2025 import (
     RiveraAndShukla2025BehaviorInterface,
@@ -39,6 +41,15 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
     This converter is specifically designed for the Rivera and Shukla 2025 dataset
     which involves multi-subject social behavior experiments with complex temporal
     alignment requirements due to potential clock resets during long recordings.
+
+    Attributes
+    ----------
+    data_interface_classes : dict
+        Mapping of data interface names to their corresponding classes.
+    INTER_EPOCH_INTERVAL : int
+        Typical interval between epochs in seconds, used for clock reset correction.
+    dlc_timestamp_mismatches : list[tuple[float, float, str]]
+        List of epochs with DLC data that doesn't match video timestamps, tuple of (start_time, stop_time, comment).
     """
 
     data_interface_classes = dict(
@@ -48,8 +59,20 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         DeepLabCut2=RiveraAndShukla2025DeepLabCutInterface,
         Epoch=RiveraAndShukla2025EpochInterface,
     )
+    INTER_EPOCH_INTERVAL = 1800
+    dlc_timestamp_mismatches: list[tuple[float, float, str]] = []
 
-    def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+    def add_to_nwbfile(
+        self, nwbfile: NWBFile, metadata: DeepDict | None = None, conversion_options: dict | None = None
+    ):
+        super().add_to_nwbfile(nwbfile, metadata, conversion_options)
+        self.add_invalid_intervals_to_nwbfile(
+            clock_resets=self.clock_resets, dlc_timestamp_mismatches=self.dlc_timestamp_mismatches, nwbfile=nwbfile
+        )
+
+    def temporally_align_data_interfaces(
+        self, metadata: DeepDict | None = None, conversion_options: dict | None = None
+    ):
         """Perform temporal alignment across all data interfaces.
 
         Orchestrates the temporal alignment of all data modalities by detecting
@@ -85,8 +108,7 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
 
         # Check for clock resets
-        INTER_EPOCH_INTERVAL = 1800  # Typical interval between epochs in seconds
-        start_times, stop_times, clock_resets = [], [], []
+        start_times, stop_times, self.clock_resets = [], [], []
         i = 0
         for epoch_video_timestamps_file_paths in video_timestamps_file_paths:
             if not isinstance(epoch_video_timestamps_file_paths, list):
@@ -103,7 +125,7 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
                     i += 1
                     continue
                 if start_time < stop_times[i - 1]:
-                    clock_resets.append(i)
+                    self.clock_resets.append(i)
                 i += 1
 
         # Align timestamps with clock resets
@@ -119,9 +141,9 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
 
                 # Calculate starting time shift for this segment
                 starting_time_shift = 0.0
-                for reset_index in clock_resets:
+                for reset_index in self.clock_resets:
                     if i >= reset_index:
-                        starting_time_shift += stop_times[reset_index - 1] + INTER_EPOCH_INTERVAL
+                        starting_time_shift += stop_times[reset_index - 1] + self.INTER_EPOCH_INTERVAL
                 timestamps += starting_time_shift
 
                 # Calculate starting frame for this segment
@@ -291,8 +313,69 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
         if df.shape[0] != len(aligned_timestamps):
             msg = (
                 f"Number of rows in the DLC file ({df.shape[0]}) does not match the number of aligned timestamps "
-                f"({len(aligned_timestamps)}). Setting aligned timestamps to NaN."
+                f"({len(aligned_timestamps)})."
             )
             warnings.warn(msg)
-            aligned_timestamps = np.ones((df.shape[0],)) * np.nan
+
+            comment = (
+                f"For epoch {file_path.name}, the number of rows in the DLC file ({df.shape[0]}) does not match "
+                f"the number of aligned timestamps ({len(aligned_timestamps)}). As a result, the DLC timestamps were "
+                f"set to be the first {df.shape[0]} video timestamps. This time interval should be treated with caution "
+                f"with respect to the temporal alignment of the DLC data with other data streams."
+            )
+            start_time = aligned_timestamps[0]
+            stop_time = aligned_timestamps[df.shape[0] - 1]
+            self.dlc_timestamp_mismatches.append((start_time, stop_time, comment))
+
+            aligned_timestamps = aligned_timestamps[: df.shape[0]]
         dlc_interface.set_aligned_timestamps(aligned_timestamps=aligned_timestamps)
+
+    def add_invalid_intervals_to_nwbfile(
+        self, clock_resets: list[int], dlc_timestamp_mismatches: list[tuple[float, float, str]], nwbfile: NWBFile
+    ):
+        """Add invalid intervals to NWB file based on detected clock resets.
+
+        Marks intervals between epochs when a clock reset occurred as invalid in the NWB file
+        to indicate periods of unreliable timing due to recording system resets.
+
+        Parameters
+        ----------
+        clock_resets : list[int]
+            List of indices where clock resets were detected. Each index corresponds to the video timestamps file path
+            in the flattened list of all epochs and segments immediately following a clock reset.
+        dlc_timestamp_mismatches : list[tuple[float, float, str]]
+            List of epochs with DLC data that doesn't match video timestamps, tuple of (start_time, stop_time, comment).
+        nwbfile : NWBFile
+            The NWB file to which invalid intervals will be added.
+        """
+        if len(clock_resets) == 0 and len(dlc_timestamp_mismatches) == 0:
+            return
+
+        video_timestamps_file_paths = self.data_interface_objects["Video"].video_timestamps_file_paths
+        flattened_file_paths = []
+        for epoch_video_timestamps_file_paths in video_timestamps_file_paths:
+            if not isinstance(epoch_video_timestamps_file_paths, list):
+                epoch_video_timestamps_file_paths = [epoch_video_timestamps_file_paths]
+            flattened_file_paths.extend(epoch_video_timestamps_file_paths)
+
+        nwbfile.add_invalid_times_column(name="comment", description="Reason for invalid time interval.")
+        nwbfile.add_invalid_times_column(name="tag", description="Tag describing the type of invalid time interval.")
+        comment = (
+            f"Between epochs (some time after start_time) the experimenter closed the program used to acquire data, "
+            f"causing the clock to reset. As a result, the interval between epochs was approximated as "
+            f"{self.INTER_EPOCH_INTERVAL} seconds. Due to the inherent uncertainty, this inter-epoch interval should be "
+            f"considered invalid."
+        )
+        for clock_reset in clock_resets:
+            last_file_path_pre_reset = Path(flattened_file_paths[clock_reset - 1])
+            timestamps, _ = readCameraModuleTimeStamps(last_file_path_pre_reset)
+            start_time = timestamps[-1]
+            stop_time = start_time + self.INTER_EPOCH_INTERVAL
+            nwbfile.add_invalid_time_interval(
+                start_time=start_time, stop_time=stop_time, comment=comment, tag="clock_reset"
+            )
+
+        for start_time, stop_time, comment in dlc_timestamp_mismatches:
+            nwbfile.add_invalid_time_interval(
+                start_time=start_time, stop_time=stop_time, comment=comment, tag="DLC_timestamp_mismatch"
+            )
