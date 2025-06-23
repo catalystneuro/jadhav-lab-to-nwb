@@ -169,7 +169,8 @@ def session_to_nwb(
     # Add genotype
     metadata["Subject"]["genotype"] = metadata["SubjectMaps"]["subject_id_to_genotype"][subject_id]
 
-    # Add session description
+    # Add session_id and description
+    metadata["NWBFile"]["session_id"] = session_id
     session_description = metadata["SessionMaps"]["condition_to_session_description"][experimental_condition]
     metadata["NWBFile"]["session_description"] = session_description
 
@@ -183,7 +184,8 @@ def session_to_nwb(
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/CoopLearnProject")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb/rivera_and_shukla_2025")
+    output_dir_path.mkdir(parents=True, exist_ok=True)
     stub_test = False
     verbose = True
 
