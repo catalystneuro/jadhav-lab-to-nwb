@@ -136,7 +136,7 @@ def test_epoch(nwbfile_path: Path):
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
     first_task_epoch = (sgc.TaskEpoch & {"nwb_file_name": nwb_copy_file_name, "epoch": 1}).fetch1()
     expected_first_task_epoch = {
-        "nwb_file_name": "sub-XFN1_ses-07-20-2023_.nwb",
+        "nwb_file_name": "sub-XFN1_ses-07-20-2023-100_.nwb",
         "epoch": 1,
         "task_name": "SocialW_Left",
         "camera_name": None,
@@ -170,7 +170,7 @@ def test_invalid_intervals(nwbfile_path: Path):
 
 
 def main():
-    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN1_ses-07-20-2023.nwb")
+    nwbfile_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw/sub-XFN1_ses-07-20-2023-100.nwb")
     nwb_copy_file_name = get_nwb_copy_filename(nwbfile_path.name)
 
     (sgc.Nwbfile & {"nwb_file_name": nwb_copy_file_name}).delete()

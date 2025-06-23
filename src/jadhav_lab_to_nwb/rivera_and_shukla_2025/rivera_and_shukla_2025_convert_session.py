@@ -69,7 +69,8 @@ def session_to_nwb(
     Missing DLC data is handled gracefully with optional conversion.
     """
     session_folder_path = Path(session_folder_path)
-    session_id = session_folder_path.name
+    session_date = session_folder_path.name
+    session_id = f"{session_date}-{experimental_condition}".strip("%")  # Spyglass doesn't allow % in the file name
     dio_folder_path = session_folder_path / "DIO data" / "Raw"
     dlc_folder_path = session_folder_path / "DLC data" / "Raw"
     output_dir_path = Path(output_dir_path)
@@ -154,7 +155,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Add datetime to conversion
-    session_start_time = datetime.strptime(session_id, "%m-%d-%Y")
+    session_start_time = datetime.strptime(session_date, "%m-%d-%Y")
     est = ZoneInfo("US/Eastern")
     session_start_time = session_start_time.replace(tzinfo=est)
     metadata["NWBFile"]["session_start_time"] = session_start_time

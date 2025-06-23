@@ -44,7 +44,6 @@ def dataset_to_nwb(
         output_dir_path=Path(output_dir_path),
         verbose=verbose,
     )
-
     exception_folder_path = Path(output_dir_path) / "exceptions"
     exception_folder_path.mkdir(parents=True, exist_ok=True)
     warnings_folder_path = Path(output_dir_path) / "warnings"
@@ -169,7 +168,7 @@ if __name__ == "__main__":
 
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/CoopLearnProject")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb/rivera_and_shukla_2025")
     max_workers = 4
     verbose = False
 
