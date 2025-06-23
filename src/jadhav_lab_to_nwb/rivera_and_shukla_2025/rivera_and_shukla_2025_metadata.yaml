@@ -12,6 +12,10 @@ NWBFile:
     - Rivera, Edward L.
     - Bladon, John H.
     - Jadhav, Shantanu P.
+  keywords:
+    - cooperation
+    - social cognition
+    - autism spectrum disorders
 
 SessionMaps:
    condition_to_session_description:
@@ -24,7 +28,7 @@ Subject:
   genotype: Wild Type
   sex: M
   species: Rattus norvegicus
-  age: P3M/5M
+  age: P3M/P5M
 
 SubjectMaps:
   subject_id_to_genotype:
