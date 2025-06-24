@@ -68,7 +68,7 @@ def session_to_nwb(
         ├── {subject_id}_{session_id}_S{epoch}_F{file}_{timestamp}/
         │   ├── {epoch_name}.rec
         │   ├── {epoch_name}.trodesComments
-        │   ├── {epoch_name}.1.h264
+        │   ├── {epoch_name}.1.mp4
         │   └── {epoch_name}.1.videoTimeStamps
         ├── {session_name}.SpikesFinal/
         ├── {session_name}.ExportedUnitStats/
@@ -124,7 +124,7 @@ def session_to_nwb(
     # Add Video
     file_paths, video_timestamps_file_paths = [], []
     for epoch_folder_path in epoch_folder_paths:
-        file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.h264"
+        file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.mp4"
         video_timestamps_file_path = epoch_folder_path / f"{epoch_folder_path.name}.1.videoTimeStamps"
         file_paths.append(file_path)
         video_timestamps_file_paths.append(video_timestamps_file_path)
