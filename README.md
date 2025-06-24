@@ -101,12 +101,12 @@ chmod +x src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh
 
 **Example for Olson 2024 dataset:**
 ```bash
-./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh /Volumes/T7/CatalystNeuro/Jadhav/Olson2024
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
 ```
 
 **Example for Rivera and Shukla 2025 dataset:**
 ```bash
-./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh /Volumes/T7/CatalystNeuro/Jadhav/RiveraShukla2025
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
 ```
 
 The script will:
