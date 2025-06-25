@@ -99,6 +99,8 @@ class Olson2024BehaviorInterface(BaseDataInterface):
             event_metadata = next(
                 event_metadata for event_metadata in metadata["Behavior"]["Events"] if event_metadata["id"] == event_id
             )
+            if len(timestamps) == 0:
+                continue
             time_series = TimeSeries(
                 name=event_metadata["name"],
                 description=event_metadata["description"],
