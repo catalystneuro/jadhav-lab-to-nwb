@@ -123,13 +123,16 @@ def test_behavior(nwbfile_path: Path):
     time_series = (
         sgc.DIOEvents & {"nwb_file_name": nwb_copy_file_name, "dio_event_name": "matched_poke_A1"}
     ).fetch_nwb()[0]["dio"]
-    spyglass_dio_data = np.asarray(time_series.data[:])
+    spyglass_dio_timestamps = np.asarray(time_series.timestamps[:])
     with NWBHDF5IO(nwbfile_path, "r") as io:
         nwbfile = io.read()
-        nwb_dio_data = np.asarray(
-            nwbfile.processing["behavior"].data_interfaces["behavioral_events"].time_series["matched_poke_A1"].data[:]
+        nwb_dio_timestamps = np.asarray(
+            nwbfile.processing["behavior"]
+            .data_interfaces["behavioral_events"]
+            .time_series["matched_poke_A1"]
+            .timestamps[:]
         )
-    np.testing.assert_array_equal(spyglass_dio_data, nwb_dio_data)
+    np.testing.assert_array_equal(spyglass_dio_timestamps, nwb_dio_timestamps)
 
 
 def test_epoch(nwbfile_path: Path):
