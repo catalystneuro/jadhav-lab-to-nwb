@@ -1,11 +1,14 @@
 NWBFile:
   session_description:
-    A rich text description of the experiment. Can also just be the abstract of the publication.
+    CA1 and subiculum (SUB) are two main output regions of the hippocampus, projecting to highly overlapping cortical
+    and subcortical regions. The manner and extent of coordination between rodent CA1 and SUB during the learning of
+    memory-guided navigation is largely unknown. We are therefore recording these two regions simultaneously while rats
+    learn a memory-guided navigation task in a complex track environment.
   institution: Brandeis University
   lab: Jadhav
   experimenter:
-    - Last, First Middle
-    - Last, First Middle
+    - Olson, Jacob M.
+    - Jadhav, Shantanu P.
 
 Subject:
   description: Long Evans Rat

@@ -366,16 +366,33 @@ class RiveraAndShukla2025NWBConverter(NWBConverter):
             f"{self.INTER_EPOCH_INTERVAL} seconds. Due to the inherent uncertainty, this inter-epoch interval should be "
             f"considered invalid."
         )
+        start_times, stop_times, comments, tags = [], [], [], []
         for clock_reset in clock_resets:
             last_file_path_pre_reset = Path(flattened_file_paths[clock_reset - 1])
             timestamps, _ = readCameraModuleTimeStamps(last_file_path_pre_reset)
             start_time = timestamps[-1]
             stop_time = start_time + self.INTER_EPOCH_INTERVAL
-            nwbfile.add_invalid_time_interval(
-                start_time=start_time, stop_time=stop_time, comment=comment, tag="clock_reset"
-            )
+            start_times.append(start_time)
+            stop_times.append(stop_time)
+            comments.append(comment)
+            tags.append("clock_reset")
 
         for start_time, stop_time, comment in dlc_timestamp_mismatches:
+            start_times.append(start_time)
+            stop_times.append(stop_time)
+            comments.append(comment)
+            tags.append("DLC_timestamp_mismatch")
+
+        sorting_indices = np.argsort(start_times)
+        start_times = np.array(start_times)[sorting_indices]
+        stop_times = np.array(stop_times)[sorting_indices]
+        comments = np.array(comments)[sorting_indices]
+        tags = np.array(tags)[sorting_indices]
+
+        for start_time, stop_time, comment, tag in zip(start_times, stop_times, comments, tags, strict=True):
             nwbfile.add_invalid_time_interval(
-                start_time=start_time, stop_time=stop_time, comment=comment, tag="DLC_timestamp_mismatch"
+                start_time=start_time,
+                stop_time=stop_time,
+                comment=comment,
+                tag=tag,
             )

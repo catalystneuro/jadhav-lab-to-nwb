@@ -69,7 +69,8 @@ def session_to_nwb(
     Missing DLC data is handled gracefully with optional conversion.
     """
     session_folder_path = Path(session_folder_path)
-    session_id = session_folder_path.name
+    session_date = session_folder_path.name
+    session_id = f"{session_date}-{experimental_condition}".strip("%")  # Spyglass doesn't allow % in the file name
     dio_folder_path = session_folder_path / "DIO data" / "Raw"
     dlc_folder_path = session_folder_path / "DLC data" / "Raw"
     output_dir_path = Path(output_dir_path)
@@ -82,10 +83,13 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add Video
-    file_paths = natsorted(list(dio_folder_path.glob("*.h264")))
-    # log07-15-2023(3-XFN3-XFN1).1.h264 is just a video of the mazes without behavior --> skipping
-    file_paths = [file_path for file_path in file_paths if file_path.name != "log07-15-2023(3-XFN3-XFN1).1.h264"]
-    video_timestamps_file_paths = natsorted(list(dio_folder_path.glob("*.videoTimeStamps")))
+    file_paths = [file_path for file_path in dio_folder_path.glob("*.mp4") if not file_path.name.startswith("._")]
+    file_paths = natsorted(file_paths)
+    # log07-15-2023(3-XFN3-XFN1).1.mp4 is just a video of the mazes without behavior --> skipping
+    file_paths = [file_path for file_path in file_paths if file_path.name != "log07-15-2023(3-XFN3-XFN1).1.mp4"]
+    video_timestamps_file_paths = natsorted(
+        [file_path for file_path in dio_folder_path.glob("*.videoTimeStamps") if not file_path.name.startswith("._")]
+    )
     epoch_name_to_file_paths, epoch_name_to_timestamps_file_paths = {}, {}
     for file_path, video_timestamps_file_path in zip(file_paths, video_timestamps_file_paths, strict=True):
         file_epoch_name = rivera_and_shukla_2025_get_epoch_name(name=file_path.name)
@@ -154,7 +158,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Add datetime to conversion
-    session_start_time = datetime.strptime(session_id, "%m-%d-%Y")
+    session_start_time = datetime.strptime(session_date, "%m-%d-%Y")
     est = ZoneInfo("US/Eastern")
     session_start_time = session_start_time.replace(tzinfo=est)
     metadata["NWBFile"]["session_start_time"] = session_start_time
@@ -168,7 +172,8 @@ def session_to_nwb(
     # Add genotype
     metadata["Subject"]["genotype"] = metadata["SubjectMaps"]["subject_id_to_genotype"][subject_id]
 
-    # Add session description
+    # Add session_id and description
+    metadata["NWBFile"]["session_id"] = session_id
     session_description = metadata["SessionMaps"]["condition_to_session_description"][experimental_condition]
     metadata["NWBFile"]["session_description"] = session_description
 
@@ -182,7 +187,8 @@ def session_to_nwb(
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/CoopLearnProject")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Spyglass/raw")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Jadhav/conversion_nwb/rivera_and_shukla_2025")
+    output_dir_path.mkdir(parents=True, exist_ok=True)
     stub_test = False
     verbose = True
 

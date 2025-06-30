@@ -60,6 +60,63 @@ conda activate spyglass
 python src/jadhav_lab_to_nwb/olson_2024/olson_2024_insert_session.py
 ```
 
+## Video File Preprocessing (Required)
+
+**Important: Before running any Python conversion scripts, you must convert .h264 video files to .mp4 format.**
+
+The conversion scripts expect .mp4 files for video processing. Raw behavioral videos are typically recorded in .h264 format and need to be converted using the provided shell script.
+
+### Prerequisites
+
+You must have `ffmpeg` installed on your system:
+
+**macOS (using Homebrew):**
+```bash
+brew install ffmpeg
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+**Windows:**
+Download from [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html) or use a package manager like Chocolatey.
+
+### Converting Video Files
+
+Use the provided shell script to convert all .h264 files in your data directory:
+
+```bash
+# Make the script executable (first time only)
+chmod +x src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh
+
+# Convert files by providing the data directory path
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh /path/to/your/data/directory
+
+# Or run without arguments to be prompted for the directory
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh
+```
+
+**Example for Olson 2024 dataset:**
+```bash
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
+```
+
+**Example for Rivera and Shukla 2025 dataset:**
+```bash
+./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
+```
+
+The script will:
+- Recursively find all .h264 files in the specified directory
+- Convert them to .mp4 format using ffmpeg
+- Skip files that already have corresponding .mp4 versions
+- Provide progress tracking and error reporting
+
+**Note:** This conversion process may take considerable time for large datasets. The script can be safely interrupted and resumed - it will skip already converted files.
+
 ## Helpful Definitions
 
 This conversion project is comprised primarily by DataInterfaces, NWBConverters, and conversion scripts.
@@ -221,6 +278,8 @@ For the conversion `rivera_and_shukla_2025` you can find a directory located in 
 
 ### Converting the Olson 2024 Dataset
 
+**Prerequisites:** Ensure you have completed the [Video File Preprocessing](#video-file-preprocessing-required) step to convert any .h264 files to .mp4 format before running the conversion scripts.
+
 To convert a single session:
 1. In `src/jadhav_lab_to_nwb/olson_2024/olson_2024_convert_session.py`, update the `data_dir_path` and
     `output_dir_path` to appropriate local paths. `data_dir_path` should be the directory containing session folders
@@ -232,6 +291,8 @@ To convert a single session:
     ```
 
 ### Converting the Rivera and Shukla 2025 Dataset
+
+**Prerequisites:** Ensure you have completed the [Video File Preprocessing](#video-file-preprocessing-required) step to convert any .h264 files to .mp4 format before running the conversion scripts.
 
 To convert a single session:
 1. In `src/jadhav_lab_to_nwb/rivera_and_shukla_2025/rivera_and_shukla_2025_convert_session.py`, update the `data_dir_path` and
@@ -272,7 +333,8 @@ data_dir_path/
     ├── {subject_id}_{session_id}_S{epoch}_F{file}_{timestamp}/
     │   ├── {epoch_name}.rec                    # Raw electrophysiology
     │   ├── {epoch_name}.trodesComments         # Trodes metadata
-    │   ├── {epoch_name}.1.h264                 # Behavioral video
+    │   ├── {epoch_name}.1.h264                 # Original behavioral video
+    │   ├── {epoch_name}.1.mp4                  # Converted video (required for conversion)
     │   └── {epoch_name}.1.videoTimeStamps      # Video timestamps
     ├── {session_name}.SpikesFinal/             # Spike sorting results
     ├── {session_name}.ExportedUnitStats/       # Unit statistics
@@ -280,6 +342,8 @@ data_dir_path/
     ├── {session_name}.DLC/                     # DeepLabCut pose data
     └── {session_name}.DIO/                     # Digital I/O events
 ```
+
+**Note:** After running the video preprocessing step, you will have both .h264 (original) and .mp4 (converted) files. The Python conversion scripts require the .mp4 files.
 
 ## Customizing for New Datasets
 
