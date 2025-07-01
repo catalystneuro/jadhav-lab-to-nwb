@@ -289,12 +289,12 @@ def main():
     )
 
     # Example Session DIO-only
-    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "100%" / "XFN2-XFN4" / "07-17-2023"
+    session_folder_path = data_dir_path / "CohortAS1" / "Social W" / "Opaque" / "XFN2-XFN4" / "08-30-2023"
     session_to_nwb(
         session_folder_path=session_folder_path,
         subject_id="XFN2",
         output_dir_path=output_dir_path,
-        experimental_condition="100%",
+        experimental_condition="Opaque",
         stub_test=stub_test,
         verbose=verbose,
     )
@@ -302,7 +302,7 @@ def main():
         session_folder_path=session_folder_path,
         subject_id="XFN4",
         output_dir_path=output_dir_path,
-        experimental_condition="100%",
+        experimental_condition="Opaque",
         stub_test=stub_test,
         verbose=verbose,
     )
