@@ -69,3 +69,4 @@
 - The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it --> skipping
 - One session (CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023) has a missing DLC segment
 - One session (CohortAS1/Social W/50%/XFN2-XFN4/09-21-2023) has ~~~ at the end of the behavior file
+- The folders dated 08-03-2023, 08-04-2023 and 08-07-2023 for pair XFN1-XFN3 shouldn't have been in the 50% folder, as this pair was still running on the 100% reward condition. These are duplicates from the 100% folder. Feel free to discard these folders in the 50% reward condition for rat pair XFN1-XFN3.
