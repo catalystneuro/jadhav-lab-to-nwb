@@ -27,6 +27,7 @@
 - nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
 - matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
 - Some of the sessions in the 50% folder (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-03-2023) uses a deterministic stateScriptLog where every matched poke results in a reward. How to classify this session?
+- How often were rewards delivered in Opaque condition?
 
 ## Edge cases
 - Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
@@ -69,3 +70,4 @@
 - The XFN1-XFN3/07-17-2023 folder has 07-15-2023 data in it --> skipping
 - One session (CohortAS1/Social W/50%/XFN2-XFN4/08-03-2023) has a missing DLC segment
 - One session (CohortAS1/Social W/50%/XFN2-XFN4/09-21-2023) has ~~~ at the end of the behavior file
+- The folders dated 08-03-2023, 08-04-2023 and 08-07-2023 for pair XFN1-XFN3 shouldn't have been in the 50% folder, as this pair was still running on the 100% reward condition. These are duplicates from the 100% folder. Feel free to discard these folders in the 50% reward condition for rat pair XFN1-XFN3.
