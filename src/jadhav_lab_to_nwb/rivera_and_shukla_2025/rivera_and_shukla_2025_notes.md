@@ -27,6 +27,7 @@
 - nose pokes are recorded for each well "Poke in wellB", "Poke in well1", etc.
 - matched pokes are recorded and delivered rewards "Matched pokes in position B2" unless it is followed by "but, no reward" in the next line
 - Some of the sessions in the 50% folder (ex. CoopLearnProject/CohortAS1/Social W/50%/XFN1-XFN3/08-03-2023) uses a deterministic stateScriptLog where every matched poke results in a reward. How to classify this session?
+- How often were rewards delivered in Opaque condition?
 
 ## Edge cases
 - Some of the sessions (ex. CoopLearnProject/CohortAS1/Social W/100%/XFN2-XFN4/07-14-2023) has a different number of timestamps for video and DLC
