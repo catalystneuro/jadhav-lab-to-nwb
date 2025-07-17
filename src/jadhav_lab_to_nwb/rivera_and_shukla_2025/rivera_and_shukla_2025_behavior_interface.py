@@ -151,6 +151,7 @@ class RiveraAndShukla2025BehaviorInterface(BaseDataInterface):
                 data=np.ones((len(timestamps), 1)),
                 timestamps=timestamps,
                 unit="n.a.",
+                continuity="instantaneous",
             )
             behavioral_events.add_timeseries(time_series)
 
