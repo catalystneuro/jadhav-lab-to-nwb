@@ -62,9 +62,11 @@ python src/jadhav_lab_to_nwb/olson_2024/olson_2024_insert_session.py
 
 ## Video File Preprocessing (Required)
 
+## Video File Preprocessing (Required)
+
 **Important: Before running any Python conversion scripts, you must convert .h264 video files to .mp4 format.**
 
-The conversion scripts expect .mp4 files for video processing. Raw behavioral videos are typically recorded in .h264 format and need to be converted using the provided shell script.
+The conversion scripts expect .mp4 files for video processing. Raw behavioral videos are typically recorded in .h264 format and need to be converted using the provided scripts.
 
 ### Prerequisites
 
@@ -86,6 +88,8 @@ Download from [https://ffmpeg.org/download.html](https://ffmpeg.org/download.htm
 
 ### Converting Video Files
 
+#### macOS and Linux
+
 Use the provided shell script to convert all .h264 files in your data directory:
 
 ```bash
@@ -99,23 +103,57 @@ chmod +x src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh
 ./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh
 ```
 
+#### Windows
+
+Use the provided PowerShell script to convert all .h264 files in your data directory:
+
+```powershell
+# Run the PowerShell script (bypassing execution policy if needed)
+PowerShell -ExecutionPolicy Bypass -File "src\jadhav_lab_to_nwb\utils\convert_h264_to_mp4.ps1" "C:\path\to\your\data\directory"
+
+# Or run without arguments to be prompted for the directory
+PowerShell -ExecutionPolicy Bypass -File "src\jadhav_lab_to_nwb\utils\convert_h264_to_mp4.ps1"
+```
+
+Alternatively, if you've set the PowerShell execution policy (run as Administrator: `Set-ExecutionPolicy RemoteSigned`):
+
+```powershell
+# Navigate to the utils directory
+cd src\jadhav_lab_to_nwb\utils
+
+# Run the script
+.\convert_h264_to_mp4.ps1 "C:\path\to\your\data\directory"
+```
+
 **Example for Olson 2024 dataset:**
 ```bash
+# macOS/Linux
 ./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
+```
+
+```powershell
+# Windows
+PowerShell -ExecutionPolicy Bypass -File "src\jadhav_lab_to_nwb\utils\convert_h264_to_mp4.ps1" "D:\path\to\SubLearnProject"
 ```
 
 **Example for Rivera and Shukla 2025 dataset:**
 ```bash
+# macOS/Linux
 ./src/jadhav_lab_to_nwb/utils/convert_h264_to_mp4.sh path/to/SubLearnProject
 ```
 
-The script will:
+```powershell
+# Windows
+PowerShell -ExecutionPolicy Bypass -File "src\jadhav_lab_to_nwb\utils\convert_h264_to_mp4.ps1" "D:\path\to\SubLearnProject"
+```
+
+Both scripts will:
 - Recursively find all .h264 files in the specified directory
 - Convert them to .mp4 format using ffmpeg
 - Skip files that already have corresponding .mp4 versions
 - Provide progress tracking and error reporting
 
-**Note:** This conversion process may take considerable time for large datasets. The script can be safely interrupted and resumed - it will skip already converted files.
+**Note:** This conversion process may take considerable time for large datasets. The scripts can be safely interrupted and resumed - they will skip already converted files.
 
 ## Helpful Definitions
 
