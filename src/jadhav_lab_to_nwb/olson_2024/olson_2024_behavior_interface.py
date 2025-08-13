@@ -107,6 +107,7 @@ class Olson2024BehaviorInterface(BaseDataInterface):
                 data=np.ones((len(timestamps), 1)),
                 timestamps=timestamps,
                 unit="n.a.",
+                continuity="instantaneous",
             )
             behavioral_events.add_timeseries(time_series)
         behavior_module.add(behavioral_events)
