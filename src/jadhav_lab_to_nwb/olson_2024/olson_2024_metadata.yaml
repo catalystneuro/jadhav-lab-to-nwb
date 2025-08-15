@@ -17,7 +17,7 @@ Subject:
   species: Rattus norvegicus
   subject_id: SL18
   weight: 467g
-  age: P63D/ # TODO: Replace with actual age
+  age: P6M
 
 Ecephys:
   DataAcqDevice:
