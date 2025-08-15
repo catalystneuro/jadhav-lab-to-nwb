@@ -62,8 +62,6 @@ python src/jadhav_lab_to_nwb/olson_2024/olson_2024_insert_session.py
 
 ## Video File Preprocessing (Required)
 
-## Video File Preprocessing (Required)
-
 **Important: Before running any Python conversion scripts, you must convert .h264 video files to .mp4 format.**
 
 The conversion scripts expect .mp4 files for video processing. Raw behavioral videos are typically recorded in .h264 format and need to be converted using the provided scripts.
