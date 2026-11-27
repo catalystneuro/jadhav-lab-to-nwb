@@ -4,6 +4,7 @@ This module provides data interfaces for converting SpikeGadgets electrophysiolo
 recordings from the Olson 2024 dataset. It handles multi-epoch recordings with
 tetrode configurations and integrates with NWB format for neural data analysis.
 """
+
 from pynwb.file import NWBFile
 from pynwb.ecephys import ElectricalSeries
 from pathlib import Path
@@ -19,6 +20,7 @@ from neuroconv.datainterfaces import SpikeGadgetsRecordingInterface
 from neuroconv.utils import DeepDict, dict_deep_update
 from spikeinterface.extractors import SpikeGadgetsRecordingExtractor
 from ..tools.spikeinterface import MultiRecordingDataChunkIterator
+from ..tools.spikegadgets import get_rec_timestamps
 
 
 class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
@@ -37,8 +39,8 @@ class Olson2024SpikeGadgetsRecordingInterface(BaseDataInterface):
         file_paths : list[FilePath]
             List of paths to SpikeGadgets .rec files, one per epoch.
         comments_file_paths : list[FilePath]
-            List of paths to comments files containing timing information,
-            one per epoch. Must match the length of file_paths.
+            List of paths to the .trodesComments files, one per epoch. Must match the length of file_paths.
+            They are no longer used for timing: the raw times come from the .rec packet timestamps.
         **kwargs
             Additional keyword arguments passed to individual epoch interfaces.
         """
@@ -151,17 +153,12 @@ class Olson2024SingleEpochSpikeGadgetsRecordingInterface(SpikeGadgetsRecordingIn
         for hwChan, nTrode in self.hwChan_to_nTrode.items():
             self.nTrode_to_hwChans[nTrode].append(hwChan)
 
-        if comments_file_path is not None:
-            with open(comments_file_path, "r") as f:
-                first_line = f.readline()
-                if "start" in first_line:
-                    self.starting_time = (
-                        float(first_line.split()[0]) / self.recording_extractor.get_sampling_frequency()
-                    )
-                else:
-                    raise ValueError(f"Comments file {comments_file_path} does not contain starting time")
-        else:
-            self.starting_time = 0.0
+        # The raw signal takes its times from the packet timestamps of the .rec file, the clock that Trodes uses for
+        # the LFP, spikes and DIO it exports. Times built from the .trodesComments start and the nominal rate were
+        # 4 to 13 s off from those files and missed any pause in the recording (issue #23). The comments file is no
+        # longer read for timing; the argument is kept so that existing calls still work.
+        self.recording_extractor.set_times(get_rec_timestamps(self.recording_extractor))
+        self.starting_time = 0.0
 
     def get_metadata(self) -> DeepDict:
         metadata = super().get_metadata()
