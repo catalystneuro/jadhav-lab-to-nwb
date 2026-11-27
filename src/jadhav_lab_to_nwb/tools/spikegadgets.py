@@ -133,3 +133,30 @@ def readCameraModuleTimeStamps(file_path: FilePath) -> tuple[np.ndarray, float]:
                 break
         timestamps = np.fromfile(fid, dtype=np.uint32) / clock_rate
     return timestamps, clock_rate
+
+
+def get_rec_timestamps(recording_extractor) -> np.ndarray:
+    """Return the Trodes timestamp of every sample of a SpikeGadgets .rec recording, in seconds.
+
+    Each packet of a .rec file carries the hardware clock count at which it was recorded (a little-endian uint32
+    after the device bytes). Trodes uses these counts for the files it exports (LFP, spikes, DIO), so taking the raw
+    signal's times from them puts it on the same clock, with any pause or dropped packets in place. Dividing by the
+    sampling rate gives seconds, as in the exported files' timestamps.
+
+    Parameters
+    ----------
+    recording_extractor : SpikeGadgetsRecordingExtractor
+        The recording, read by neo's SpikeGadgetsRawIO.
+
+    Returns
+    -------
+    np.ndarray
+        One float64 time per sample, in seconds.
+    """
+    neo_reader = recording_extractor.neo_reader
+    packets = neo_reader._raw_memmap  # one row per packet (sample), as bytes
+    timestamp_byte = neo_reader._timestamp_byte
+    counts = np.ascontiguousarray(packets[:, timestamp_byte : timestamp_byte + 4]).view("<u4").ravel()
+    if counts.size > 1 and not np.all(np.diff(counts.astype(np.int64)) > 0):
+        raise ValueError("The packet timestamps of this .rec file are not strictly increasing.")
+    return counts / neo_reader._sampling_rate
